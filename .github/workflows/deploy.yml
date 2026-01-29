@@ -28,6 +28,15 @@ jobs:
           hugo-version: "latest"
           extended: true
 
+      - name: Build CV (LaTeX)
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: cv
+          root_file: cv.tex
+
+      - name: Copy CV into site
+        run: cp cv/cv.pdf static/cv.pdf
+
       - name: Build
         run: |
           set -euo pipefail

@@ -20,6 +20,14 @@ This repo is a minimal personal site template built with **Hugo (extended)** and
 - Add a blog post:
   - `hugo new posts/my-post.md`
 
+## CV (LaTeX)
+
+- Edit the LaTeX source: `cv/cv.tex`
+- GitHub Actions compiles it on deploy and publishes it as: `/cv.pdf`
+- Optional local build (requires a LaTeX install):
+  - `latexmk -pdf -interaction=nonstopmode cv/cv.tex -output-directory=cv`
+  - `cp cv/cv.pdf static/cv.pdf`
+
 ## Deploy to GitHub Pages
 
 This repo includes a GitHub Actions workflow that builds the site and publishes `./public` to the `gh-pages` branch on every push to `main`:
@@ -47,4 +55,3 @@ Update `baseURL` in `hugo.yaml`:
 
 - Site config: `hugo.yaml` (profile name/subtitle, social links, buttons)
 - Homepage layout override (adds “Recent News” + “Recent Blog Posts”): `layouts/index.html`
-
