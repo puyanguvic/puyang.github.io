@@ -1,0 +1,65 @@
+baseURL: "https://USERNAME.github.io/"
+languageCode: "en-us"
+title: "Your Name"
+theme: "PaperMod"
+paginate: 10
+enableRobotsTXT: true
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+params:
+  env: production
+  description: "Personal website"
+  author: "Your Name"
+
+  defaultTheme: auto
+  disableThemeToggle: false
+
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+
+  profileMode:
+    enabled: true
+    title: "Your Name"
+    subtitle: "Short subtitle (e.g., PhD student • Researcher)"
+    imageUrl: "/image/profile.png"
+    imageTitle: "Avatar"
+    imageWidth: 180
+    imageHeight: 180
+    buttons:
+      - name: "News"
+        url: "/news/"
+      - name: "Blog"
+        url: "/posts/"
+      - name: "Projects"
+        url: "/projects/"
+
+  socialIcons:
+    - name: "email"
+      url: "mailto:you@example.com"
+    - name: "github"
+      url: "https://github.com/USERNAME"
+    - name: "linkedin"
+      url: "https://www.linkedin.com/in/USERNAME/"
+
+menu:
+  main:
+    - identifier: news
+      name: News
+      url: /news/
+      weight: 10
+    - identifier: posts
+      name: Blog
+      url: /posts/
+      weight: 20
+    - identifier: projects
+      name: Projects
+      url: /projects/
+      weight: 30
