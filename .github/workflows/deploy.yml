@@ -29,7 +29,17 @@ jobs:
           extended: true
 
       - name: Build
-        run: hugo --minify
+        run: |
+          set -euo pipefail
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          if [[ "${REPO}" == "${OWNER}.github.io" ]]; then
+            BASE_URL="https://${OWNER}.github.io/"
+          else
+            BASE_URL="https://${OWNER}.github.io/${REPO}/"
+          fi
+          echo "Using baseURL=${BASE_URL}"
+          hugo --minify --baseURL "${BASE_URL}"
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
@@ -38,4 +48,3 @@ jobs:
           publish_branch: gh-pages
           publish_dir: ./public
           force_orphan: true
-
