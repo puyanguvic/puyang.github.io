@@ -1,6 +1,6 @@
 ---
 title: "about"
-date: 2023-7-9T17:51:47+03:30
+date: 2023-07-09T17:51:47+03:30
 draft: false
 headless: true
 

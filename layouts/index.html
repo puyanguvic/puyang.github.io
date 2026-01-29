@@ -8,8 +8,8 @@
   {{- end }}
 {{- end }}
 
-{{- $news := (where site.RegularPages "Section" "news") | sort "Date" "desc" | first 5 }}
-{{- $posts := (where site.RegularPages "Section" "posts") | sort "Date" "desc" | first 5 }}
+{{- $news := first 5 (sort (where site.RegularPages "Section" "news") "Date" "desc") }}
+{{- $posts := first 5 (sort (where site.RegularPages "Section" "posts") "Date" "desc") }}
 
 {{- if $news }}
 <header class="page-header">
@@ -56,4 +56,3 @@
 {{- end }}
 
 {{- end }}
-
