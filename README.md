@@ -50,6 +50,10 @@ Update `baseURL` in `hugo.yaml`:
   - `https://<username>.github.io/`
 - Project site repo (for example `my-site`):
   - `https://<username>.github.io/my-site/`
+- Custom domain:
+  - Set `baseURL` to `https://your-domain/` (for example `https://puyang.me/`)
+  - Configure GitHub Pages custom domain + DNS
+  - (Optional) set repo variable `CUSTOM_DOMAIN` to your domain so the workflow builds with the correct `--baseURL`
 
 ## Customize
 
