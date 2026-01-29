@@ -31,7 +31,7 @@ params:
     enabled: true
     title: "Your Name"
     subtitle: "Short subtitle (e.g., PhD student • Researcher)"
-    imageUrl: "/image/profile.png"
+    imageUrl: "image/profile.png"
     imageTitle: "Avatar"
     imageWidth: 180
     imageHeight: 180
