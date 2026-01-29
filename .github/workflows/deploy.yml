@@ -22,6 +22,14 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      - name: Detect CV changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            cv:
+              - 'cv/**'
+
       - name: Setup Hugo (extended)
         uses: peaceiris/actions-hugo@v3
         with:
@@ -29,13 +37,22 @@ jobs:
           extended: true
 
       - name: Build CV (LaTeX)
+        if: steps.changes.outputs.cv == 'true'
         uses: xu-cheng/latex-action@v3
         with:
           working_directory: cv
-          root_file: cv.tex
+          root_file: puyang-resume.tex
 
       - name: Copy CV into site
-        run: cp cv/cv.pdf static/cv.pdf
+        if: steps.changes.outputs.cv == 'true'
+        run: |
+          set -euo pipefail
+          if [[ ! -f cv/puyang-resume.pdf ]]; then
+            echo "Expected built PDF not found: cv/puyang-resume.pdf"
+            ls -la cv || true
+            exit 1
+          fi
+          cp cv/puyang-resume.pdf static/cv.pdf
 
       - name: Build
         run: |
