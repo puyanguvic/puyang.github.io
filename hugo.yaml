@@ -37,13 +37,13 @@ params:
     imageHeight: 180
     buttons:
       - name: "CV"
-        url: "/cv.pdf"
+        url: "cv.pdf"
       - name: "News"
-        url: "/news/"
+        url: "news/"
       - name: "Blog"
-        url: "/posts/"
+        url: "posts/"
       - name: "Projects"
-        url: "/projects/"
+        url: "projects/"
 
   socialIcons:
     - name: "email"
@@ -57,17 +57,17 @@ menu:
   main:
     - identifier: cv
       name: CV
-      url: /cv.pdf
+      url: cv.pdf
       weight: 5
     - identifier: news
       name: News
-      url: /news/
+      url: news/
       weight: 10
     - identifier: posts
       name: Blog
-      url: /posts/
+      url: posts/
       weight: 20
     - identifier: projects
       name: Projects
-      url: /projects/
+      url: projects/
       weight: 30
