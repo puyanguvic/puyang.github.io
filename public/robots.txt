@@ -1,3 +1,0 @@
-User-agent: *
-Disallow:
-Sitemap: https://puyanguvic.github.io/puyang.github.io/sitemap.xml

@@ -6,8 +6,9 @@ authors:
 date: "2023-06-08"
 
 publication: "Computer Networks"
-
-links:
-    pdf: https://www.sciencedirect.com/science/article/pii/S1389128623003080
+summary: "Computer Networks (2023). Pu Yang; Xiangyu Ren; Lin Cai; Jiequ Ji."
 ---
 
+**Authors:** Pu Yang; Xiangyu Ren; Lin Cai; Jiequ Ji  
+**Venue:** Computer Networks (2023)  
+**PDF:** https://www.sciencedirect.com/science/article/pii/S1389128623003080

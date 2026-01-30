@@ -1,10 +1,9 @@
 ---
-title: "Network Architecture for 6G network"
+title: "Network Architecture for 6G Network"
 
 date: 2020-05-01T00:00:00Z
-period: "2020 May to 2023 May"
-
-links:
-    website: 'https://github.com/puyanguvic/romam.git'
-    alias: link_name_here
+summary: "Research project (May 2020 – May 2023) on 6G network architecture."
 ---
+
+**Period:** May 2020 – May 2023  
+**Repository:** https://github.com/puyanguvic/romam
