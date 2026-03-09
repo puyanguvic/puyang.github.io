@@ -40,6 +40,9 @@ export default defineConfig({
           text: "Blog",
           items: [
             { text: "Overview", link: "/blog/" },
+            { text: "高维空间与机器学习（一）", link: "/blog/high-dimensional-space-and-machine-learning-distance-breakdown" },
+            { text: "高维空间与机器学习（二）", link: "/blog/high-dimensional-space-and-machine-learning-orthogonality" },
+            { text: "高维空间与机器学习（三）", link: "/blog/high-dimensional-space-and-machine-learning-hypersphere" },
             { text: "Welcome to my blog", link: "/blog/welcome-to-my-blog" }
           ]
         }
