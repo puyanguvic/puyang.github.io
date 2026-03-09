@@ -3,17 +3,6 @@ node_modules/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
 
-# LaTeX build artifacts
-docs/public/cv/*.aux
-docs/public/cv/*.bbl
-docs/public/cv/*.bcf
-docs/public/cv/*.blg
-docs/public/cv/*.fdb_latexmk
-docs/public/cv/*.fls
-docs/public/cv/*.log
-docs/public/cv/*.out
-docs/public/cv/*.pdf
-docs/public/cv/*.run.xml
-docs/public/cv/*.synctex.gz
-docs/public/cv/*.toc
-docs/public/cv/*.xdv
+# Keep only the published PDF under docs/public/cv/
+docs/public/cv/*
+!docs/public/cv/puyang-resume.pdf

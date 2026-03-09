@@ -21,6 +21,41 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Detect CV-related changes in this push
+        if: github.event_name == 'push'
+        id: cv_changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          base="${{ github.event.before }}"
+          head="${{ github.sha }}"
+
+          if [[ "$base" == "0000000000000000000000000000000000000000" ]]; then
+            base="4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+          fi
+
+          git diff --name-only "$base" "$head" | tee changed-files.txt
+
+          if grep -q '^cv/' changed-files.txt; then
+            echo "cv_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "cv_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if grep -qx 'docs/public/cv/puyang-resume.pdf' changed-files.txt; then
+            echo "pdf_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pdf_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Require refreshed PDF before deploy
+        if: github.event_name == 'push' && steps.cv_changes.outputs.cv_changed == 'true' && steps.cv_changes.outputs.pdf_changed != 'true'
+        shell: bash
+        run: |
+          echo "::error file=docs/public/cv/puyang-resume.pdf::CV source changed under cv/, but docs/public/cv/puyang-resume.pdf was not updated. Run 'npm run build:cv' and push the refreshed PDF."
+          exit 1
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -29,13 +64,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Build CV (LaTeX)
-        uses: xu-cheng/latex-action@v3
-        with:
-          working_directory: docs/public/cv
-          root_file: puyang-resume.tex
-          latexmk_use_xelatex: true
 
       - name: Build
         env:

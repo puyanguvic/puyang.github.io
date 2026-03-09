@@ -26,11 +26,14 @@ This repo is a personal website built with **VitePress** and deployed to **GitHu
 
 ## CV (LaTeX)
 
-- Edit the LaTeX source in `docs/public/cv/`
-- The generated PDF is `docs/public/cv/puyang-resume.pdf` and should not be committed
-- GitHub Actions compiles the PDF on every deploy and publishes it as: `/cv/puyang-resume.pdf`
-- Optional local build (requires a LaTeX install):
-  - `latexmk -xelatex -interaction=nonstopmode docs/public/cv/puyang-resume.tex -output-directory=docs/public/cv`
+- Edit the LaTeX source in `cv/`
+- Commit the generated PDF copy at `docs/public/cv/puyang-resume.pdf`
+- GitHub Pages publishes that static file directly as: `/cv/puyang-resume.pdf`
+- Rebuild the PDF locally only when the CV source changes (requires a LaTeX install):
+  - `npm run build:cv`
+- `build:cv` compiles in a temporary directory and refreshes only `docs/public/cv/puyang-resume.pdf`
+- After rebuilding, commit both the LaTeX source changes and the refreshed PDF
+- CI checks this rule in `.github/workflows/check-cv.yml`: if `cv/` changes, the committed PDF must also change, and the CV must still compile
 
 ## Optional visitor counter
 

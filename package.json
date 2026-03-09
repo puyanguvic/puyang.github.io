@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:cv": "latexmk -xelatex -interaction=nonstopmode docs/public/cv/puyang-resume.tex -output-directory=docs/public/cv",
+    "build:cv": "TMPDIR=$(mktemp -d) && trap 'rm -rf \"$TMPDIR\"' EXIT && latexmk -cd -xelatex -interaction=nonstopmode -output-directory=\"$TMPDIR\" cv/puyang-resume.tex && cp \"$TMPDIR/puyang-resume.pdf\" docs/public/cv/puyang-resume.pdf",
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
     "preview": "vitepress preview docs"
