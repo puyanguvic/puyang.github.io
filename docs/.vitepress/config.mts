@@ -9,6 +9,9 @@ export default defineConfig({
   description: "Personal website of Pu Yang",
   lastUpdated: true,
   head: [["link", { rel: "icon", href: "/favicon.ico" }]],
+  markdown: {
+    math: true
+  },
   ignoreDeadLinks: [
     /^mailto:/,
     /^https?:\/\//
