@@ -1,11 +1,11 @@
 ---
-title: "Tokenizer的理论（三）：为什么 character-level tokenizer 理论最优却几乎不用？"
+title: "Character-Level Tokenizer 的理论优势与工程局限"
 date: 2026-03-09T12:20:00-08:00
 summary: "从 information bottleneck、优化地形和 Transformer 的 inductive bias 出发，解释为什么 character-level 方法通常输给 subword。"
 tags: ["tokenizer", "character-level", "optimization"]
 ---
 
-# Tokenizer的理论（三）：为什么 character-level tokenizer 理论最优却几乎不用？
+# Character-Level Tokenizer 的理论优势与工程局限
 
 如果从原则上看，character-level tokenizer 似乎非常有吸引力。它不需要词表工程，不会遇到 OOV 问题，也不必纠结某个词该不该拆开。所有文本都可以无缝表示成字符序列，整个系统统一、干净、理论上最“彻底”。
 

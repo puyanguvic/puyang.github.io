@@ -1,11 +1,11 @@
 ---
-title: "大模型的表示空间（二）：LLM embedding 其实是一种球面编码"
+title: "LLM Embedding 的球面编码视角"
 date: 2026-03-09T11:10:00-08:00
 summary: "从通信理论中的 spherical code 出发，讨论 token embedding 的分布、容量以及为什么高维球面特别适合做语义编码。"
 tags: ["LLM", "embeddings", "spherical code"]
 ---
 
-# 大模型的表示空间（二）：LLM embedding 其实是一种球面编码
+# LLM Embedding 的球面编码视角
 
 当我们谈大模型的 embedding 时，最常见的直觉是：每个 token 对应一个向量，这些向量只是模型内部的数字表示。这个描述当然没错，但它太弱了。因为它没有解释一个更本质的问题：为什么这样一个高维向量系统，能够稳定地承载数万到数十万个 token，同时还保留足够丰富的语义关系？
 

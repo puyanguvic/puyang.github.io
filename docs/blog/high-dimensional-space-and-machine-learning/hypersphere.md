@@ -1,11 +1,11 @@
 ---
-title: "高维空间与机器学习（三）：为什么 embedding 向量几乎都在球面上？"
+title: "Embedding 向量的超球面分布及其成因"
 date: 2026-03-09T10:20:00-08:00
 summary: "从范数分布、超球面几何和 cosine similarity 出发，解释为什么 embedding 常常表现为近似球面分布。"
 tags: ["machine learning", "embeddings", "hypersphere geometry"]
 ---
 
-# 高维空间与机器学习（三）：为什么 embedding 向量几乎都在球面上？
+# Embedding 向量的超球面分布及其成因
 
 如果你观察现代机器学习模型中的 embedding，经常会发现一个很有意思的现象：这些向量的方向当然各不相同，但它们的长度往往没有那么大差异。许多时候，embedding 看起来像是分布在某个高维球面附近，而不是均匀散落在整个空间里。
 

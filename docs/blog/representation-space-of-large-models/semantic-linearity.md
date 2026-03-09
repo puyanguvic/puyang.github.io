@@ -1,11 +1,11 @@
 ---
-title: "大模型的表示空间（一）：为什么语义在 embedding 空间中是线性的？"
+title: "Embedding 空间中的语义线性结构"
 date: 2026-03-09T11:00:00-08:00
 summary: "从 king - man + woman 的经典现象出发，讨论语义子空间、群表示与语义变换为什么会呈现出近似线性结构。"
 tags: ["LLM", "embeddings", "representation learning"]
 ---
 
-# 大模型的表示空间（一）：为什么语义在 embedding 空间中是线性的？
+# Embedding 空间中的语义线性结构
 
 现代机器学习里最让人印象深刻的一类现象，就是语义关系似乎能够在向量空间中以“方向”的形式被表达出来。最经典的例子当然是：
 

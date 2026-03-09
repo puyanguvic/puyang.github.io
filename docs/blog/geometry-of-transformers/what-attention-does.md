@@ -1,11 +1,11 @@
 ---
-title: "Transformer的几何结构（一）：Transformer Attention 其实在做什么？"
+title: "Transformer Attention 的几何本质"
 date: 2026-03-09T11:30:00-08:00
 summary: "把 attention 理解为 query 在 key 子空间中的匹配，再用 value 对表示进行重建。"
 tags: ["Transformer", "attention", "geometry of representation"]
 ---
 
-# Transformer的几何结构（一）：Transformer Attention 其实在做什么？
+# Transformer Attention 的几何本质
 
 Transformer 已经成为现代大模型的标准结构，但它的核心计算往往被讲得过于工程化。很多介绍会告诉你：先算 query、key、value，再做 softmax，再加权求和。这当然没有错，可这样的描述更像是“执行步骤”，而不是“本质解释”。
 

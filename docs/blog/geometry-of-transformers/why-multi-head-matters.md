@@ -1,11 +1,11 @@
 ---
-title: "Transformer的几何结构（二）：为什么 Multi-head Attention 如此重要？"
+title: "Multi-Head Attention 的必要性与表达优势"
 date: 2026-03-09T11:40:00-08:00
 summary: "从单一子空间的局限出发，解释 multi-head attention 如何为模型提供多个语义子空间与坐标系。"
 tags: ["Transformer", "multi-head attention", "representation geometry"]
 ---
 
-# Transformer的几何结构（二）：为什么 Multi-head Attention 如此重要？
+# Multi-Head Attention 的必要性与表达优势
 
 如果说 attention 的本质是“子空间投影 + 表示重建”，那么接下来一个自然问题就是：为什么还需要 **multi-head**？为什么不能只用一个更大的 attention，把所有事情都做完？
 

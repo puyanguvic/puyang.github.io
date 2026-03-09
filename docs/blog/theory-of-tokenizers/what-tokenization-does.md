@@ -1,11 +1,11 @@
 ---
-title: "Tokenizer的理论（一）：Tokenizer 到底在做什么？"
+title: "Tokenization 的压缩本质"
 date: 2026-03-09T12:00:00-08:00
 summary: "把 tokenization 理解为文本压缩：从 Zipf 定律、Shannon 熵到 BPE，解释为什么 subword 方法有效。"
 tags: ["tokenizer", "compression", "LLM"]
 ---
 
-# Tokenizer的理论（一）：Tokenizer 到底在做什么？
+# Tokenization 的压缩本质
 
 很多人在第一次接触大模型时，会把 tokenizer 看成一个预处理工具：它把字符串切成 token，然后模型再去处理这些 token。这个说法并不算错，但它远远不够。因为如果 tokenizer 只是“切词工具”，那我们很难解释：为什么不同 tokenizer 会显著影响训练效率、推理成本、上下文长度乃至模型能力？
 
