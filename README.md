@@ -33,6 +33,12 @@ This repo is a personal website built with **VitePress** and deployed to **GitHu
   - `latexmk -xelatex -interaction=nonstopmode content/cv/puyang-resume.tex -output-directory=content/cv`
   - `node scripts/copy-cv.mjs --require`
 
+## Optional visitor counter
+
+- This site supports an optional GoatCounter counter on the homepage.
+- Set the repo variable `GOATCOUNTER_URL` to your GoatCounter site URL, for example `https://example.goatcounter.com`.
+- GoatCounter setup reference: https://www.goatcounter.com/help/start
+
 ## Deploy to GitHub Pages
 
 This repo includes a GitHub Actions workflow that builds the site and publishes `./docs/.vitepress/dist` to the `gh-pages` branch on every push to `main`:

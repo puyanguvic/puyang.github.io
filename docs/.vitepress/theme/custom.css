@@ -5,18 +5,10 @@
   --vp-c-brand-soft: rgba(25, 146, 184, 0.16);
   --vp-c-text-1: #132230;
   --vp-c-text-2: #455a64;
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: linear-gradient(120deg, #0b5a74 10%, #1992b8 90%);
-  --vp-home-hero-image-background-image: radial-gradient(circle at center, rgba(25, 146, 184, 0.22), rgba(11, 90, 116, 0.02) 68%);
-  --vp-home-hero-image-filter: blur(48px);
 }
 
 .VPNavBarTitle .logo {
   border-radius: 999px;
-}
-
-.VPFeature {
-  border: 1px solid rgba(11, 90, 116, 0.12);
 }
 
 .vp-doc h1,
@@ -27,4 +19,63 @@
 
 .vp-doc a {
   font-weight: 500;
+}
+
+.home-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 2rem;
+  align-items: start;
+  margin: 0.5rem 0 2rem;
+}
+
+.home-intro__name {
+  margin: 0 0 1rem;
+  font-size: 2.2rem;
+  line-height: 1.05;
+}
+
+.home-intro__copy p {
+  margin: 0 0 0.9rem;
+}
+
+.home-intro__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.home-intro__image {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 1px solid rgba(11, 90, 116, 0.14);
+}
+
+.home-visit-counter {
+  margin: 0.6rem 0 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.95rem;
+}
+
+.home-visit-counter strong {
+  color: var(--vp-c-text-1);
+}
+
+.home-visit-counter--muted {
+  font-style: italic;
+}
+
+@media (max-width: 720px) {
+  .home-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .home-intro__image {
+    order: -1;
+    width: 148px;
+    height: 148px;
+  }
 }
