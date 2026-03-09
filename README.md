@@ -22,11 +22,12 @@ This repo is a minimal personal site template built with **Hugo (extended)** and
 
 ## CV (LaTeX)
 
-- Edit the LaTeX source: `cv/puyang-resume.tex`
-- GitHub Actions compiles it on deploy and publishes it as: `/cv.pdf`
+- Edit the LaTeX source: `content/cv/puyang-resume.tex`
+- `static/cv.pdf` is a generated file and should not be committed
+- GitHub Actions compiles the PDF on every deploy and publishes it as: `/cv.pdf`
 - Optional local build (requires a LaTeX install):
-  - `latexmk -pdf -interaction=nonstopmode cv/puyang-resume.tex -output-directory=cv`
-  - `cp cv/puyang-resume.pdf static/cv.pdf`
+  - `latexmk -xelatex -interaction=nonstopmode content/cv/puyang-resume.tex -output-directory=content/cv`
+  - `cp content/cv/puyang-resume.pdf static/cv.pdf`
 
 ## Deploy to GitHub Pages
 

@@ -193,8 +193,10 @@
 % All arguments are compulsory
 % #1: Award Name, #2: Time Period, #3: Description
 \newcommand{\award}[3]{
-    \textbf{#1} \hfill \textit{#2}\\
-    \hspace*{1em}\begin{minipage}{\textwidth}
+    \begin{tabularx}{\linewidth}{@{}X@{}r@{}}
+        \textbf{#1} & \textit{#2}
+    \end{tabularx}\\
+    \hspace*{1em}\begin{minipage}{\dimexpr\linewidth-1em\relax}
         #3
     \end{minipage}\\
     \vspace{0.5em}

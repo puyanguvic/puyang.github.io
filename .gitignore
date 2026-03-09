@@ -6,15 +6,17 @@ public/
 resources/
 
 # LaTeX build artifacts
-cv/*.aux
-cv/*.bbl
-cv/*.bcf
-cv/*.blg
-cv/*.fdb_latexmk
-cv/*.fls
-cv/*.log
-cv/*.out
-cv/*.pdf
-cv/*.run.xml
-cv/*.synctex.gz
-cv/*.toc
+content/cv/*.aux
+content/cv/*.bbl
+content/cv/*.bcf
+content/cv/*.blg
+content/cv/*.fdb_latexmk
+content/cv/*.fls
+content/cv/*.log
+content/cv/*.out
+content/cv/*.pdf
+content/cv/*.run.xml
+content/cv/*.synctex.gz
+content/cv/*.toc
+content/cv/*.xdv
+static/cv.pdf
