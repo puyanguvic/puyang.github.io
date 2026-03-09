@@ -4,22 +4,28 @@
   <style>
     .bg { fill: #fcfcf9; }
     .panel { fill: #ffffff; stroke: #d9dee8; stroke-width: 2; rx: 20; }
-    .heading { fill: #203048; font: 600 26px "Helvetica Neue", Arial, sans-serif; }
+    .heading { fill: #203048; font-family: Arial; font-size: 21px; font-weight: 600; }
     .axis { stroke: #71849d; stroke-width: 2.5; }
     .curve-low { fill: rgba(89, 148, 213, 0.22); stroke: #4d89c7; stroke-width: 4; }
     .curve-high { fill: rgba(240, 139, 75, 0.24); stroke: #ea7d3c; stroke-width: 4; }
     .marker-low { stroke: #2e5f93; stroke-width: 4; }
     .marker-high { stroke: #b65b20; stroke-width: 4; }
-    .label { fill: #41556f; font: 500 18px "Helvetica Neue", Arial, sans-serif; }
-    .small { fill: #5b6b81; font: 400 15px "Helvetica Neue", Arial, sans-serif; }
+    .label { fill: #41556f; font-family: Arial; font-size: 17px; font-weight: 500; }
+    .small { fill: #5b6b81; font-family: Arial; font-size: 14px; font-weight: 400; }
     .dash { stroke: #97a6ba; stroke-width: 2; stroke-dasharray: 6 6; }
   </style>
 
   <rect class="bg" x="0" y="0" width="920" height="430" rx="24" />
   <rect class="panel" x="24" y="24" width="872" height="382" />
 
-  <text class="heading" x="84" y="74">Lower dimension: broader spread of pairwise distances</text>
-  <text class="heading" x="503" y="74">Higher dimension: distances collapse into a narrow band</text>
+  <text class="heading" x="240" y="58" text-anchor="middle">
+    <tspan x="240" dy="0">Lower dimension</tspan>
+    <tspan x="240" dy="27">broader spread of pairwise distances</tspan>
+  </text>
+  <text class="heading" x="678" y="58" text-anchor="middle">
+    <tspan x="678" dy="0">Higher dimension</tspan>
+    <tspan x="678" dy="27">distances collapse into a narrow band</tspan>
+  </text>
 
   <line class="axis" x1="88" y1="325" x2="394" y2="325" />
   <line class="axis" x1="520" y1="325" x2="826" y2="325" />
@@ -40,8 +46,17 @@
   <text class="label" x="631" y="186">D_min</text>
   <text class="label" x="700" y="186">D_max</text>
 
-  <text class="small" x="176" y="151">large relative gap between near and far</text>
-  <text class="small" x="603" y="124">typical distance ≈ √(2d)</text>
-  <text class="small" x="600" y="351">only a small relative gap survives</text>
-  <text class="small" x="170" y="351">distance ranking is easier to separate</text>
+  <text class="small" x="240" y="150" text-anchor="middle">
+    <tspan x="240" dy="0">large relative gap</tspan>
+    <tspan x="240" dy="18">between near and far</tspan>
+  </text>
+  <text class="small" x="682" y="124" text-anchor="middle">typical distance approx sqrt(2d)</text>
+  <text class="small" x="240" y="352" text-anchor="middle">
+    <tspan x="240" dy="0">distance ranking is easier</tspan>
+    <tspan x="240" dy="18">to separate</tspan>
+  </text>
+  <text class="small" x="682" y="352" text-anchor="middle">
+    <tspan x="682" dy="0">only a small relative gap</tspan>
+    <tspan x="682" dy="18">survives</tspan>
+  </text>
 </svg>

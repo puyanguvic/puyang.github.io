@@ -4,9 +4,9 @@
   <style>
     .bg { fill: #fcfcf9; }
     .panel { fill: #ffffff; stroke: #d9dee8; stroke-width: 2; rx: 20; }
-    .heading { fill: #203048; font: 600 26px "Helvetica Neue", Arial, sans-serif; }
-    .label { fill: #41556f; font: 500 18px "Helvetica Neue", Arial, sans-serif; }
-    .small { fill: #5b6b81; font: 400 15px "Helvetica Neue", Arial, sans-serif; }
+    .heading { fill: #203048; font-family: Arial; font-size: 22px; font-weight: 600; }
+    .label { fill: #41556f; font-family: Arial; font-size: 17px; font-weight: 500; }
+    .small { fill: #5b6b81; font-family: Arial; font-size: 14px; font-weight: 400; }
     .low-fill { fill: #dfeeff; }
     .high-fill { fill: #ffe7d4; }
     .shell { fill: none; stroke: #f08b4b; stroke-width: 18; opacity: 0.9; }
@@ -24,8 +24,14 @@
   <rect class="bg" x="0" y="0" width="920" height="420" rx="24" />
   <rect class="panel" x="24" y="24" width="872" height="372" />
 
-  <text class="heading" x="70" y="72">Low dimension: mass spreads through the interior</text>
-  <text class="heading" x="502" y="72">High dimension: mass collapses onto a thin shell</text>
+  <text class="heading" x="238" y="58" text-anchor="middle">
+    <tspan x="238" dy="0">Low dimension</tspan>
+    <tspan x="238" dy="28">mass spreads through the interior</tspan>
+  </text>
+  <text class="heading" x="682" y="58" text-anchor="middle">
+    <tspan x="682" dy="0">High dimension</tspan>
+    <tspan x="682" dy="28">mass collapses onto a thin shell</tspan>
+  </text>
 
   <circle class="low-fill" cx="238" cy="225" r="122" opacity="0.85" />
   <circle class="outline" cx="238" cy="225" r="122" />
@@ -39,7 +45,10 @@
   <circle class="point-a" cx="250" cy="145" r="7" />
   <circle class="point-a" cx="316" cy="226" r="7" />
   <circle class="point-a" cx="194" cy="131" r="7" />
-  <text class="label" x="128" y="372">points occupy many radii</text>
+  <text class="label" x="238" y="362" text-anchor="middle">
+    <tspan x="238" dy="0">points occupy</tspan>
+    <tspan x="238" dy="22">many radii</tspan>
+  </text>
 
   <circle class="high-fill" cx="682" cy="225" r="122" opacity="0.55" />
   <circle class="shell" cx="682" cy="225" r="107" />
@@ -61,8 +70,14 @@
   <circle class="point-b" cx="586" cy="281" r="7" />
   <circle class="point-b" cx="576" cy="196" r="7" />
   <circle class="point-b" cx="622" cy="135" r="7" />
-  <text class="label" x="571" y="372">radius about √d, shell thickness about O(1)</text>
+  <text class="label" x="682" y="362" text-anchor="middle">
+    <tspan x="682" dy="0">radius about sqrt(d)</tspan>
+    <tspan x="682" dy="22">shell thickness about O(1)</tspan>
+  </text>
 
   <line class="arrow" x1="805" y1="105" x2="742" y2="145" />
-  <text class="small" x="780" y="94">most mass lives near the boundary</text>
+  <text class="small" x="790" y="94" text-anchor="end">
+    <tspan x="790" dy="0">most mass lives</tspan>
+    <tspan x="790" dy="18">near the boundary</tspan>
+  </text>
 </svg>
