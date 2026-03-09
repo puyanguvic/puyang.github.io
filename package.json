@@ -1,0 +1,15 @@
+{
+  "name": "puyang.github.io",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare:site": "node scripts/copy-cv.mjs",
+    "build:cv": "latexmk -xelatex -interaction=nonstopmode content/cv/puyang-resume.tex -output-directory=content/cv",
+    "dev": "npm run prepare:site -- --allow-missing && vitepress dev docs",
+    "build": "npm run prepare:site -- --require && vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

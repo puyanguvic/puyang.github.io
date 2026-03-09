@@ -1,7 +1,5 @@
 ---
 title: "About"
-date: 2023-07-09T17:51:47+03:30
-draft: false
 ---
 
 I am a Ph.D. candidate in the Department of Electrical and Computer Engineering at the University of Victoria (BC, Canada), under the supervision of [Dr. Lin Cai][1]. I obtained my M.Sc. in Computer Technology from Northwestern Polytechnical University (Xi'an, China), under the supervision of [Dr. Shining Li][2], where I also earned my B.Eng. in Software Engineering.

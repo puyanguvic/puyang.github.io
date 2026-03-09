@@ -1,37 +1,41 @@
-# Hugo + PaperMod personal website (GitHub Pages)
+# VitePress personal website (GitHub Pages)
 
-This repo is a minimal personal site template built with **Hugo (extended)** and the **PaperMod** theme.
+This repo is a personal website built with **VitePress** and deployed to **GitHub Pages**.
 
 ## Prerequisites
 
-- Hugo **extended** installed locally
-- Theme submodule initialized:
-  - `git submodule update --init --recursive`
+- Node.js 18+
+- npm 9+
+- Optional for CV builds: a LaTeX install with `latexmk` and XeLaTeX
 
 ## Local development
 
-- Start dev server (includes drafts):
-  - `hugo server -D`
+- Install dependencies:
+  - `npm install`
+- Start the docs dev server:
+  - `npm run dev`
 
-## Add content
+## Content structure
 
-- Add a news item:
-  - `hugo new news/YYYY-MM-DD-title.md`
-- Add a blog post:
-  - `hugo new posts/my-post.md`
+- Homepage: `docs/index.md`
+- About page: `docs/about.md`
+- News: `docs/news/`
+- Blog: `docs/blog/`
+- Projects: `docs/projects/`
+- Publications: `docs/publications/`
 
 ## CV (LaTeX)
 
 - Edit the LaTeX source: `content/cv/puyang-resume.tex`
-- `static/cv.pdf` is a generated file and should not be committed
+- `docs/public/cv.pdf` is a generated file and should not be committed
 - GitHub Actions compiles the PDF on every deploy and publishes it as: `/cv.pdf`
 - Optional local build (requires a LaTeX install):
   - `latexmk -xelatex -interaction=nonstopmode content/cv/puyang-resume.tex -output-directory=content/cv`
-  - `cp content/cv/puyang-resume.pdf static/cv.pdf`
+  - `node scripts/copy-cv.mjs --require`
 
 ## Deploy to GitHub Pages
 
-This repo includes a GitHub Actions workflow that builds the site and publishes `./public` to the `gh-pages` branch on every push to `main`:
+This repo includes a GitHub Actions workflow that builds the site and publishes `./docs/.vitepress/dist` to the `gh-pages` branch on every push to `main`:
 
 - Workflow: `.github/workflows/deploy.yml`
 
@@ -43,20 +47,7 @@ This repo includes a GitHub Actions workflow that builds the site and publishes 
    - Branch: `gh-pages`
    - Folder: `/ (root)`
 
-### baseURL
-
-Update `baseURL` in `hugo.yaml`:
-
-- User/Org site repo named `<username>.github.io`:
-  - `https://<username>.github.io/`
-- Project site repo (for example `my-site`):
-  - `https://<username>.github.io/my-site/`
-- Custom domain:
-  - Set `baseURL` to `https://your-domain/` (for example `https://puyang.me/`)
-  - Configure GitHub Pages custom domain + DNS
-  - (Optional) set repo variable `CUSTOM_DOMAIN` to your domain so the workflow builds with the correct `--baseURL`
-
 ## Customize
 
-- Site config: `hugo.yaml` (profile name/subtitle, social links, buttons)
-- Homepage layout override (adds “Recent News” + “Recent Blog Posts”): `layouts/index.html`
+- Site config: `docs/.vitepress/config.mts`
+- Theme overrides: `docs/.vitepress/theme/`

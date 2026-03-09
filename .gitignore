@@ -1,9 +1,8 @@
 .DS_Store
-.hugo_build.lock
-
-# Hugo build output / cache
-public/
-resources/
+node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+docs/public/cv.pdf
 
 # LaTeX build artifacts
 content/cv/*.aux
@@ -19,4 +18,3 @@ content/cv/*.run.xml
 content/cv/*.synctex.gz
 content/cv/*.toc
 content/cv/*.xdv
-static/cv.pdf

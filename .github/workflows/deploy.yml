@@ -1,4 +1,4 @@
-name: Deploy Hugo site (gh-pages)
+name: Deploy VitePress site (gh-pages)
 
 on:
   push:
@@ -16,17 +16,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (with submodules)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
 
-      - name: Setup Hugo (extended)
-        uses: peaceiris/actions-hugo@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          hugo-version: "latest"
-          extended: true
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build CV (LaTeX)
         uses: xu-cheng/latex-action@v3
@@ -35,7 +37,7 @@ jobs:
           root_file: puyang-resume.tex
           latexmk_use_xelatex: true
 
-      - name: Copy CV into site
+      - name: Copy CV into VitePress public assets
         run: |
           set -euo pipefail
           if [[ ! -f content/cv/puyang-resume.pdf ]]; then
@@ -43,24 +45,17 @@ jobs:
             ls -la content/cv || true
             exit 1
           fi
-          cp content/cv/puyang-resume.pdf static/cv.pdf
+          node scripts/copy-cv.mjs --require
 
       - name: Build
         run: |
           set -euo pipefail
-          if [[ -n "${{ vars.CUSTOM_DOMAIN }}" ]]; then
-            BASE_URL="https://${{ vars.CUSTOM_DOMAIN }}/"
-            echo "Using --baseURL=${BASE_URL} (CUSTOM_DOMAIN repo variable)"
-            hugo --minify --baseURL "${BASE_URL}"
-          else
-            echo "Using baseURL from Hugo config (hugo.yaml)"
-            hugo --minify
-          fi
+          npm run build
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./public
+          publish_dir: ./docs/.vitepress/dist
           force_orphan: true
