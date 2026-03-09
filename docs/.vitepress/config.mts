@@ -40,9 +40,20 @@ export default defineConfig({
           text: "Blog",
           items: [
             { text: "Overview", link: "/blog/" },
-            { text: "高维空间与机器学习（一）", link: "/blog/high-dimensional-space-and-machine-learning-distance-breakdown" },
-            { text: "高维空间与机器学习（二）", link: "/blog/high-dimensional-space-and-machine-learning-orthogonality" },
-            { text: "高维空间与机器学习（三）", link: "/blog/high-dimensional-space-and-machine-learning-hypersphere" },
+            { text: "Tokenizer的理论", link: "/blog/theory-of-tokenizers/" },
+            { text: "Tokenizer 到底在做什么", link: "/blog/theory-of-tokenizers/what-tokenization-does" },
+            { text: "为什么词表总在 50k 左右", link: "/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k" },
+            { text: "为什么 character-level 很少用", link: "/blog/theory-of-tokenizers/why-character-level-rarely-wins" },
+            { text: "Transformer的几何结构", link: "/blog/geometry-of-transformers/" },
+            { text: "Attention 其实在做什么", link: "/blog/geometry-of-transformers/what-attention-does" },
+            { text: "为什么 Multi-head 如此重要", link: "/blog/geometry-of-transformers/why-multi-head-matters" },
+            { text: "大模型的表示空间", link: "/blog/representation-space-of-large-models/" },
+            { text: "语义为什么是线性的", link: "/blog/representation-space-of-large-models/semantic-linearity" },
+            { text: "LLM embedding 的球面编码", link: "/blog/representation-space-of-large-models/spherical-coding" },
+            { text: "高维空间与机器学习", link: "/blog/high-dimensional-space-and-machine-learning/" },
+            { text: "距离会失效", link: "/blog/high-dimensional-space-and-machine-learning/distance-breakdown" },
+            { text: "几乎总是正交", link: "/blog/high-dimensional-space-and-machine-learning/orthogonality" },
+            { text: "几乎都在球面上", link: "/blog/high-dimensional-space-and-machine-learning/hypersphere" },
             { text: "Welcome to my blog", link: "/blog/welcome-to-my-blog" }
           ]
         }
