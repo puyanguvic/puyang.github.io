@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="420" viewBox="0 0 920 420" role="img" aria-labelledby="title desc">
+  <title id="title">薄壳现象示意图</title>
+  <desc id="desc">左侧展示低维球体内部的分散分布，右侧展示高维中概率质量集中在薄壳附近。</desc>
+  <style>
+    .bg { fill: #fcfcf9; }
+    .panel { fill: #ffffff; stroke: #d9dee8; stroke-width: 2; rx: 20; }
+    .heading { fill: #203048; font: 600 26px "Helvetica Neue", Arial, sans-serif; }
+    .label { fill: #41556f; font: 500 18px "Helvetica Neue", Arial, sans-serif; }
+    .small { fill: #5b6b81; font: 400 15px "Helvetica Neue", Arial, sans-serif; }
+    .low-fill { fill: #dfeeff; }
+    .high-fill { fill: #ffe7d4; }
+    .shell { fill: none; stroke: #f08b4b; stroke-width: 18; opacity: 0.9; }
+    .outline { fill: none; stroke: #8aa5c2; stroke-width: 3; }
+    .point-a { fill: #4d89c7; }
+    .point-b { fill: #ea7d3c; }
+    .arrow { stroke: #8da0b8; stroke-width: 2.5; marker-end: url(#arrowHead); }
+  </style>
+  <defs>
+    <marker id="arrowHead" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#8da0b8" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="420" rx="24" />
+  <rect class="panel" x="24" y="24" width="872" height="372" />
+
+  <text class="heading" x="70" y="72">Low dimension: mass spreads through the interior</text>
+  <text class="heading" x="502" y="72">High dimension: mass collapses onto a thin shell</text>
+
+  <circle class="low-fill" cx="238" cy="225" r="122" opacity="0.85" />
+  <circle class="outline" cx="238" cy="225" r="122" />
+  <circle class="point-a" cx="179" cy="168" r="9" />
+  <circle class="point-a" cx="214" cy="209" r="8" />
+  <circle class="point-a" cx="260" cy="257" r="8" />
+  <circle class="point-a" cx="287" cy="197" r="7" />
+  <circle class="point-a" cx="223" cy="278" r="7" />
+  <circle class="point-a" cx="147" cy="232" r="7" />
+  <circle class="point-a" cx="299" cy="285" r="7" />
+  <circle class="point-a" cx="250" cy="145" r="7" />
+  <circle class="point-a" cx="316" cy="226" r="7" />
+  <circle class="point-a" cx="194" cy="131" r="7" />
+  <text class="label" x="128" y="372">points occupy many radii</text>
+
+  <circle class="high-fill" cx="682" cy="225" r="122" opacity="0.55" />
+  <circle class="shell" cx="682" cy="225" r="107" />
+  <circle class="outline" cx="682" cy="225" r="122" />
+  <circle class="point-b" cx="700" cy="115" r="8" />
+  <circle class="point-b" cx="763" cy="144" r="8" />
+  <circle class="point-b" cx="788" cy="221" r="8" />
+  <circle class="point-b" cx="753" cy="297" r="8" />
+  <circle class="point-b" cx="690" cy="330" r="8" />
+  <circle class="point-b" cx="616" cy="307" r="8" />
+  <circle class="point-b" cx="578" cy="236" r="8" />
+  <circle class="point-b" cx="603" cy="154" r="8" />
+  <circle class="point-b" cx="657" cy="118" r="8" />
+  <circle class="point-b" cx="736" cy="129" r="7" />
+  <circle class="point-b" cx="781" cy="185" r="7" />
+  <circle class="point-b" cx="773" cy="268" r="7" />
+  <circle class="point-b" cx="723" cy="322" r="7" />
+  <circle class="point-b" cx="640" cy="327" r="7" />
+  <circle class="point-b" cx="586" cy="281" r="7" />
+  <circle class="point-b" cx="576" cy="196" r="7" />
+  <circle class="point-b" cx="622" cy="135" r="7" />
+  <text class="label" x="571" y="372">radius about √d, shell thickness about O(1)</text>
+
+  <line class="arrow" x1="805" y1="105" x2="742" y2="145" />
+  <text class="small" x="780" y="94">most mass lives near the boundary</text>
+</svg>

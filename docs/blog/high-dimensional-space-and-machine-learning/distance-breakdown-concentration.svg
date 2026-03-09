@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="430" viewBox="0 0 920 430" role="img" aria-labelledby="title desc">
+  <title id="title">距离集中示意图</title>
+  <desc id="desc">左侧展示低维时较宽的距离分布，右侧展示高维时集中在狭窄区间的距离分布，并标出最近邻和最远邻。</desc>
+  <style>
+    .bg { fill: #fcfcf9; }
+    .panel { fill: #ffffff; stroke: #d9dee8; stroke-width: 2; rx: 20; }
+    .heading { fill: #203048; font: 600 26px "Helvetica Neue", Arial, sans-serif; }
+    .axis { stroke: #71849d; stroke-width: 2.5; }
+    .curve-low { fill: rgba(89, 148, 213, 0.22); stroke: #4d89c7; stroke-width: 4; }
+    .curve-high { fill: rgba(240, 139, 75, 0.24); stroke: #ea7d3c; stroke-width: 4; }
+    .marker-low { stroke: #2e5f93; stroke-width: 4; }
+    .marker-high { stroke: #b65b20; stroke-width: 4; }
+    .label { fill: #41556f; font: 500 18px "Helvetica Neue", Arial, sans-serif; }
+    .small { fill: #5b6b81; font: 400 15px "Helvetica Neue", Arial, sans-serif; }
+    .dash { stroke: #97a6ba; stroke-width: 2; stroke-dasharray: 6 6; }
+  </style>
+
+  <rect class="bg" x="0" y="0" width="920" height="430" rx="24" />
+  <rect class="panel" x="24" y="24" width="872" height="382" />
+
+  <text class="heading" x="84" y="74">Lower dimension: broader spread of pairwise distances</text>
+  <text class="heading" x="503" y="74">Higher dimension: distances collapse into a narrow band</text>
+
+  <line class="axis" x1="88" y1="325" x2="394" y2="325" />
+  <line class="axis" x1="520" y1="325" x2="826" y2="325" />
+
+  <path class="curve-low" d="M108 325 C140 312, 158 245, 198 211 C234 180, 274 178, 312 220 C336 247, 353 289, 374 325 Z" />
+  <path class="curve-high" d="M563 325 C610 323, 636 265, 663 184 C677 146, 694 145, 707 184 C734 264, 760 323, 807 325 Z" />
+
+  <line class="marker-low" x1="142" y1="326" x2="142" y2="222" />
+  <line class="marker-low" x1="344" y1="326" x2="344" y2="232" />
+  <line class="marker-high" x1="648" y1="326" x2="648" y2="207" />
+  <line class="marker-high" x1="714" y1="326" x2="714" y2="207" />
+
+  <line class="dash" x1="246" y1="325" x2="246" y2="170" />
+  <line class="dash" x1="682" y1="325" x2="682" y2="136" />
+
+  <text class="label" x="126" y="200">D_min</text>
+  <text class="label" x="320" y="210">D_max</text>
+  <text class="label" x="631" y="186">D_min</text>
+  <text class="label" x="700" y="186">D_max</text>
+
+  <text class="small" x="176" y="151">large relative gap between near and far</text>
+  <text class="small" x="603" y="124">typical distance ≈ √(2d)</text>
+  <text class="small" x="600" y="351">only a small relative gap survives</text>
+  <text class="small" x="170" y="351">distance ranking is easier to separate</text>
+</svg>
