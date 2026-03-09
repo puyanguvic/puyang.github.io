@@ -12,7 +12,7 @@
         and distributed systems.
       </p>
       <div class="home-intro__links">
-        <a href="/cv.pdf">CV</a>
+        <a href="/cv/puyang-resume.pdf">CV</a>
         <a href="/publications/">Publications</a>
         <a href="/projects/">Projects</a>
         <a href="/about">About</a>

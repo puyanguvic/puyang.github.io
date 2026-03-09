@@ -26,12 +26,11 @@ This repo is a personal website built with **VitePress** and deployed to **GitHu
 
 ## CV (LaTeX)
 
-- Edit the LaTeX source: `content/cv/puyang-resume.tex`
-- `docs/public/cv.pdf` is a generated file and should not be committed
-- GitHub Actions compiles the PDF on every deploy and publishes it as: `/cv.pdf`
+- Edit the LaTeX source in `docs/public/cv/`
+- The generated PDF is `docs/public/cv/puyang-resume.pdf` and should not be committed
+- GitHub Actions compiles the PDF on every deploy and publishes it as: `/cv/puyang-resume.pdf`
 - Optional local build (requires a LaTeX install):
-  - `latexmk -xelatex -interaction=nonstopmode content/cv/puyang-resume.tex -output-directory=content/cv`
-  - `node scripts/copy-cv.mjs --require`
+  - `latexmk -xelatex -interaction=nonstopmode docs/public/cv/puyang-resume.tex -output-directory=docs/public/cv`
 
 ## Optional visitor counter
 

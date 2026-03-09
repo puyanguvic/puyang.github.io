@@ -2,19 +2,18 @@
 node_modules/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
-docs/public/cv.pdf
 
 # LaTeX build artifacts
-content/cv/*.aux
-content/cv/*.bbl
-content/cv/*.bcf
-content/cv/*.blg
-content/cv/*.fdb_latexmk
-content/cv/*.fls
-content/cv/*.log
-content/cv/*.out
-content/cv/*.pdf
-content/cv/*.run.xml
-content/cv/*.synctex.gz
-content/cv/*.toc
-content/cv/*.xdv
+docs/public/cv/*.aux
+docs/public/cv/*.bbl
+docs/public/cv/*.bcf
+docs/public/cv/*.blg
+docs/public/cv/*.fdb_latexmk
+docs/public/cv/*.fls
+docs/public/cv/*.log
+docs/public/cv/*.out
+docs/public/cv/*.pdf
+docs/public/cv/*.run.xml
+docs/public/cv/*.synctex.gz
+docs/public/cv/*.toc
+docs/public/cv/*.xdv

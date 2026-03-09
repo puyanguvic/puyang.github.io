@@ -33,19 +33,9 @@ jobs:
       - name: Build CV (LaTeX)
         uses: xu-cheng/latex-action@v3
         with:
-          working_directory: content/cv
+          working_directory: docs/public/cv
           root_file: puyang-resume.tex
           latexmk_use_xelatex: true
-
-      - name: Copy CV into VitePress public assets
-        run: |
-          set -euo pipefail
-          if [[ ! -f content/cv/puyang-resume.pdf ]]; then
-            echo "Expected built PDF not found: content/cv/puyang-resume.pdf"
-            ls -la content/cv || true
-            exit 1
-          fi
-          node scripts/copy-cv.mjs --require
 
       - name: Build
         env:
