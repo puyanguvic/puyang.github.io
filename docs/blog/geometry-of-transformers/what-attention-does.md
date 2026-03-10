@@ -1,45 +1,43 @@
 ---
 title: "Transformer Attention 的几何本质"
 date: 2026-03-09T11:30:00-08:00
-summary: "把 attention 理解为 query-key 几何诱导出的软坐标系统，以及在 value 空间中的内容自适应重建。"
+summary: "从 query-key 匹配、概率单纯形与 value 重建出发，解释 attention 的几何本质。"
 tags: ["Transformer", "attention", "geometry of representation"]
 ---
 
 # Transformer Attention 的几何本质
 
-Transformer 的核心计算常被讲成一串工程步骤：先算 `Q, K, V`，再做 `softmax`，最后加权求和。这种解释当然没有错，但它不够抓本质。真正重要的问题是：为什么这样一个看似简单的运算，能够在每一层里完成上下文检索、长程依赖建模和表示更新？
+attention 常被描述成一串熟悉的工程步骤：计算 `Q`、`K`、`V`，做一次 `softmax`，然后对 `V` 加权求和。这个描述在实现层面完全正确，但如果停在这里，就很难解释它为什么能承担上下文检索、关系路由与表示重写等多种职责。真正关键的不是“加权平均”这个形式，而是这些权重是如何被生成出来的，以及它们把输出限制在什么样的几何对象上 [1-7]。
 
-更精确的说法是：
+更精确的说法是：attention 通过 query-key 匹配定义一组上下文相关的软坐标，再在 value 空间中完成一次内容自适应重建。它因此更接近动态核回归、重心重建或内容相关投影，而不是简单复制某个 token 的表示。
 
-> attention 的本质，不是“给 token 分配权重”，而是由 query-key 几何诱导出一组软坐标，再在 value 空间中做内容自适应重建。
+> 核心结论：在标准 self-attention 中，query 决定当前表示应按何种关系读取上下文，key 决定哪些位置在这种关系下可被激活，softmax 则把匹配分数映射为概率单纯形上的软坐标；最终输出是这些坐标在 value 空间中的重心重建，而不是某个位置内容的直接拷贝 [1-7]。
 
-这句话和“子空间投影 + 表示重建”的直觉接近，但比它更严格。因为标准 softmax attention 并不是正交投影；它更接近一种**内容相关的核回归 / 重心重建** [1-4]。
+在“Transformer 的几何结构”系列中，本文先定义单头 attention 的软坐标几何；下一篇 [Multi-Head Attention 的必要性与表达优势](/blog/geometry-of-transformers/why-multi-head-matters) 再说明为什么一套坐标系不足以覆盖语言里的异质关系。
 
-> 核心结论：在 Transformer 中，query 决定“当前表示应当沿哪种关系读取上下文”，key 决定“上下文中有哪些可被读取的方向”，而 softmax 则把匹配分数变成概率单纯形上的软坐标；最终输出是这些坐标在 value 空间中的加权重建，而不是某个 token 表示的简单复制 [1-7]。
+## 1. 从矩阵公式看 attention 的结构
 
-## 1. 先从公式开始：attention 是一个行随机算子
-
-标准 scaled dot-product attention 写成矩阵形式是
+标准 scaled dot-product attention 写成矩阵形式为
 
 $$
-\mathrm{Attn}(Q, K, V)
+\operatorname{Attn}(Q,K,V)
 =
-\mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.
+\operatorname{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V.
 $$
 
-设
+记
 
 $$
-A = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right),
+A = \operatorname{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right),
 $$
 
-则有
+则输出可写为
 
 $$
 O = AV.
 $$
 
-这里的 $A \in \mathbb{R}^{n \times n}$ 是一个**行随机矩阵**：每一行都非负、且和为 `1`。如果只看第 $i$ 个 token，对应的输出为
+这里的 $A \in \mathbb{R}^{n \times n}$ 是一个行随机矩阵：每一行非负，且和为 $1$。对第 $i$ 个位置而言，
 
 $$
 o_i = \sum_{j=1}^n \alpha_{ij} v_j,
@@ -47,130 +45,130 @@ o_i = \sum_{j=1}^n \alpha_{ij} v_j,
 \alpha_i \in \Delta^{n-1},
 $$
 
-其中 $\Delta^{n-1}$ 是 $(n-1)$ 维概率单纯形。这个式子已经透露出 attention 的几何结构：对每个 query 而言，softmax 会给出一组位于单纯形上的软坐标，输出则是这些坐标在 value 向量上的重心组合 [1][2]。
+其中 $\Delta^{n-1}$ 是概率单纯形。这个表达已经揭示了 attention 的几何含义：每个 query 位置先在全部上下文位置上生成一组软坐标 $\alpha_i$，再用这组坐标对 value 做重心组合。
 
-从角色上看，三组向量并不对称：
-
-| 对象 | 几何角色 | 功能解释 |
-| --- | --- | --- |
-| query | 读取方向 / 测试函数 | 决定当前 token 需要按什么关系去看上下文 |
-| key | 可匹配方向 / 索引 | 决定上下文中哪些位置会被当前 query 激活 |
-| value | 被重建内容 | 决定一旦某位置被选中，真正传回来的表示是什么 |
+因此，attention 的输出并不是任意向量，而总落在当前 value 集合的凸包中。这是它与“自由线性层”之间的第一个根本区别。
 
 ## 2. Query-Key 内积到底在测什么？
 
-对单个位置 $i$ 与 $j$，attention logits 为
+对位置 $i,j$，attention logit 为
 
 $$
 s_{ij} = \frac{q_i^\top k_j}{\sqrt{d_k}}
-=
-\frac{x_i^\top W_Q^\top W_K x_j}{\sqrt{d_k}}.
+= \frac{x_i^\top W_Q^\top W_K x_j}{\sqrt{d_k}}.
 $$
 
-这个式子非常重要，因为它说明 attention 比“直接比较两个 token 是否相似”更一般。模型并不是在原始表示空间里计算欧氏距离或余弦相似度，而是在一个由 $W_Q^\top W_K$ 定义的**可学习双线性形式**下比较两个位置。于是：
+这个式子说明，attention 并不是在原始表示空间中直接比较“两个 token 是否相似”，而是在一个由 $W_Q^\top W_K$ 定义的可学习双线性形式下衡量它们是否匹配。于是：
 
-- query 不是内容本身，而是“当前应读取哪种关系”的探针；
-- key 不是内容本身，而是“当前这个位置在哪些关系下可被读取”的索引；
-- 同一个 token 在不同 head、不同层里，会对应完全不同的匹配几何。
+- query 不是内容本身，而是当前读取任务的探针；
+- key 不是内容本身，而是当前位置在某种关系下是否可被读取的索引；
+- 匹配标准不是固定距离，而是由参数与层级共同决定的动态几何。
 
-因此，attention 的第一步并不是“找最像我的 token”，而是：
+因此，attention 的第一步不应被表述为“找最像我的 token”，而应表述为：**在当前 head 所定义的关系度量下，哪些上下文位置最值得被当前 query 读取。**
 
-> 在当前层、当前 head 所定义的关系度量下，哪些上下文位置与我最对齐？
+这也是同一 token 在不同层、不同 head 中会参与完全不同匹配模式的原因。attention 所学习的不是一个统一的相似度，而是一族上下文相关的关系度量 [1][5]。
 
-这也是为什么 attention 可以同时服务句法依赖、指代关系、局部搭配、篇章回溯与任务相关读取。它不是一个固定度量，而是一族由参数和上下文共同决定的动态匹配规则 [1][5]。
+## 3. 为什么要除以 $\sqrt{d_k}$？
 
-## 3. 为什么它更像“软投影”，而不是“硬检索”？
+scaled dot-product attention 里的缩放项常被当成实现细节一笔带过，但它实际上承担了重要的数值角色。若 $q_i$ 与 $k_j$ 的各维大致零均值、方差相近，那么未缩放的内积
 
-一旦得到了 $\alpha_i$，输出
+$$
+q_i^\top k_j = \sum_{\ell=1}^{d_k} q_{i\ell} k_{j\ell}
+$$
+
+其方差通常会随 $d_k$ 线性增长。于是，当 head 维度变大时，logits 的典型幅度会变成 $O(\sqrt{d_k})$，softmax 很快就会进入近似饱和区：少数位置权重接近 `1`，其余位置权重接近 `0`，梯度也随之变得尖锐而不稳定 [1]。
+
+把内积除以 $\sqrt{d_k}$ 的作用，就是把 logits 的方差重新拉回 $O(1)$ 量级，使 softmax 在不同 head 宽度下都维持可训练的数值范围。这个缩放项因此不是装饰性的常数，而是让“可学习双线性匹配”变成“可优化概率坐标”的必要条件。
+
+## 4. softmax 为什么对应“软坐标”而不是“硬检索”？
+
+一旦得到 logits $s_{ij}$，softmax 会把它们转化为满足
+
+$$
+\alpha_{ij} \ge 0, \qquad \sum_j \alpha_{ij} = 1
+$$
+
+的权重。几何上，这等价于把第 $i$ 个 query 对上下文的读取方式限制在概率单纯形上。于是输出
 
 $$
 o_i = \sum_j \alpha_{ij} v_j
 $$
 
-就落在当前 value 集合的凸包里。也就是说，对固定的 `V` 而言，attention 输出不是任意向量，而是上下文 value 的一个**重心重建**。这正是 attention 比“top-1 检索”更强的地方：它允许模型从多个位置同时取信息，并且可微地控制组合比例。
+是当前 value 向量的重心重建。
+
+这一步之所以重要，是因为它区分了 attention 与两类常见误解。
+
+- 它不是硬检索：模型不必从一个位置中拿回全部信息，而是可以从多个位置平滑汇聚内容。
+- 它也不是正交投影：softmax 引入非线性归一化，且 key 空间与 value 空间并不必须一致。
+
+因此，更精确的比喻是“软投影”或“内容相关核回归”，而不是普通线性代数意义上的投影算子。图 1 可以把这一步拆成可视化的两层过程。
 
 ![attention 的软坐标与重建示意图](./attention-soft-coordinates.svg)
 
-*图 1. attention 更精确的几何描述是：query 在 key 几何上产生一组软坐标，softmax 把这些坐标限制在概率单纯形内，最后输出是 value 空间中的重心重建。它功能上接近软投影，但并不是正交投影。*
+*图 1. query-key 匹配先生成概率单纯形上的软坐标，attention 输出则是这些坐标在 value 空间中的重心重建。*
 
-这时再回看“子空间投影”这个比喻，就能更严格地区分：
+图 1 最重要的地方，是它把“加权平均”分解成了“先定坐标，再做重建”。如果漏掉前一步，就会把 attention 误读成普通平滑器，而看不到它真正的关系选择作用。
 
-- 它**像**投影，因为 query 的确在通过 key 几何选择一组相关方向；
-- 它又**不同于**正交投影，因为 softmax 引入了非线性归一化，且 value 空间与 key 空间可以解耦。
+## 5. 为什么 attention 比固定卷积或固定窗口更灵活？
 
-所以，标准 attention 的更稳妥表述应当是：**由 query-key 相容性诱导出的软坐标系统，再在 value 空间上做内容自适应重建**。
+从几何角度看，self-attention 之所以强，不在于它“看得远”，而在于它能把读取规则也做成输入相关的。与固定卷积或固定窗口相比，它至少有三点结构优势。
 
-## 4. 为什么 attention 比固定卷积或固定窗口更灵活？
+### 全局可达
 
-Vaswani 等人最早强调过 self-attention 的两个关键优势：任意两位置之间的路径长度短，以及权重完全依赖内容而不是固定位置 [1]。从几何上看，这等价于说 attention 具备三个很重要的性质。
+每个 query 默认都能访问整段上下文，因此长距离依赖不必沿着时间步逐层传递 [1]。
 
-### 全局感受野
+### 内容自适应
 
-每个 query 默认都可以访问整个上下文，而不是只访问局部窗口。因此，长距离依赖不需要通过多步递推才能传递。
+卷积核在不同位置共享相同的读取规则，而 attention 的权重随 query-key 匹配实时变化，因此“看哪里”取决于当前内容。
 
-### 内容自适应权重
+### 可退化为更简单算子
 
-卷积核在不同位置共享同一组权重，而 attention 的权重会随 query-key 匹配实时变化，因此读取规则是输入相关的。
+在适当参数化下，多头 self-attention 可以表达卷积结构 [7]。这说明 attention 不是卷积的弱替代，而是更一般的动态关系算子。
 
-### 可退化为更简单的局部算子
+因此，attention 的核心优势并不是“全局平均”，而是“全局范围内的内容相关读取”。
 
-attention 并不只会做“全局查找”。Cordonnier 等人证明，多头 self-attention 在合适参数化下可以表达卷积层 [7]。这说明 attention 包含卷积作为一个特例，而不是卷积对 attention 的近似替代。
+## 6. 为什么 attention 权重不能被直接等同于解释？
 
-也正因为如此，attention 更像一个**可学习的动态几何算子**：需要局部时，它可以像局部算子；需要跨句、跨段时，它又可以立刻切到全局读取模式。
+一旦把 attention 看成软坐标系统，很容易进一步误以为这些坐标本身就是模型的可解释因果说明。这个推断并不成立。Brunner 等人的工作表明，在某些条件下，attention 权重本身并不具有良好的可识别性：不同参数化可能产生相同输出，却对应不同的注意力分布 [5]。
 
-## 5. 为什么不能把 attention 权重直接当成解释？
+因此，attention 权重确实反映了模型的一条读取路径，但它并不是唯一、也未必是充分的人类可解释说明。更何况 attention 也不是 Transformer 的全部。Geva 等人指出，FFN 在很大程度上可以被理解为位置上的 key-value memory，负责在当前位置执行更强的内容选择与写入 [6]。
 
-这里必须保持技术上的克制。说“attention 给出了软坐标”，并不等于说“attention 权重就是模型解释”。Brunner 等人在 ICLR 2020 里指出，当序列长度超过 head 维度时，attention 权重本身并不具有良好的可识别性；不同参数配置可能产生相同输出，却对应不同的注意力分布 [5]。
+于是，一个完整层的表示更新更接近于：
 
-这意味着：
+1. attention 先完成上下文路由与混合；
+2. 残差连接保留原始表示；
+3. FFN 再在当前位置做更强的非线性变换与模式提取。
 
-- 注意力分布是模型内部的一部分计算状态；
-- 它确实反映了某种读取路径；
-- 但它未必是唯一的、可直接人类解释的因果说明。
+也就是说，attention 提供的是上下文读取机制，而不是完整语义推理闭环。
 
-此外，attention 也不是 Transformer 的全部。Geva 等人表明，FFN 在很大程度上可以被理解为位置上的 key-value memory；attention 负责路由上下文，FFN 则负责在每个位置上做更强的模式选择与内容写入 [6]。因此，真正的 Transformer 表示更新更接近：
+## 7. attention 有多强，又有什么边界？
 
-1. 用 attention 读取相关上下文。
-2. 通过残差把原表示保留下来。
-3. 用 FFN 在当前位置做进一步变换与记忆检索。
+从正面看，带位置编码的 Transformer 在函数逼近上具有很强的表达能力 [3]。这说明 attention 远不是“只能做加权平均”的弱算子，而是更大表示系统里的关键上下文映射模块。
 
-也就是说，attention 提供的是**上下文路由与混合**，不是完整的语义计算闭环。
+从反面看，纯 self-attention 也有理论边界。Hahn 指出，如果层数或头数不随输入长度增长，纯 self-attention 在某些形式语言和层级结构上存在限制 [4]。这提醒我们，attention 的能力依赖于层数、位置编码、非线性模块与多头结构，而不是来自单个注意力矩阵本身。
 
-## 6. 这种机制有多强，又有什么边界？
+因此，最准确的说法不是“attention 单独完成理解”，而是：**attention 为 Transformer 提供了内容相关的上下文坐标系统，使后续层能够在全局依赖之上继续计算。**
 
-从正面看，Transformer 的 attention 模块具有很强的表达力。Yun 等人证明，带位置编码的 Transformer 可以普适逼近连续的序列到序列函数 [3]。这说明 attention 并不是一个“只能做加权平均”的弱算子，而是更大表示系统中的关键上下文映射模块。
+## 8. 结语
 
-但从反面看，纯 self-attention 也不是没有边界。Hahn 在 TACL 2020 中指出，如果层数或头数不随输入长度增长，纯 self-attention 在某些形式语言和层级结构上存在严格限制 [4]。这提醒我们两个事实：
+attention 的本质，不应被压缩成“对 value 做加权平均”。更准确的表述是：它先通过 query-key 几何生成一组输入相关的软坐标，再用这些坐标在 value 空间中完成重心重建。这样一来，Transformer 的关键就不只是“看到了哪些 token”，而是“为当前 token 建立了怎样一套读取上下文的局部坐标系”。
 
-- attention 很强，但它的能力依赖于层数、头数、位置编码与后续非线性模块；
-- 单层 attention 的几何意义很清楚，但模型整体能力来自多层堆叠、残差连接和 FFN 的共同作用。
+归结起来，**attention 是一种内容相关的几何读取算子。** 它先生成坐标，再完成重建；而 multi-head 的问题，则是在同一层里并行提供多少套彼此不同的坐标系统。下一篇文章就讨论这一步。
 
-因此，最准确的说法不是“attention 单独完成理解”，而是“attention 为 Transformer 提供了可内容化的上下文坐标系统，使后续层能够在全局依赖之上继续计算”。
-
-## 7. 结语
-
-如果要把本文压缩成一句话，我会写：
-
-> attention 的本质，是由 query-key 几何生成软坐标，再在 value 空间做内容相关重建。
-
-这比“加权平均”更准确，也比“简单检索”更有解释力。它说明 Transformer 的关键不只是看到了哪些 token，而是为每个 token 动态建立了一套“如何读取上下文”的局部坐标系。
-
-如果把这个结论放回整个系列中看，它与前文讨论的[Embedding 空间中的语义线性结构](/blog/representation-space-of-large-models/semantic-linearity)和[LLM Embedding 的球面编码视角](/blog/representation-space-of-large-models/spherical-coding)是一致的：前者讨论 token 表示在静态空间中如何组织，attention 则负责在这些表示之上动态生成上下文相关的几何读取规则。
-
-下一篇文章，我们会继续这个视角，讨论为什么 multi-head attention 不是简单地“多做几遍 attention”，而是在并行构造多个不同的语义坐标系。
+继续阅读：[Multi-Head Attention 的必要性与表达优势](/blog/geometry-of-transformers/why-multi-head-matters)。
 
 ## 参考文献
 
-[1] VASWANI A, SHAZEER N, PARMAR N, et al. Attention Is All You Need[C]// *Advances in Neural Information Processing Systems 30*. Red Hook, NY: Curran Associates, 2017. Available: [https://papers.nips.cc/paper/7181-attention-is-all-you-need](https://papers.nips.cc/paper/7181-attention-is-all-you-need).
+[1] VASWANI A, SHAZEER N, PARMAR N, et al. Attention Is All You Need[C]// *Advances in Neural Information Processing Systems 30*. Red Hook, NY: Curran Associates, 2017. URL: [https://papers.nips.cc/paper/7181-attention-is-all-you-need](https://papers.nips.cc/paper/7181-attention-is-all-you-need).
 
-[2] LEE J, LEE Y, KIM J, et al. Set Transformer: A Framework for Attention-based Permutation-Invariant Neural Networks[C]// *Proceedings of the 36th International Conference on Machine Learning*. PMLR, 2019: 3744-3753. Available: [https://proceedings.mlr.press/v97/lee19d.html](https://proceedings.mlr.press/v97/lee19d.html).
+[2] LEE J, LEE Y, KIM J, et al. Set Transformer: A Framework for Attention-based Permutation-Invariant Neural Networks[C]// *Proceedings of the 36th International Conference on Machine Learning*. PMLR, 2019: 3744-3753. URL: [https://proceedings.mlr.press/v97/lee19d.html](https://proceedings.mlr.press/v97/lee19d.html).
 
-[3] YUN C, BHOJANAPALLI S, RAWAT A S, et al. Are Transformers Universal Approximators of Sequence-to-Sequence Functions?[C]// *International Conference on Learning Representations*. 2020. Available: [https://openreview.net/forum?id=ByxRM0Ntvr](https://openreview.net/forum?id=ByxRM0Ntvr).
+[3] YUN C, BHOJANAPALLI S, RAWAT A S, et al. Are Transformers Universal Approximators of Sequence-to-Sequence Functions?[C]// *International Conference on Learning Representations*. 2020. URL: [https://openreview.net/forum?id=ByxRM0Ntvr](https://openreview.net/forum?id=ByxRM0Ntvr).
 
 [4] HAHN M. Theoretical Limitations of Self-Attention in Neural Sequence Models[J]. *Transactions of the Association for Computational Linguistics*, 2020, 8: 156-171. DOI: [10.1162/tacl_a_00306](https://doi.org/10.1162/tacl_a_00306).
 
-[5] BRUNNER G, LIU Y, PASCUAL D, et al. On Identifiability in Transformers[C]// *International Conference on Learning Representations*. 2020. Available: [https://research.google/pubs/on-identifiability-in-transformers/](https://research.google/pubs/on-identifiability-in-transformers/).
+[5] BRUNNER G, LIU Y, PASCUAL D, et al. On Identifiability in Transformers[C]// *International Conference on Learning Representations*. 2020. URL: [https://research.google/pubs/on-identifiability-in-transformers/](https://research.google/pubs/on-identifiability-in-transformers/).
 
 [6] GEVA M, SCHUSTER R, BERANT J, et al. Transformer Feed-Forward Layers Are Key-Value Memories[C]// *Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing*. Online and Punta Cana, Dominican Republic: Association for Computational Linguistics, 2021: 5484-5495. DOI: [10.18653/v1/2021.emnlp-main.446](https://doi.org/10.18653/v1/2021.emnlp-main.446).
 
-[7] CORDONNIER J-B, LOUKAS A, JAGGI M. On the Relationship between Self-Attention and Convolutional Layers[C]// *International Conference on Learning Representations*. 2020. Available: [https://openreview.net/forum?id=zoPf7R-2wZr](https://openreview.net/forum?id=zoPf7R-2wZr).
+[7] CORDONNIER J-B, LOUKAS A, JAGGI M. On the Relationship between Self-Attention and Convolutional Layers[C]// *International Conference on Learning Representations*. 2020. URL: [https://openreview.net/forum?id=zoPf7R-2wZr](https://openreview.net/forum?id=zoPf7R-2wZr).
