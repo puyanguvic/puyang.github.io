@@ -1,99 +1,208 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="540" viewBox="0 0 980 540" role="img" aria-labelledby="title desc">
-  <title id="title">Thin-Shell Phenomenon</title>
-  <desc id="desc">Comparison of radial spread in low dimensions and probability mass concentrating near a narrow shell in high dimensions.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" role="img" aria-labelledby="title desc">
+  <title id="title">Thin-shell phenomenon in high dimensions</title>
+  <desc id="desc">Comparison of broad radial spread in low dimensions and concentration near a thin shell in high dimensions.</desc>
+
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#faf7ef" />
-      <stop offset="100%" stop-color="#f3efe6" />
-    </linearGradient>
-    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#fbfaf6" />
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08" />
-    </filter>
-  </defs>
-  <style>
-    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 30px; font-weight: 700; }
-    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 500; }
-    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 28; filter: url(#shadow); }
-    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 22px; font-weight: 700; }
-    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 15px; font-weight: 500; }
-    .axis-text { fill: #5a6c84; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; }
-    .pill { fill: #e7eef8; }
-    .pill-text { fill: #28496d; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; }
-    .dash { fill: none; stroke: #c8d3e1; stroke-width: 1.7; stroke-dasharray: 6 7; }
-    .low-shell { fill: #e8f1fb; stroke: #8caed0; stroke-width: 2; }
-    .high-core { fill: #fff0df; stroke: #e5b17f; stroke-width: 2; }
-    .high-shell { fill: none; stroke: #f29c4a; stroke-width: 22; stroke-linecap: round; opacity: 0.92; }
-    .low-point { fill: #2f6ca3; }
-    .high-point { fill: #cf6d1d; }
-    .guide { fill: none; stroke: #91a3ba; stroke-width: 2.2; }
-    .arrow { fill: none; stroke: #7d8ea5; stroke-width: 2.2; marker-end: url(#arrowHead); }
-  </style>
-  <defs>
-    <marker id="arrowHead" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#7d8ea5" />
+    <marker id="arrowGray" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#64748b"/>
     </marker>
+    <style>
+      .bg { fill: #ffffff; }
+
+      .title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .panel {
+        fill: #fcfdff;
+        stroke: #d6dee8;
+        stroke-width: 1.2;
+        rx: 10;
+      }
+
+      .panel-title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .text {
+        fill: #475569;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 11.6px;
+        font-weight: 400;
+      }
+
+      .small {
+        fill: #64748b;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 10.8px;
+        font-weight: 400;
+      }
+
+      .label {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12.3px;
+        font-weight: 600;
+      }
+
+      .dash {
+        fill: none;
+        stroke: #cbd5e1;
+        stroke-width: 1.2;
+        stroke-dasharray: 4 4;
+      }
+
+      .guide {
+        fill: none;
+        stroke: #94a3b8;
+        stroke-width: 1.5;
+      }
+
+      .shell-low {
+        fill: rgba(37, 99, 235, 0.08);
+        stroke: #93c5fd;
+        stroke-width: 1.4;
+      }
+
+      .core-high {
+        fill: rgba(217, 119, 6, 0.08);
+        stroke: #fed7aa;
+        stroke-width: 1.2;
+      }
+
+      .shell-high {
+        fill: none;
+        stroke: #d97706;
+        stroke-width: 18;
+        stroke-linecap: round;
+        opacity: 0.9;
+      }
+
+      .low-point { fill: #2563eb; }
+      .high-point { fill: #9a3412; }
+
+      .note-box {
+        fill: #f8fafc;
+        stroke: #d9e2ec;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .note-box-warm {
+        fill: #fffaf0;
+        stroke: #ead9b8;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .arrow {
+        fill: none;
+        stroke: #64748b;
+        stroke-width: 1.5;
+        marker-end: url(#arrowGray);
+      }
+    </style>
   </defs>
 
-  <rect x="0" y="0" width="980" height="540" fill="url(#bg)" rx="34" />
+  <rect class="bg" x="0" y="0" width="980" height="520"/>
 
-  <rect class="pill" x="52" y="36" width="92" height="34" rx="17" />
-  <text class="pill-text" x="98" y="58" text-anchor="middle">FIGURE 1</text>
-  <text class="title" x="52" y="112">Thin-Shell Phenomenon: Common Radius in High Dimensions</text>
-  <text class="subtitle" x="52" y="142">High-dimensional space does not fill the interior uniformly; most probability mass concentrates near a thin outer shell.</text>
+  <!-- Global title -->
+  <text class="title" x="48" y="38">Thin-shell phenomenon: mass concentrates near a common radius</text>
 
-  <rect class="card" x="44" y="176" width="418" height="314" rx="28" />
-  <rect class="card" x="518" y="176" width="418" height="314" rx="28" />
+  <!-- Panels -->
+  <rect class="panel" x="40" y="84" width="430" height="380" rx="10"/>
+  <rect class="panel" x="510" y="84" width="430" height="380" rx="10"/>
 
-  <text class="card-title" x="74" y="216">Low Dimension: Broad Radius Spread</text>
-  <text class="card-text" x="74" y="242">Points may lie near the center, mid-radius, or boundary.</text>
+  <!-- LEFT PANEL -->
+  <text class="panel-title" x="58" y="112">Lower dimension</text>
+  <text class="text" x="58" y="134">
+    <tspan x="58" dy="0">Samples occupy many radii,</tspan>
+    <tspan x="58" dy="15">so interior mass remains visible.</tspan>
+  </text>
 
-  <circle class="dash" cx="253" cy="336" r="46" />
-  <circle class="dash" cx="253" cy="336" r="88" />
-  <circle class="low-shell" cx="253" cy="336" r="132" />
-  <line class="guide" x1="253" y1="336" x2="329" y2="256" />
-  <line class="guide" x1="253" y1="336" x2="193" y2="419" />
-  <circle class="low-point" cx="251" cy="337" r="8" />
-  <circle class="low-point" cx="226" cy="296" r="7" />
-  <circle class="low-point" cx="300" cy="334" r="7" />
-  <circle class="low-point" cx="311" cy="265" r="7" />
-  <circle class="low-point" cx="195" cy="278" r="7" />
-  <circle class="low-point" cx="184" cy="352" r="7" />
-  <circle class="low-point" cx="216" cy="403" r="7" />
-  <circle class="low-point" cx="286" cy="407" r="7" />
-  <circle class="low-point" cx="351" cy="350" r="7" />
-  <circle class="low-point" cx="335" cy="238" r="7" />
-  <text class="axis-text" x="84" y="446">Samples occupy many radii, and the interior remains visible.</text>
+  <!-- left geometry -->
+  <circle class="dash" cx="255" cy="286" r="42"/>
+  <circle class="dash" cx="255" cy="286" r="82"/>
+  <circle class="shell-low" cx="255" cy="286" r="124"/>
 
-  <text class="card-title" x="548" y="216">High Dimension: Narrow Shell</text>
-  <text class="card-text" x="548" y="242">Typical radius is about √d, while shell thickness stays O(1).</text>
+  <line class="guide" x1="255" y1="286" x2="323" y2="218"/>
+  <line class="guide" x1="255" y1="286" x2="202" y2="365"/>
 
-  <circle class="high-core" cx="727" cy="336" r="132" opacity="0.75" />
-  <circle class="high-shell" cx="727" cy="336" r="114" />
-  <circle class="dash" cx="727" cy="336" r="60" />
-  <circle class="high-point" cx="728" cy="222" r="7" />
-  <circle class="high-point" cx="792" cy="241" r="7" />
-  <circle class="high-point" cx="836" cy="298" r="7" />
-  <circle class="high-point" cx="832" cy="370" r="7" />
-  <circle class="high-point" cx="786" cy="429" r="7" />
-  <circle class="high-point" cx="723" cy="450" r="7" />
-  <circle class="high-point" cx="658" cy="431" r="7" />
-  <circle class="high-point" cx="615" cy="374" r="7" />
-  <circle class="high-point" cx="618" cy="301" r="7" />
-  <circle class="high-point" cx="663" cy="242" r="7" />
-  <circle class="high-point" cx="766" cy="229" r="6" />
-  <circle class="high-point" cx="817" cy="266" r="6" />
-  <circle class="high-point" cx="841" cy="333" r="6" />
-  <circle class="high-point" cx="813" cy="404" r="6" />
-  <circle class="high-point" cx="752" cy="446" r="6" />
-  <circle class="high-point" cx="685" cy="446" r="6" />
-  <circle class="high-point" cx="629" cy="404" r="6" />
-  <circle class="high-point" cx="608" cy="336" r="6" />
-  <circle class="high-point" cx="632" cy="268" r="6" />
-  <text class="axis-text" x="558" y="446">Most samples lie on one shell, so radial variation shrinks fast.</text>
-  <path class="arrow" d="M870 224 C844 232, 816 250, 792 268" />
-  <text class="axis-text" x="872" y="212" text-anchor="end">Probability mass shifts outward</text>
+  <circle class="low-point" cx="255" cy="286" r="6.5"/>
+  <circle class="low-point" cx="231" cy="246" r="6"/>
+  <circle class="low-point" cx="299" cy="283" r="6"/>
+  <circle class="low-point" cx="306" cy="228" r="6"/>
+  <circle class="low-point" cx="201" cy="231" r="6"/>
+  <circle class="low-point" cx="190" cy="301" r="6"/>
+  <circle class="low-point" cx="220" cy="351" r="6"/>
+  <circle class="low-point" cx="286" cy="356" r="6"/>
+  <circle class="low-point" cx="348" cy="299" r="6"/>
+  <circle class="low-point" cx="329" cy="206" r="6"/>
+
+  <!-- left compact label -->
+  <text class="small" x="255" y="392" text-anchor="middle">radial spread: broad</text>
+
+  <rect class="note-box" x="104" y="418" width="302" height="28" rx="7"/>
+  <text class="small" x="255" y="436" text-anchor="middle">the interior remains visibly populated</text>
+
+  <!-- RIGHT PANEL -->
+  <text class="panel-title" x="528" y="112">Higher dimension</text>
+  <text class="text" x="528" y="134">
+    <tspan x="528" dy="0">Most samples lie near one radius,</tspan>
+    <tspan x="528" dy="15">while thickness stays only O(1).</tspan>
+  </text>
+
+  <!-- right geometry -->
+  <circle class="core-high" cx="725" cy="286" r="124"/>
+  <circle class="dash" cx="725" cy="286" r="58"/>
+  <circle class="shell-high" cx="725" cy="286" r="108"/>
+
+  <circle class="high-point" cx="725" cy="180" r="6"/>
+  <circle class="high-point" cx="784" cy="198" r="6"/>
+  <circle class="high-point" cx="825" cy="251" r="6"/>
+  <circle class="high-point" cx="822" cy="317" r="6"/>
+  <circle class="high-point" cx="780" cy="372" r="6"/>
+  <circle class="high-point" cx="723" cy="392" r="6"/>
+  <circle class="high-point" cx="664" cy="374" r="6"/>
+  <circle class="high-point" cx="623" cy="321" r="6"/>
+  <circle class="high-point" cx="626" cy="254" r="6"/>
+  <circle class="high-point" cx="667" cy="199" r="6"/>
+
+  <circle class="high-point" cx="760" cy="188" r="5"/>
+  <circle class="high-point" cx="806" cy="222" r="5"/>
+  <circle class="high-point" cx="830" cy="283" r="5"/>
+  <circle class="high-point" cx="807" cy="349" r="5"/>
+  <circle class="high-point" cx="749" cy="388" r="5"/>
+  <circle class="high-point" cx="690" cy="387" r="5"/>
+  <circle class="high-point" cx="642" cy="350" r="5"/>
+  <circle class="high-point" cx="618" cy="286" r="5"/>
+  <circle class="high-point" cx="640" cy="224" r="5"/>
+
+  <!-- right annotations -->
+  <line class="guide" x1="725" y1="286" x2="725" y2="178"/>
+  <text class="label" x="725" y="164" text-anchor="middle">radius ≍ √d</text>
+
+  <path class="arrow" d="M852 198 C832 205, 812 218, 795 233"/>
+  <text class="small" x="870" y="188">mass shifts outward</text>
+
+  <!-- moved shell-thickness label outside -->
+  <line class="guide" x1="833" y1="286" x2="868" y2="286"/>
+  <text class="small" x="872" y="290">shell thickness: O(1)</text>
+
+  <rect class="note-box-warm" x="586" y="418" width="298" height="28" rx="7"/>
+  <text class="small" x="735" y="436" text-anchor="middle">most samples lie on a thin shell near the boundary</text>
+
+  <!-- Bottom note -->
+  <text class="small" x="490" y="492" text-anchor="middle">
+    In high dimension, the radius grows like √d, while fluctuations around that radius remain much smaller.
+  </text>
 </svg>
+
+
+
