@@ -18,7 +18,6 @@ This repo is a personal website built with **VitePress** and deployed to **GitHu
 ## Content structure
 
 - Homepage: `docs/index.md`
-- About page: `docs/about.md`
 - News: `docs/news/`
 - Blog: `docs/blog/`
 - Projects: `docs/projects/`
