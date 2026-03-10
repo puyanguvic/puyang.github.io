@@ -34,9 +34,12 @@ description: Notes and short posts.
 :::
 
 ::: details Mar 9, 2026 · Tokenizer的理论
-这个系列讨论 tokenizer 的理论基础与工程折中：为什么 tokenization 可以理解为压缩，为什么词表大小会集中在某个范围，以及为什么 character-level 方法虽然看起来更纯粹却并不流行。
+这个系列讨论 tokenizer 的理论基础与工程折中：tokenization 为什么本质上是码本压缩，词表规模为什么会停在一个中等区间，以及 token-free 方案为何常常又在模型内部重新引入压缩。
 
 1. [Tokenization 的压缩本质](/blog/theory-of-tokenizers/what-tokenization-does)
+   从平均描述长度、Zipfian 频率分布与 subword 码本设计出发，解释 tokenizer 为什么首先是压缩系统。
 2. [LLM 词表规模的自然平衡点](/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k)
+   从序列长度收益递减、长尾稀疏与 softmax 成本的权衡出发，说明词表为什么不会无限扩张。
 3. [Character-Level Tokenizer 的理论优势与工程局限](/blog/theory-of-tokenizers/why-character-level-rarely-wins)
+   从序列长度、优化路径和 modern token-free 模型的结构补偿出发，解释为什么纯字符方案通常难成主流。
 :::

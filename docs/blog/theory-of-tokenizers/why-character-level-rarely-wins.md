@@ -1,135 +1,134 @@
 ---
 title: "Character-Level Tokenizer 的理论优势与工程局限"
 date: 2026-03-09T12:20:00-08:00
-summary: "从 information bottleneck、优化地形和 Transformer 的 inductive bias 出发，解释为什么 character-level 方法通常输给 subword。"
+summary: "从序列长度、优化路径和 modern token-free 模型的结构补偿出发，解释为什么 character-level 方法通常难以成为主流。"
 tags: ["tokenizer", "character-level", "optimization"]
 ---
 
 # Character-Level Tokenizer 的理论优势与工程局限
 
-如果从原则上看，character-level tokenizer 似乎非常有吸引力。它不需要词表工程，不会遇到 OOV 问题，也不必纠结某个词该不该拆开。所有文本都可以无缝表示成字符序列，整个系统统一、干净、理论上最“彻底”。
+如果只从表示纯度看，character-level tokenizer 的确很诱人。它不需要维护复杂词表，不会出现 OOV 问题，也不需要在“这个词应不应该拆开”上做额外工程决策。所有文本都可以统一地写成字符或字节序列，看起来既彻底又优雅。
 
-所以一个自然的问题是：既然 character-level 这么纯粹，为什么现实里的大语言模型几乎都不采用它作为主流方案？为什么大家最终都停在了 subword tokenizer 上？
+但现实中的主流大模型并没有大规模转向这种方案。原因并不在于 character-level 不能表达语言，而在于它通常不能在**整体系统效率**上赢过 subword 方案。
 
-答案很有代表性，因为它揭示了现代大模型设计里一个非常常见的事实：
+更准确地说：
 
-> 理论上最干净的表示方式，并不一定是最适合当前优化与架构的表示方式。
+> character-level 的问题不是表示能力不足，而是它把太多本可由 tokenizer 预先完成的局部压缩与组合工作，转移给了后续 Transformer 自己去学。
 
-character-level 方法并非没有价值，但在今天的 Transformer 框架下，它通常会在信息传递效率、优化难度和结构偏置上同时吃亏。这篇文章就想把这三点拆开。
+> 核心结论：token-free 或 character/byte-level 方法确实带来开放词表、鲁棒性和跨语言统一性等优点，但它们往往需要更长序列、更长优化路径以及额外的结构补偿。现代最成功的 token-free 模型几乎都会显式或隐式地重新引入下采样、局部块化或潜在 subword 归纳偏置，这恰恰反过来说明：压缩并没有消失，只是从显式 tokenizer 转移到了模型内部 [1-5]。
 
-## 1. 理论上为什么 character-level 看起来最优？
+## 1. 为什么 character-level 看起来很“对”？
 
-character-level 的吸引力主要来自三个方面。
+ByT5 总结过 token-free 模型最常被强调的几个优势 [1]：
 
-### 1.1 它有最小的基本符号集
+- 可以天然处理任何语言和任何新词；
+- 对拼写噪声、字符扰动和非标准文本更鲁棒；
+- 减少预处理流水线和 tokenizer 相关技术债；
+- 避免固定词表对新领域和新脚本的硬边界限制。
 
-字符集远小于 subword 词表，因此系统表面上更简单、更统一。
+这些优点都是真实的。尤其在多语言、噪声文本、拼写变化频繁或输入规范不稳定的场景里，character/byte-level 的统一表示确实很有吸引力。
 
-### 1.2 它完全开放词表
+问题在于，**统一表示**不等于**高效学习**。字符或字节只是最细粒度的书写单位，而不是最适合 Transformer 直接进行高层语义建模的单位。
 
-不管出现什么新词、专有名词、拼写变体、代码标识符，都可以直接表示，不会有 `<unk>` 或奇怪的分词边界问题。
+## 2. 第一个问题：序列太长，所有代价都会被放大
 
-### 1.3 它避免人为切分假设
+character-level 的最直接代价，是序列长度膨胀。一个 subword token 往往对应多个字符或字节，因此相同文本在 token-free 方案下通常会展开为更长的序列。ByT5 明确把这一点列为 token-free 模型必须面对的核心 tradeoff：更长序列会带来更高训练 FLOPs 和更慢推理速度 [1]。
 
-subword tokenizer 毕竟引入了一套人造码本，而 character-level 直接从最原子的书写单位出发，似乎更“客观”。
+这会连锁影响几乎所有 Transformer 成本：
 
-从表示能力角度看，character-level 确实没有硬性缺陷。理论上，只要模型足够大、上下文足够长、训练足够充分，它完全可以学会从字符组合中恢复词、词根、语法和语义结构。
+- attention 计算更重；
+- KV cache 更大；
+- 固定上下文窗口能装下的真实文本更少；
+- 模型需要花更多层和更多路径，先把低层局部块重新组合出稳定语义单元。
 
-问题在于，“理论上能学到”与“在现有计算预算和优化机制下容易学到”是两回事。
+也就是说，character-level 并不是“不压缩”；它只是把“压缩的负担”从显式 tokenizer 挪到了后续网络。
 
-## 2. information bottleneck：字符级输入让有效信息传输变得更难
+## 3. 第二个问题：优化路径更长，语义形成更晚
 
-字符级系统最大的实际问题，是信息传输链条被拉长了。对于模型来说，一个语义单元不再是一个或几个 subword，而可能需要十几个甚至几十个字符才能拼出来。
+从优化角度看，character-level 的更大问题并不是单纯更慢，而是**语义形成路径更长**。
 
-这会带来一种典型的 **information bottleneck**：
+在 subword 方案中，模型一开始就能看到具有一定语义密度的单位，例如高频词根、前后缀或常见拼写块。相反，在 character-level 方案中，底层输入本身几乎不携带稳定语义，模型必须先学会：
 
-- 底层字符本身语义很弱；
-- 模型必须经过更多层、更多位置交互，才能把字符组合成稳定词义；
-- 上层任务真正关心的信息被埋得更深、更远。
+1. 哪些字符应当绑定成局部片段；
+2. 哪些片段进一步构成稳定词法单元；
+3. 这些单元如何再与上下文和任务语义关联。
 
-例如单词 `representation`，在 subword tokenizer 下可能被切成 2 到 4 个单元；在 character-level 下则要跨十多个字符。模型若想理解这个词，就得先跨多个位置把这些字符绑定起来，再把词义与上下文关联。这意味着大量计算都花在“先恢复局部单词结构”上，而不是直接进行更高层语义建模。
+因此，character-level 的难点不只是“长”，而是“高层任务的有效梯度需要穿过更长的组合链条才能影响底层表示”。这会使训练早期更容易被表面模式占据，例如拼写共现、局部重复和短程正则，而较难更快形成紧凑的中层语义结构。
 
-因此，character-level 不是不能表达，而是有效信息需要穿过更长路径才能成形。这会显著增加训练难度。
+## 4. 第三个问题：Transformer 并不天然偏爱原始字符流
 
-## 3. optimization landscape：字符级任务更长、更稀、更难学
+标准 Transformer 最擅长的，是在一组已有一定语义密度的离散单位之间做全局依赖建模；它并不是最理想的底层字符组合器。换句话说，Transformer 的 inductive bias 更适合：
 
-从优化角度看，character-level 方法面临的不是单一困难，而是一整套更糟的优化地形。
+- 在中间粒度单元之间做关系建模；
+- 在多层中反复重写表示；
+- 利用注意力在已有单元之间建立依赖。
 
-### 3.1 序列更长
+它不天然擅长的是：
 
-同样一段文本，字符级序列往往比 subword 长好几倍。Transformer 对长序列本来就不便宜，于是字符级会把计算和显存压力迅速放大。
+- 先从极长原始字符流里恢复局部块结构；
+- 再把这些块压缩成更高层的词法或语义单元；
+- 最后才开始真正的上下文关系建模。
 
-### 3.2 监督更稀
+这也是为什么 subword tokenizer 虽然看似只是前处理，实际上却在帮助 Transformer 做一件它并不最擅长的事：提前把高频局部组合打包成更高语义密度的输入单位。
 
-预测下一个字符比预测下一个 subword 更局部，也更低层。模型需要做大量短程模式学习，才能逐渐累积出高层语义能力。这意味着训练信号在早期更容易被表面拼写模式占据。
+## 5. 现代 token-free 模型到底是怎么变强的？
 
-### 3.3 梯度路径更长
+这一点最能说明问题。最近几年真正有竞争力的 token-free 模型，并不是“直接把原始字符扔给标准 Transformer 就赢了”，而是几乎都会引入额外结构来**重新做压缩**。
 
-高层语义任务的有用梯度，需要穿过更长的组合链条才能影响底层表示。相比 subword 直接给出较强的中间语义单元，字符级往往要靠模型自己重新发现这些中间层级。
+![token-free 模型为何仍会重新引入压缩](./character-level-compute-tradeoff.svg)
 
-因此，character-level 的优化景观通常更崎岖。不是因为它错了，而是因为它把太多本可由 tokenizer 预先完成的结构发现，全部推给了神经网络。
+*图 1. token-free 方法想要变得实用，通常都需要在模型内部重新引入某种压缩机制：要么做下采样，要么做局部块化，要么学习潜在 subword。压缩并没有消失，只是从显式 tokenizer 转移到了网络内部。*
 
-## 4. Transformer 的 inductive bias 并不天然偏爱字符级
+### ByT5：保留标准 Transformer，但接受更长序列代价
 
-这里还有一个更关键的点：当前主流 Transformer 的 **inductive bias**，其实更适合处理已经具备一定语义密度的离散单元，而不是极细粒度字符流。
+ByT5 证明，标准 Transformer 在少量修改下也可以直接处理字节序列，而且在鲁棒性和噪声敏感任务上有明显优势 [1]。但它同时也明确报告了 token-free 方案在参数、训练 FLOPs 和推理速度上的实打实 tradeoff。换句话说，ByT5 的结论不是“tokenizer 没必要”，而是“如果你愿意支付更长序列的代价，token-free 方案可以很有吸引力”。
 
-Transformer 擅长什么？
+### CANINE：显式下采样
 
-- 在固定长度表示之间做全局关系建模；
-- 用 attention 在不同语义单元之间建立依赖；
-- 在多层中逐步重构和更新表示。
+CANINE 的关键设计不是“纯字符”本身，而是**downsampling**。Clark 等人明确指出，为了让字符级输入在计算上可行，模型必须通过下采样把超长字符序列压缩成更短中间表示，再交给深层 Transformer 编码 [2]。这其实就是在模型内部重新引入压缩层。
 
-它并不天然擅长什么？
+### Charformer：学习潜在 subword
 
-- 先从极长字符序列里恢复稳定的局部组合单元；
-- 再在这些单元之上做更高层语义计算。
+Charformer 则更直白。Tay 等人提出的 GBST（gradient-based subword tokenization）模块，会在模型内部枚举候选字符块并学习它们的打分，从而形成一种端到端的**潜在 subword tokenization** [3]。这等于告诉我们：即便不想使用显式 tokenizer，模型最后也常常需要自己重新学出某种中层块结构。
 
-也就是说，Transformer 更像一个高层关系建模器，而不是最理想的底层字符组合器。你当然可以强迫它做这两件事，但这会浪费大量容量在本不该成为瓶颈的低层组合上。
+从系统角度看，可以把这几条路线概括如下：
 
-subword tokenizer 的价值正在这里体现出来：它相当于替 Transformer 做了一部分底层结构打包，把许多高频局部模式预压缩成更有语义密度的单位。这样 Transformer 可以更早进入自己更擅长的表示与关系建模阶段。
+| 方法 | 关键补偿机制 | 它说明了什么 |
+| --- | --- | --- |
+| ByT5 [1] | 接受更长序列与更高计算代价 | token-free 可行，但不是免费 |
+| CANINE [2] | 下采样压缩字符序列 | 实用字符级模型仍然需要显式压缩 |
+| Charformer [3] | 学习潜在 subword 块 | 成功的 token-free 往往会重建中间粒度单元 |
 
-## 5. character-level 真正输在哪里？
+这张表最值得注意的一点是：**现代 token-free 的成功，不是取消压缩，而是把压缩迁移到了模型内部。**
 
-如果把前面几点合起来看，character-level 失败的关键不在“表达能力不足”，而在“系统整体效率不足”。它通常会在三个维度上同时吃亏：
+## 6. 所以 character-level 真正输在哪里？
 
-### 5.1 计算效率差
+把前面几部分合起来看，character-level 方案通常会在三个维度上同时吃亏：
 
-序列变长，attention 和缓存成本都会明显上升。
+- 计算效率：序列更长，attention 和缓存成本都更高。
+- 优化效率：模型必须先恢复局部组合，再做高层语义建模，学习路径更长。
+- 架构匹配：标准 Transformer 更适合直接消费中间粒度单元，而不是从原始字符开始完成全部压缩。
 
-### 5.2 学习效率差
+因此，character-level 的问题不是“不正确”，而是“在当前主流架构和预算下，整体系统代价通常更高”。这也是为什么 subword tokenizer 仍然长期占据默认位置：它在模型之外先做掉了一部分局部压缩，让 Transformer 能更早开始自己真正擅长的全局关系建模 [4][5]。
 
-模型必须先学会字符组合，再学语义结构，学习路径更长。
+## 7. 结语
 
-### 5.3 架构匹配度差
+如果要把本文压缩成一句话，我会写：
 
-当前 Transformer 的偏置更适合接收中间粒度的离散单元，而不是一切都从字符层重新开始。
+> character-level 最终往往赢不了，不是因为它不能表示语言，而是因为压缩和中间结构发现这件事无论如何都得做，而显式 subword tokenizer 往往是更便宜、更稳定的做法。
 
-所以，character-level 不是“不正确”，而是“不划算”。在无限算力和更合适的架构下，它也许可以表现很好；但在今天的大模型训练现实中，它通常不是最优工程选择。
+这也解释了一个看似矛盾、其实很重要的事实：最成功的 token-free 模型，往往都在想办法把某种“隐式 tokenizer”重新放回模型内部。无论这个机制叫下采样、局部块化还是 latent subword，它都在承担同一类系统职责。
 
-## 6. 为什么 subword 是一个极强的折中？
+如果把这篇与前两篇[Tokenization 的压缩本质](/blog/theory-of-tokenizers/what-tokenization-does)和[LLM 词表规模的自然平衡点](/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k)一起看，整个逻辑就闭合了：Tokenizer 不是随手加上的工程壳，而是大模型系统如何分配压缩、优化和计算负担的核心设计点。
 
-这也就解释了为什么 subword tokenizer 长期占据主流。它不是最纯理论的方案，却是一个极强的工程折中：
+## 参考文献
 
-- 比 word-level 更开放，能处理新词和长尾；
-- 比 character-level 更紧凑，序列长度更可控；
-- 比纯字符更有语义密度，更适合 embedding 学习；
-- 与 Transformer 的计算结构和 inductive bias 更匹配。
+[1] XUE L, BARUA A, CONSTANT N, et al. ByT5: Towards a Token-Free Future with Pre-trained Byte-to-Byte Models[J]. *Transactions of the Association for Computational Linguistics*, 2022, 10: 291-306. DOI: [10.1162/tacl_a_00461](https://doi.org/10.1162/tacl_a_00461).
 
-换句话说，subword 的成功恰恰来自“不极端”。它接受一部分码本工程，换来更好的压缩效率；它接受一部分拆分不完美，换来更好的训练稳定性。这种折中不是妥协失败，而是系统设计成熟的体现。
+[2] CLARK J H, GARRETTE D, TURC I, et al. CANINE: Pre-training an Efficient Tokenization-Free Encoder for Language Representation[J]. *Transactions of the Association for Computational Linguistics*, 2022, 10: 73-91. DOI: [10.1162/tacl_a_00448](https://doi.org/10.1162/tacl_a_00448).
 
-## 7. 我们的理解：subword tokenizer 是理论与工程的折中
+[3] TAY Y, TRAN V Q, RUDER S, et al. Charformer: Fast Character Transformers via Gradient-based Subword Tokenization[C]// *International Conference on Learning Representations*. 2022. Available: [https://research.google/pubs/charformer-fast-character-transformers-via-gradient-based-subword-tokenization/](https://research.google/pubs/charformer-fast-character-transformers-via-gradient-based-subword-tokenization/).
 
-现在可以把本文的结论写得很明确：
+[4] SENNRICH R, HADDOW B, BIRCH A. Neural Machine Translation of Rare Words with Subword Units[C]// *Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)*. Berlin, Germany: Association for Computational Linguistics, 2016: 1715-1725. DOI: [10.18653/v1/P16-1162](https://doi.org/10.18653/v1/P16-1162).
 
-> character-level tokenizer 在表示上最统一，但在当前大模型框架下，subword tokenizer 才是理论与工程之间更合理的折中。
-
-character-level 的“理论最优”，更多是一种表示纯度上的最优；而大模型真正需要的是整体系统最优。整体系统最优要考虑：
-
-- 信息传输链路是否足够短；
-- 优化地形是否足够平滑；
-- 架构偏置是否与输入单元匹配；
-- 计算成本是否可接受。
-
-在这些标准下，subword tokenizer 通常比 character-level 更符合现实需要。它不是最干净的选择，却往往是最有效的选择。
-
-这其实也是 tokenizer 理论给我们的一个重要启发：很多看似“前处理”的设计，真正决定的并不是输入格式，而是整个模型将如何分配它的计算资源与学习能力。Tokenizer 从来不是附属品，它本身就是大模型系统设计的一部分。
+[5] KUDO T, RICHARDSON J. SentencePiece: A Simple and Language Independent Subword Tokenizer and Detokenizer for Neural Text Processing[C]// *Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing: System Demonstrations*. Brussels, Belgium: Association for Computational Linguistics, 2018: 66-71. DOI: [10.18653/v1/D18-2012](https://doi.org/10.18653/v1/D18-2012).

@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
+  <title id="title">Vocabulary Size Tradeoff</title>
+  <desc id="desc">Shows the falling sequence-length cost, the rising vocabulary-side cost, and the resulting sweet spot at an intermediate vocabulary size.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#faf7ef" />
+      <stop offset="100%" stop-color="#f3efe6" />
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#fbfaf6" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08" />
+    </filter>
+  </defs>
+  <style>
+    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 30px; font-weight: 700; }
+    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 500; }
+    .pill { fill: #e7eef8; }
+    .pill-text { fill: #28496d; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; }
+    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 28; filter: url(#shadow); }
+    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 22px; font-weight: 700; }
+    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; font-weight: 500; }
+    .label { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 15px; font-weight: 700; }
+    .small { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 500; }
+    .formula-box { fill: #fff6ea; stroke: #edc28f; stroke-width: 1.5; rx: 18; }
+    .step-box { fill: #f6f1e7; stroke: #d7cbb6; stroke-width: 1.5; rx: 18; }
+    .axis { stroke: #72859b; stroke-width: 2.2; }
+    .grid { stroke: #dbe3ed; stroke-width: 1.2; }
+    .down { fill: none; stroke: #244f7a; stroke-width: 4; }
+    .up { fill: none; stroke: #cf6d1d; stroke-width: 4; }
+    .total { fill: none; stroke: #6a8f6b; stroke-width: 5; }
+    .spot { fill: #cf6d1d; stroke: #ffffff; stroke-width: 3; }
+  </style>
+
+  <rect x="0" y="0" width="980" height="560" fill="url(#bg)" rx="34" />
+  <rect class="pill" x="52" y="36" width="92" height="34" rx="17" />
+  <text class="pill-text" x="98" y="58" text-anchor="middle">FIGURE 1</text>
+  <text class="title" x="52" y="112">Vocabulary Size Has a Genuine Sweet Spot</text>
+  <text class="subtitle" x="52" y="142">Expanding the vocabulary shortens sequences, but the gain quickly saturates while vocabulary-side cost keeps rising.</text>
+
+  <rect class="card" x="44" y="176" width="560" height="330" rx="28" />
+  <rect class="card" x="630" y="176" width="306" height="330" rx="28" />
+
+  <text class="card-title" x="74" y="216">System Cost vs. Vocabulary Size</text>
+  <text class="card-text" x="74" y="240">The best region is intermediate: large enough to absorb high-frequency structure, small enough to avoid tail sparsity and output inflation.</text>
+  <line class="axis" x1="94" y1="452" x2="560" y2="452" />
+  <line class="axis" x1="94" y1="452" x2="94" y2="272" />
+  <line class="grid" x1="94" y1="398" x2="560" y2="398" />
+  <line class="grid" x1="94" y1="344" x2="560" y2="344" />
+  <line class="grid" x1="210" y1="452" x2="210" y2="272" />
+  <line class="grid" x1="326" y1="452" x2="326" y2="272" />
+  <line class="grid" x1="442" y1="452" x2="442" y2="272" />
+  <path class="down" d="M110 288 C168 296, 250 322, 320 356 C378 384, 446 406, 548 430" />
+  <path class="up" d="M110 434 C220 418, 310 396, 402 360 C458 338, 502 314, 548 286" />
+  <path class="total" d="M110 378 C184 332, 252 304, 310 302 C372 300, 432 320, 548 392" />
+  <circle class="spot" cx="324" cy="302" r="8" />
+  <text class="small" x="338" y="296">sweet spot</text>
+  <text class="small" x="460" y="430">sequence cost</text>
+  <text class="small" x="470" y="302">vocab-side cost</text>
+  <text class="small" x="274" y="286">total system cost</text>
+  <text class="small" x="94" y="478">small V</text>
+  <text class="small" x="326" y="478" text-anchor="middle">medium V</text>
+  <text class="small" x="560" y="478" text-anchor="end">large V</text>
+
+  <text class="card-title" x="658" y="216">What Changes with V?</text>
+  <text class="card-text" x="658" y="240">Three forces matter at once.</text>
+  <rect class="step-box" x="658" y="286" width="250" height="54" rx="16" />
+  <rect class="step-box" x="658" y="356" width="250" height="54" rx="16" />
+  <rect class="step-box" x="658" y="426" width="250" height="54" rx="16" />
+  <text class="label" x="678" y="308">Small V</text>
+  <text class="small" x="678" y="328">long sequences, cheap vocabulary</text>
+  <text class="label" x="678" y="378">Medium V</text>
+  <text class="small" x="678" y="398">best compression / learning balance</text>
+  <text class="label" x="678" y="448">Large V</text>
+  <text class="small" x="678" y="468">shorter sequences, sparse tail, heavy softmax</text>
+
+  <rect class="formula-box" x="332" y="54" width="316" height="72" rx="18" />
+  <text class="label" x="490" y="84" text-anchor="middle">J(V) ≈ a T(V)^2 + b T(V) + c V</text>
+  <text class="small" x="490" y="110" text-anchor="middle">compression gains saturate; vocabulary cost keeps growing</text>
+
+  <rect class="step-box" x="84" y="516" width="242" height="24" rx="12" />
+  <rect class="step-box" x="368" y="516" width="242" height="24" rx="12" />
+  <rect class="step-box" x="652" y="516" width="242" height="24" rx="12" />
+  <text class="small" x="205" y="533" text-anchor="middle">Zipfian head gives big early gains</text>
+  <text class="small" x="489" y="533" text-anchor="middle">Long-tail gains become marginal quickly</text>
+  <text class="small" x="773" y="533" text-anchor="middle">An intermediate vocabulary becomes optimal</text>
+</svg>

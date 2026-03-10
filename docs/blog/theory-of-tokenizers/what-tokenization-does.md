@@ -1,127 +1,155 @@
 ---
 title: "Tokenization 的压缩本质"
 date: 2026-03-09T12:00:00-08:00
-summary: "把 tokenization 理解为文本压缩：从 Zipf 定律、Shannon 熵到 BPE，解释为什么 subword 方法有效。"
+summary: "从平均描述长度、Zipfian 频率分布与 subword 码本设计出发，解释为什么 tokenization 本质上是一种神经网络友好的压缩。"
 tags: ["tokenizer", "compression", "LLM"]
 ---
 
 # Tokenization 的压缩本质
 
-很多人在第一次接触大模型时，会把 tokenizer 看成一个预处理工具：它把字符串切成 token，然后模型再去处理这些 token。这个说法并不算错，但它远远不够。因为如果 tokenizer 只是“切词工具”，那我们很难解释：为什么不同 tokenizer 会显著影响训练效率、推理成本、上下文长度乃至模型能力？
+很多人在第一次接触大模型时，会把 tokenizer 看成一个前处理工具：它把字符串切成 token，然后模型再去处理这些 token。这个描述并不算错，但它解释力很弱。因为如果 tokenizer 只是“切词器”，我们就很难解释：为什么不同 tokenizer 会显著影响序列长度、训练效率、上下文利用率，甚至影响模型对长尾词和跨语言文本的处理方式。
 
 更准确的理解是：
 
-> tokenization 的本质不是分词，而是压缩。
+> tokenization 的本质不是分词，而是为神经网络设计一套可逆、可学习、可压缩的离散码本。
 
-模型并不能直接处理无限长的原始文本序列。它需要把文本变成一个有限长度、可学习、可重复利用的符号序列。tokenizer 做的正是这件事：在保留尽可能多有用信息的前提下，把原始文本压缩成模型更容易处理的离散代码。
+这里“压缩”不是指传统压缩器那种单纯追求最短比特串的目标，而是指：在尽量保留可恢复文本信息的前提下，把原始字符串重新编码成更短、更稳定、更适合下游表示学习的符号序列 [1][3-5]。
 
-一旦你把 tokenizer 理解为压缩系统，很多现象就会变得清楚：为什么常见模式会被合并成 subword，为什么长尾词会被拆开，为什么词表大小不能无限大，也不能无限小。
+> 核心结论：tokenizer 的首要作用，是把语言中高频、可复用的局部结构外包给一个显式码本，从而减少序列长度、降低统计冗余，并把更多计算预算留给真正的上下文建模；subword 方法之所以长期主导现代 LLM，并不是因为它最“语言学正确”，而是因为它在压缩效率、开放词表和优化稳定性之间取得了最好的折中 [1-5]。
 
-## 1. Zipf 定律：文本天然就有可压缩结构
+## 1. 先给一个更严格的定义：tokenizer 是可逆码本
 
-人类语言并不是随机字符流。最重要的经验事实之一，就是 **Zipf 定律**：词频分布高度不均匀，极少数词出现得非常频繁，而大量词只偶尔出现。
+设原始文本是一个字符串 $x$，tokenizer 输出一个 token 序列
 
-也就是说，真实文本里有非常强的统计重复：
+$$
+\tau(x) = (t_1, t_2, \dots, t_m),
+$$
 
-- 常见词会反复出现；
-- 常见前后缀会反复出现；
-- 常见字母组合、拼写模式、语素结构会反复出现；
-- 某些高频片段跨不同单词复用。
+并要求存在确定的反向映射，使得
 
-这正是压缩得以成立的基础。压缩从来都不是凭空发生的，它依赖分布不均匀和结构可重复。如果每个字符串都随机且独一无二，那么 tokenizer 根本没有什么可学的。
+$$
+\gamma(t_1)\gamma(t_2)\cdots\gamma(t_m) = x
+$$
 
-所以从最底层看，tokenizer 并不是在“发明新单位”，而是在利用语言本来就存在的统计规律，把高频结构提取成更短的编码单元。
+或至少在规范化后的文本空间中可恢复。这里的 $\gamma$ 可以理解为“token 到字符串片段”的码本映射。于是，tokenizer 做的并不是任意切分，而是在构造一个**有限词表上的可逆变长编码系统**。
 
-## 2. Shannon entropy：tokenizer 在和熵做交易
+如果把 token 序列长度记为 $T_\tau(x)=m$，那么 tokenizer 的一个粗略目标可以写成：
 
-如果再往理论层面走一步，tokenizer 的任务可以和 **Shannon entropy** 联系起来。熵衡量的是一个符号系统的不确定性，也可以理解为平均编码成本的下界。一个好的编码系统，会让高频模式拥有更短的表示，让低频模式保留更长的表示，从而降低平均描述长度。
+$$
+\min_\tau \ \mathbb{E}_{x \sim \mathcal{D}} \big[T_\tau(x)\big]
+$$
 
-这正是 tokenizer 在做的事情。你可以把原始文本看成一个字符序列源，tokenizer 的目标并不是让每个 token 都“像词典单位”，而是让文本在新符号系统下的平均表示更经济。
+同时满足：
 
-这会产生一个很重要的工程结论：tokenizer 优化的不是语言学纯洁性，而是编码效率。也就是说，它关心的是：
+- 编码与解码可确定；
+- 词表规模有限；
+- 长尾输入仍然可表示；
+- 输出序列对神经网络是可优化的。
 
-- 哪些片段值得单独成为 token；
-- 哪些片段应该拆开；
-- 怎样的词表能让平均序列长度更短，同时保证模型还能学得动。
+这说明 tokenizer 从一开始就不是纯语言学对象，而是一个**码本设计问题**。
 
-从这个角度看，tokenizer 更像一种面向神经网络的码本设计，而不是传统意义上的词法分析器。
+## 2. 为什么语言天然适合被压缩？
 
-## 3. BPE 原理：从最频繁的合并开始
+压缩之所以可能，不是因为 tokenizer 足够聪明，而是因为语言分布本来就高度不均匀。Piantadosi 对 Zipf 规律的综述指出，自然语言中的词频分布稳定地呈现强长尾结构：极少数高频单位覆盖大量文本质量，而绝大多数单位落在低频尾部 [2]。
 
-理解现代 tokenizer，最典型的切入点就是 **BPE（Byte Pair Encoding）**。BPE 的基本思想非常朴素：
+这意味着文本中存在大量可复用模式：
 
-1. 从最小单位开始，例如字节或字符；
-2. 统计训练语料中最常见的相邻符号对；
-3. 把最频繁的那一对合并为一个新符号；
-4. 重复这个过程，直到达到目标词表大小。
+- 高频功能词会反复出现；
+- 高频词根、前后缀和语素片段会跨词复用；
+- 常见拼写块、字节模式和标点结构会反复出现；
+- 很多长尾词可以由更高频的子结构组合而成。
 
-这个算法之所以流行，并不是因为它最优，而是因为它简单、稳定、有效。BPE 的每一步都在回答一个极实际的问题：
+这正是 Shannon 意义下“可压缩源”的典型特征：如果一个符号源具有显著的统计偏斜，那么平均描述长度就可以通过非均匀编码显著降低 [1]。Tokenizer 本质上就是在利用这种偏斜。
 
-> 如果把这两个经常一起出现的片段合并成一个 token，能不能减少整体编码长度？
+## 3. BPE 与 unigram LM：两种典型的码本构造方式
 
-例如英文中的 `ing`、`tion`、`pre`、`##ly` 这类高频模式，很自然会在 BPE 过程中被保留下来。某些高频完整单词也会直接成为单个 token，而低频罕见词则被拆成多个 subword。
+现代 LLM tokenizer 的主流做法并不是直接从“词”出发，而是从字符、字节或最小片段出发，逐步学习一个中间粒度的词表。最常见的两类方法分别是 BPE 和 unigram language model。
 
-于是，BPE 本质上是在构建一套中间粒度的压缩词典。它既不像 word-level tokenizer 那样完全依赖固定词典，也不像 character-level tokenizer 那样完全拒绝合并，而是在统计规律驱动下找到一个折中层级。
+### BPE：逐步合并最有收益的高频片段
 
-## 4. 为什么 subword 有效？
+Sennrich 等人把 BPE 引入神经机器翻译后，这一方法成为 subword tokenization 的标准基线 [3]。它的核心思想非常简单：
 
-subword tokenizer 的成功，并不是偶然的工程经验，而是因为它刚好同时满足了几个关键条件。
+1. 从字符或字节级词表开始；
+2. 统计语料中最频繁的相邻片段对；
+3. 把收益最高的片段对合并为新 token；
+4. 重复直到达到目标词表规模。
 
-### 4.1 它利用了高频结构
+从压缩角度看，BPE 的每一步都在问同一个问题：
 
-高频词根、前后缀和常见片段会被压缩成较短单位，从而显著降低平均序列长度。
+> 如果把这个高频局部模式提升为显式码字，语料的平均编码长度会不会下降？
 
-### 4.2 它保留了开放词表能力
+### Unigram LM：直接把分词看成词表上的概率模型
 
-如果遇到新词、专有名词、拼写变化或跨语言文本，subword 仍然可以把它拆开编码，而不是像纯 word-level 方法那样直接掉进 `<unk>`。
+Kudo 提出的 unigram LM 则更进一步，把分词本身建模为“给定固定词表后，对文本所有可能分段的概率分配”，再通过近似最大似然学习词表 [5]。和 BPE 相比，它不是贪心合并，而是显式地在“哪些片段值得保留”为独立 token 这个问题上做概率建模。
 
-### 4.3 它适合 embedding 学习
+Kudo 与 Richardson 的 SentencePiece 又把这类做法系统化了，使 subword 训练可以直接从原始句子出发，并把词表大小作为训练前就指定的超参数 [4]。这一步很关键，因为它把 tokenizer 更明确地变成了**固定容量码本**的设计问题。
 
-模型可以为高频 subword 学出稳定表示，同时通过组合多个 subword 处理长尾词和新词。这比纯字符序列更容易形成可重用的语义单元。
+![tokenization 作为码本压缩的示意图](./tokenization-compression-codebook.svg)
 
-### 4.4 它兼顾压缩与可优化性
+*图 1. tokenizer 更准确的角色是：从原始字符流中抽取高频可复用片段，构成一个有限码本，再用该码本把文本重编码成更短、更稳定的 token 序列。*
 
-token 太细，序列太长，训练成本高；token 太粗，词表太大，长尾难学。subword 正好落在一个工程上很舒服的中间区域。
+## 4. 为什么 subword 会成为现代 LLM 的默认选择？
 
-所以，说 subword 有效，不只是因为它“分得合理”，而是因为它同时在压缩效率、词表开放性和优化稳定性上给出了不错的平衡。
+subword tokenizer 的成功，并不是偶然经验，而是因为它恰好落在一个非常有效的中间层级上。
+
+| 粒度 | 优点 | 缺点 |
+| --- | --- | --- |
+| word-level | 序列短，单 token 语义强 | OOV 严重，长尾和新词脆弱 |
+| character/byte-level | 完全开放词表，表示最统一 | 序列过长，语义形成路径太长 |
+| subword | 兼顾压缩、开放词表与可学习性 | 需要训练一个额外码本，切分并不总是语言学自然 |
+
+从系统设计角度看，subword 有四个非常直接的优势 [3-5]：
+
+- 它吸收了大部分高频局部结构，显著缩短序列长度。
+- 它仍然保留开放词表能力，长尾词与新词可以拆分表示。
+- 它为 embedding 学习提供了更稳定的中间单元，不必把一切都留给字符级组合。
+- 它与 Transformer 的计算结构更匹配，因为模型可以更早在较高语义密度的单位上开展上下文建模。
+
+因此，subword 的主导地位不是因为它“最纯粹”，恰恰相反，是因为它最不极端。
 
 ## 5. tokenizer 到底压缩了什么？
 
-这里有一个容易混淆的点。tokenizer 并不是在做无损压缩意义上的最优编码，因为模型后面还要学习 embedding、attention 和输出分布。也就是说，tokenizer 的目标不是单独最小化文本长度，而是在“让文本更适合神经网络处理”这个更大目标下做压缩。
+这里需要一个技术上的澄清：tokenizer 不是在独立地最小化比特长度，它是在为整个神经网络系统压缩输入表示。它真正压缩的至少有三件事。
 
-它压缩的主要有三样东西：
+### 序列长度
 
-### 5.1 序列长度
+高频模式被显式吸收入词表后，同样文本会对应更短的 token 序列。这直接影响上下文窗口的可用内容，也直接影响 Transformer 的计算成本。
 
-高频模式被合并后，原始字符流会变成更短的 token 序列。这直接降低了 Transformer 的计算量。
+### 统计冗余
 
-### 5.2 统计冗余
+把高频片段固化为 token，相当于把重复出现的局部结构显式存进码本，而不是要求模型每次都从字符流中重新发现它们。
 
-把常见结构固定成 token，相当于把重复模式外包给了码本，而不是要求模型每次都从字符级别重新发现它。
+### 学习难度
 
-### 5.3 学习负担
+如果某个模式总是以相近 token 形式出现，embedding 和后续层就更容易为它学出稳定表示；否则，模型必须先解决低层组合问题，再去学习更高层语义。
 
-如果同一种模式总以近似相同的 token 出现，模型更容易给它学出稳定 embedding；否则，模型就得在更低层级的字符组合里自己恢复这些规律。
+因此，tokenizer 不只是在压缩文本，也是在压缩模型的搜索空间与优化负担。
 
-所以 tokenizer 不只是压缩文本，也是在压缩模型的学习难度。
+## 6. 结语
 
-## 6. 我们的理解：tokenization = 文本压缩
+如果要把本文压缩成一句话，我会写：
 
-现在可以把全文的核心观点明确写出来：
+> tokenization 的本质，是把自然语言中的高频局部结构外包给一个显式码本，从而把原始字符串重新编码成更适合神经网络处理的压缩符号系统。
 
-> tokenization 的本质是文本压缩，而且是一种面向神经网络表示学习的压缩。
-
-Zipf 定律说明语言有强烈的频率结构，Shannon entropy 告诉我们可以利用这种结构降低平均编码成本，BPE 则提供了一种简单而有效的实现方式。subword tokenizer 之所以成功，不是因为它符合某种完美语言学理论，而是因为它在压缩效率、开放词表和可优化性之间找到了一个很强的平衡。
-
-这也解释了为什么 tokenizer 不只是前处理细节，而是整个大模型设计的一部分。它决定了模型看到世界时所使用的离散单位，而这些单位会直接影响：
+这也解释了为什么 tokenizer 不是一个无关紧要的前处理细节。它会直接影响：
 
 - 序列有多长；
-- embedding 表有多大；
-- 长尾词怎样被编码；
-- 上下文窗口里究竟能装下多少真实文本。
+- 词表有多大；
+- 长尾词如何被表示；
+- 模型把多少计算花在“先恢复局部结构”而不是“直接建模上下文”上。
 
-因此，当我们问“tokenizer 到底在做什么”时，最有力的答案不是“它在切词”，而是：
+如果把这个结论放回整个系列中看，它与前文讨论的[Embedding 空间中的语义线性结构](/blog/representation-space-of-large-models/semantic-linearity)和[LLM Embedding 的球面编码视角](/blog/representation-space-of-large-models/spherical-coding)是一致的：Tokenizer 决定了模型看到哪些离散单位，而这些单位随后又决定了 embedding 空间将如何组织、压缩和泛化。
 
-> 它在把文本重新编码成一个更适合神经网络学习的压缩符号系统。
+下一篇文章，我们会继续往工程设计层面走，讨论为什么现代 LLM 的词表大小通常不会无限增大，而往往停在一个中等规模的稳定区间。
 
-下一篇文章，我们会继续往工程设计层面走，讨论为什么 LLM 的词表大小往往集中在 30k 到 50k 左右。
+## 参考文献
+
+[1] SHANNON C E. A Mathematical Theory of Communication[J]. *Bell System Technical Journal*, 1948, 27(3): 379-423; 27(4): 623-656. Available: [https://www.mpi.nl/publications/item2383162/mathematical-theory-communication](https://www.mpi.nl/publications/item2383162/mathematical-theory-communication).
+
+[2] PIANTADOSI S T. Zipf's Word Frequency Law in Natural Language: A Critical Review and Future Directions[J]. *Psychonomic Bulletin & Review*, 2014, 21(5): 1112-1130. DOI: [10.3758/s13423-014-0585-6](https://doi.org/10.3758/s13423-014-0585-6).
+
+[3] SENNRICH R, HADDOW B, BIRCH A. Neural Machine Translation of Rare Words with Subword Units[C]// *Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)*. Berlin, Germany: Association for Computational Linguistics, 2016: 1715-1725. DOI: [10.18653/v1/P16-1162](https://doi.org/10.18653/v1/P16-1162).
+
+[4] KUDO T, RICHARDSON J. SentencePiece: A Simple and Language Independent Subword Tokenizer and Detokenizer for Neural Text Processing[C]// *Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing: System Demonstrations*. Brussels, Belgium: Association for Computational Linguistics, 2018: 66-71. DOI: [10.18653/v1/D18-2012](https://doi.org/10.18653/v1/D18-2012).
+
+[5] KUDO T. Subword Regularization: Improving Neural Network Translation Models with Multiple Subword Candidates[C]// *Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)*. Melbourne, Australia: Association for Computational Linguistics, 2018: 66-75. DOI: [10.18653/v1/P18-1007](https://doi.org/10.18653/v1/P18-1007).

@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
+  <title id="title">Why Token-Free Models Reintroduce Compression</title>
+  <desc id="desc">Contrasts direct subword input with token-free byte or character input, and shows that successful token-free architectures add downsampling or latent subword formation inside the model.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#faf7ef" />
+      <stop offset="100%" stop-color="#f3efe6" />
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#fbfaf6" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08" />
+    </filter>
+    <marker id="navyArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#244f7a" />
+    </marker>
+  </defs>
+  <style>
+    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 30px; font-weight: 700; }
+    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 500; }
+    .pill { fill: #e7eef8; }
+    .pill-text { fill: #28496d; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; }
+    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 28; filter: url(#shadow); }
+    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 22px; font-weight: 700; }
+    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; font-weight: 500; }
+    .label { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 15px; font-weight: 700; }
+    .small { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 500; }
+    .formula-box { fill: #fff6ea; stroke: #edc28f; stroke-width: 1.5; rx: 18; }
+    .step-box { fill: #f6f1e7; stroke: #d7cbb6; stroke-width: 1.5; rx: 18; }
+    .token { fill: #fff2df; stroke: #e3b786; stroke-width: 1.5; rx: 12; }
+    .token2 { fill: #eef5fb; stroke: #a6bfd9; stroke-width: 1.5; rx: 12; }
+    .token3 { fill: #eef6ef; stroke: #a6c5aa; stroke-width: 1.5; rx: 12; }
+    .flow { stroke: #7e8ea4; stroke-width: 2.2; fill: none; marker-end: url(#navyArrow); }
+  </style>
+
+  <rect x="0" y="0" width="980" height="560" fill="url(#bg)" rx="34" />
+  <rect class="pill" x="52" y="36" width="92" height="34" rx="17" />
+  <text class="pill-text" x="98" y="58" text-anchor="middle">FIGURE 1</text>
+  <text class="title" x="52" y="112">Token-Free Models Usually Put Compression Back Inside the Network</text>
+  <text class="subtitle" x="52" y="142">The tokenizer may disappear as a standalone module, but successful architectures typically reintroduce downsampling, latent chunks, or other compression mechanisms internally.</text>
+
+  <rect class="card" x="44" y="176" width="260" height="330" rx="28" />
+  <rect class="card" x="322" y="176" width="292" height="330" rx="28" />
+  <rect class="card" x="632" y="176" width="304" height="330" rx="28" />
+
+  <text class="card-title" x="72" y="216">Subword Pipeline</text>
+  <text class="card-text" x="72" y="240">Compression is explicit and happens before the Transformer stack.</text>
+  <rect class="token3" x="82" y="294" width="82" height="38" rx="12" />
+  <rect class="token2" x="172" y="294" width="58" height="38" rx="12" />
+  <rect class="token" x="82" y="348" width="94" height="38" rx="12" />
+  <rect class="token3" x="184" y="348" width="70" height="38" rx="12" />
+  <text class="small" x="123" y="318" text-anchor="middle">represent</text>
+  <text class="small" x="201" y="318" text-anchor="middle">ation</text>
+  <text class="small" x="129" y="372" text-anchor="middle">compress</text>
+  <text class="small" x="219" y="372" text-anchor="middle">ion</text>
+  <text class="small" x="82" y="436">shorter sequence</text>
+  <text class="small" x="82" y="456">higher semantic density per token</text>
+
+  <text class="card-title" x="350" y="216">Raw Character / Byte Pipeline</text>
+  <text class="card-text" x="350" y="240">The sequence is longer, so the model must recover chunk structure by itself.</text>
+  <rect class="token" x="350" y="294" width="28" height="34" rx="10" />
+  <rect class="token" x="382" y="294" width="28" height="34" rx="10" />
+  <rect class="token" x="414" y="294" width="28" height="34" rx="10" />
+  <rect class="token" x="446" y="294" width="28" height="34" rx="10" />
+  <rect class="token" x="478" y="294" width="28" height="34" rx="10" />
+  <rect class="token" x="510" y="294" width="28" height="34" rx="10" />
+  <rect class="token" x="542" y="294" width="28" height="34" rx="10" />
+  <text class="small" x="364" y="316" text-anchor="middle">r</text>
+  <text class="small" x="396" y="316" text-anchor="middle">e</text>
+  <text class="small" x="428" y="316" text-anchor="middle">p</text>
+  <text class="small" x="460" y="316" text-anchor="middle">r</text>
+  <text class="small" x="492" y="316" text-anchor="middle">e</text>
+  <text class="small" x="524" y="316" text-anchor="middle">s</text>
+  <text class="small" x="556" y="316" text-anchor="middle">…</text>
+  <rect class="step-box" x="350" y="360" width="220" height="50" rx="16" />
+  <text class="small" x="460" y="390" text-anchor="middle">longer sequence, weaker initial semantic density</text>
+  <text class="small" x="350" y="446">more compute before words or morphemes emerge</text>
+
+  <text class="card-title" x="660" y="216">Modern Token-Free Fixes</text>
+  <text class="card-text" x="660" y="240">Successful models reintroduce compression explicitly or implicitly.</text>
+  <rect class="step-box" x="662" y="286" width="240" height="54" rx="16" />
+  <rect class="step-box" x="662" y="356" width="240" height="54" rx="16" />
+  <rect class="step-box" x="662" y="426" width="240" height="54" rx="16" />
+  <text class="label" x="682" y="308">ByT5</text>
+  <text class="small" x="682" y="328">accepts longer sequences and higher compute</text>
+  <text class="label" x="682" y="378">CANINE</text>
+  <text class="small" x="682" y="398">downsamples the character stream</text>
+  <text class="label" x="682" y="448">Charformer</text>
+  <text class="small" x="682" y="468">learns latent subword-like chunks</text>
+
+  <path class="flow" d="M306 340 L318 340" />
+  <path class="flow" d="M616 340 L628 340" />
+
+  <rect class="formula-box" x="314" y="54" width="352" height="72" rx="18" />
+  <text class="label" x="490" y="84" text-anchor="middle">remove explicit tokenizer ≠ remove compression</text>
+  <text class="small" x="490" y="110" text-anchor="middle">compression often reappears as downsampling or latent chunking</text>
+
+  <rect class="step-box" x="84" y="516" width="242" height="24" rx="12" />
+  <rect class="step-box" x="368" y="516" width="242" height="24" rx="12" />
+  <rect class="step-box" x="652" y="516" width="242" height="24" rx="12" />
+  <text class="small" x="205" y="533" text-anchor="middle">Subword performs compression before modeling</text>
+  <text class="small" x="489" y="533" text-anchor="middle">Token-free pushes that burden into the network</text>
+  <text class="small" x="773" y="533" text-anchor="middle">Strong token-free models reintroduce compression internally</text>
+</svg>

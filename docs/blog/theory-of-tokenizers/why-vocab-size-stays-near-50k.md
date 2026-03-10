@@ -1,128 +1,141 @@
 ---
 title: "LLM 词表规模的自然平衡点"
 date: 2026-03-09T12:10:00-08:00
-summary: "从 Zipf 定律、embedding 学习、序列长度与计算成本的平衡出发，解释为什么词表大小常常落在 30k 到 50k。"
+summary: "从序列长度收益递减、长尾稀疏和 softmax 成本的共同权衡出发，解释为什么 LLM 词表规模常停在一个中等区间。"
 tags: ["tokenizer", "vocabulary", "LLM"]
 ---
 
 # LLM 词表规模的自然平衡点
 
-看不同的大模型，你会发现一个很有意思的现象：词表大小虽然不完全一致，但很多系统都会落在一个相近区间，通常是 30k 到 50k 左右。有些模型更大，有些更小，但这个量级反复出现，显然不是巧合。
+看不同的大模型，你会发现一个反复出现的工程现象：词表大小虽然并不完全一致，但很多系统都会停在一个中等区间，英语或近单语场景里常见的就是几万级，经验上常落在 `30k` 到 `50k` 附近，而不会无限增大或无限缩小。这个现象并不神秘。词表规模本来就不是一个可以独立优化的按钮，它同时影响输入序列长度、embedding 稀疏性、输出层分类成本以及长尾词的可学习性。
 
-如果 tokenizer 只是一个自由可调的工程组件，那么为什么不把词表做得非常大，直接减少序列长度？或者反过来，为什么不把词表做得很小，让系统更统一、更简单？
+因此，一个更专业的说法是：
 
-答案是：词表大小本质上是一个多目标平衡问题。它同时受到语言分布、embedding 学习难度、序列长度和计算成本的共同约束。30k 到 50k 之所以常见，不是因为存在一条神秘定律，而是因为在真实语料与 Transformer 架构下，这里常常是一个自然平衡点。
+> 词表大小不是“越大越好”或“越小越统一”的单变量问题，而是压缩收益与模型成本之间的平衡点问题。
 
-## 1. Zipf law：高频收益很快，长尾收益很慢
+> 核心结论：随着词表规模 $V$ 增加，平均序列长度 $T(V)$ 确实会下降，但这种下降受 Zipfian 长尾分布支配而迅速出现边际递减；与此同时，embedding 参数、输出层成本和长尾 token 的学习稀疏性会近似随 $V$ 线性恶化。因此，现代 LLM 往往在一个中等词表区间达到更好的整体系统最优，而不是把所有高频和长尾片段都硬塞进独立 token [1-6]。
 
-首先回到语言分布。根据 Zipf law，最常见的少量词和片段会覆盖语料的大部分质量。随着词表变大，最早加入词表的那些高频单位能显著缩短序列长度；但到了后面，新增 token 往往只覆盖越来越稀有的长尾片段。
+## 1. 先把问题写成一个 tradeoff
 
-这意味着词表扩张的收益会迅速递减：
+设 tokenizer 词表规模为 $V$，平均 token 序列长度为 $T(V)$。对 Transformer 而言，一个粗略但有用的系统成本模型可以写成
 
-- 从 1k 增长到 10k，收益很大；
-- 从 10k 增长到 30k，仍然有明显收益；
-- 从 30k 增长到 50k，收益开始放缓；
-- 从 50k 再往上，很多新增 token 只是在替换非常罕见的子串。
+$$
+\mathcal{J}(V)
+\approx
+a \, T(V)^2 + b \, T(V) + c \, V,
+$$
 
-换句话说，语言的频率结构决定了：你确实需要一个不小的词表去吸收高频模式，但你不需要无限扩大词表去讨好长尾。因为长尾天生就适合被 subword 组合来表示，而不值得每个都分配一个独立 token。
+其中：
 
-## 2. embedding 学习：词表越大，长尾越难学
+- $aT(V)^2$ 对应 attention 这类随序列长度超线性增长的成本；
+- $bT(V)$ 对应缓存、数据传输和线性层上的长度成本；
+- $cV$ 对应词表带来的 embedding、输出层和参数规模开销。
 
-词表不是免费的。每增加一个 token，就需要增加一个 embedding 向量，以及输出层里与之对应的参数和学习负担。
+这个式子没有假装给出严格闭式解，但它抓住了真正关键的结构：**扩大词表会减少序列长度，却会线性增加词表侧成本**。是否继续增大 $V$，本质上取决于“减少一个 token 的收益”是否仍然大于“再新增一个词表项的代价”。
 
-更重要的是，大词表会让学习变得更不均匀。高频 token 会被充分训练，低频 token 则几乎学不到稳定表示。于是词表越大，尾部就越长，而尾部 token 的 embedding 往往质量最差。
+## 2. 为什么序列长度收益会迅速递减？
 
-这会带来两个问题：
+问题的根源在于自然语言的长尾分布。Piantadosi 对 Zipf 规律的综述表明，语言中的频率质量主要集中在头部少量单位，而尾部极长 [1]。这意味着词表扩张并不是均匀有益的：
 
-### 2.1 参数浪费
+- 早期加入的高频 token 会显著缩短序列；
+- 继续增大词表时，新增 token 覆盖的往往是越来越稀有的片段；
+- 到尾部时，很多新增词表项只是在替换极少出现的局部字符串。
 
-很多长尾 token 只在训练中出现很少次，单独给它们分配 embedding 的回报很低。
+从压缩角度看，$T(V)$ 的确是单调下降的，但其斜率会越来越小，也就是
 
-### 2.2 泛化变差
+$$
+T'(V) < 0,
+\qquad
+|T'(V)| \to 0.
+$$
 
-如果一个罕见字符串被硬编码成独立 token，模型可能反而失去利用 subword 组合泛化的能力。对罕见词来说，由多个常见子词组合出来的表示，往往比一个训练不足的专用 embedding 更稳定。
+这就是边际递减的数学表达。也正因如此，词表扩张的前期收益很大，后期收益却会迅速趋缓。
 
-所以从 embedding 学习角度看，词表不能太大。太大会让很多 token 成为“参数上的孤岛”。
+## 3. 为什么词表太大也会出问题？
 
-## 3. sequence length：词表太小又会让序列爆炸
+序列短一些当然有利，但词表不是免费的。词表一旦扩大，至少会引入三类代价。
 
-另一边的问题是，词表也不能太小。因为 token 越细，文本会被切得越碎，序列长度就越长。
+### 长尾 embedding 稀疏
 
-而对于 Transformer 来说，序列长度的增加是非常昂贵的。即使不严格讨论 $O(n^2)$ 的理论复杂度，仅从实际训练和推理来看，更长的序列也会带来：
+Sennrich 等人引入 subword 的一个核心动机，就是让长尾词由较高频片段组合来表示，而不是为每个罕见词硬分配一个独立参数 [2]。如果词表过大，尾部会出现大量训练次数极低的 token。它们很难学出稳定 embedding，最终只是参数上的“孤岛”。
 
-- 更多 attention 计算；
-- 更多 KV cache 开销；
-- 更高的训练显存消耗；
-- 更少的有效上下文内容。
+### 输出层和采样成本增加
 
-举个直观的例子。如果用非常细的 tokenizer，同一段文本可能从 500 token 膨胀到 900 或 1200 token。那模型虽然“看见”的是同样的文本，但上下文窗口会更快被耗尽，算力成本也会明显上升。
+词表规模越大，下一 token 预测的分类空间就越大。即使工程上采用分块 softmax、采样近似或 fused kernel，这个方向的成本也不会凭空消失。
 
-因此，从 sequence length 角度看，词表又不能太小。太小会让一切变得更贵。
+### 泛化能力可能反而下降
 
-## 4. compute cost：词表大小同时影响输入端和输出端
+当某个低频字符串被硬编码成专门 token 时，模型可能失去通过更高频 subword 组合来共享统计规律的机会。对长尾词而言，“拆成常见片段”往往比“训练一个罕见独立 token”更稳健。
 
-词表大小的工程代价不只体现在输入 embedding 上，还体现在输出 softmax 层。模型在预测下一个 token 时，需要在整个词表上打分。词表越大，输出分布越重，训练和推理都会受到影响。
+因此，过大的词表不只是更占参数；它还会系统性加重尾部稀疏问题。
 
-这意味着词表大小其实同时作用于两端：
+## 4. 为什么词表太小也不行？
 
-- 词表大一些，可以缩短输入序列；
-- 但词表大一些，也会增加输出分类成本和参数规模。
+另一边，词表也绝不能太小。词表过小意味着 token 粒度过细，文本会被切成更长序列。对于 Transformer，这会带来一整串连锁反应：
 
-这就是一个典型的双向拉扯问题。你不能只盯着输入压缩，也不能只盯着 softmax 成本。合理的词表大小，必须在：
+- attention 计算更贵；
+- KV cache 更大；
+- 固定上下文窗口能容纳的真实文本更少；
+- 模型必须花更多层和更多路径，先把局部字符块重新组合成熟悉的词法单元。
 
-- 输入序列更短；
-- 输出层不过大；
-- embedding 易于学习；
-- 长尾不过度碎裂
+Kudo 与 Richardson 的 SentencePiece 明确把“预先设定词表容量，再让算法在这个容量约束下做最优分段”作为设计中心 [3]。这本身就说明：词表大小不是后验装饰，而是 tokenizer 训练时的一级约束。
 
-这几个目标之间取得平衡。
+如果词表持续缩小，最终就会逼近字节级或字符级建模。ByT5 的结果恰恰说明，完全去掉子词词表虽然可以提升鲁棒性和开放性，但也会带来更长序列和更重的训练/推理代价 [6]。这说明“词表尽量小”同样不是免费的。
 
-## 5. 为什么 30k–50k 往往是自然平衡点？
+## 5. 为什么中等规模会成为稳定工程解？
 
-把前面几个因素放在一起，我们就能理解为什么 30k–50k 经常出现。
+把前面几部分合在一起，就得到一个非常清楚的结论：词表规模必须停在一个中间区域，使得两侧代价都不过分。
 
-### 5.1 它已经足够吸收大部分高频模式
+![词表规模的权衡曲线示意图](./vocab-size-tradeoff.svg)
 
-到这个区间时，很多高频词、前后缀、常见拼写片段已经被有效编码，序列长度相比字符级或很小词表已经显著缩短。
+*图 1. 词表增大时，序列长度成本会下降，但边际收益递减；与此同时，词表参数、输出层和长尾稀疏代价近似线性增加。系统总成本因此更可能在一个中等区间出现低点。*
 
-### 5.2 它还没有把长尾撕得太碎
+从工程视角看，这个中间区间通常具备以下特征：
 
-对大多数文本，30k–50k 的 subword 词表已经能在压缩和开放词表之间取得不错平衡。罕见词虽然会被拆开，但不会碎得过于极端。
+| 词表区间 | 主要问题 | 系统表现 |
+| --- | --- | --- |
+| 太小 | 序列过长，字符/字节组合负担重 | 计算贵，上下文利用率低 |
+| 中等 | 高频模式已被吸收，长尾仍可分解 | 压缩、泛化和可优化性较平衡 |
+| 太大 | 长尾 token 稀疏，输出层与词表参数膨胀 | 额外收益变小，学习不均衡 |
 
-### 5.3 输出层仍然可控
+这也是为什么 Devlin 等人的 BERT 这类英语模型采用了中等规模的 WordPiece 词表 [4]，而像 SentencePiece 这样的工具也把“给定一个固定容量、在容量内寻找最好分段”视为标准工作方式 [3]。二者背后都是同一个设计逻辑：**词表需要足够大，吸收头部统计结构；但也必须足够小，避免尾部和输出层拖垮整体系统。**
 
-这个量级的词表虽然不小，但对现代大模型来说仍然是可管理的。相比更大的词表，它不会让 softmax 和 embedding 参数膨胀得太夸张。
+## 6. 为什么不同任务会偏离这个平衡点？
 
-### 5.4 长尾 token 还不至于完全学不动
+当然，这个平衡点不是普适常数。它会随任务和语料改变而移动。
 
-如果词表继续大幅扩张，很多 token 会掉到极低频区域，训练信号会严重不足。30k–50k 通常还能让大部分 token 至少拥有一定可学习性。
+- 多语言模型需要覆盖更多脚本与形态变化，往往需要更大词表或不同字节策略。
+- 代码模型面对标识符、符号和长字符串模式时，最佳词表会与自然语言不同。
+- 高度垂直的领域模型若语料更集中，有时可以用更小词表吸收主要模式。
+- 字节级方案会把部分问题转移到更细粒度序列处理上，从而换取开放性和鲁棒性 [6]。
 
-因此，30k–50k 不是一条数学硬边界，而是现代语料分布、subword tokenization 和 Transformer 计算结构共同作用下，形成的一个经验稳定区间。
+因此，更准确的说法不是“30k–50k 永远正确”，而是：**现代单语或近单语 LLM 往往会在一个中等规模 subword 词表附近遇到自然的收益递减点。**
 
-## 6. 不同模型为什么会偏离这个区间？
+## 7. 结语
 
-当然，不是所有模型都正好落在 50k。偏离这个区间通常有几个原因：
+如果要把本文压缩成一句话，我会写：
 
-- 多语言模型需要覆盖更多语言形态，往往词表更大；
-- 代码模型为了处理标识符和符号结构，也可能采用不同策略；
-- 特定领域模型如果语料高度集中，有时可以用更小词表；
-- 字节级 tokenizer 会把一部分问题转移到更细粒度编码中。
+> 词表规模之所以常停在一个中等区间，不是经验巧合，而是因为序列压缩收益递减得很快，而词表侧成本上升得很稳。
 
-但即便如此，很多成功模型仍然会在一个相近的量级徘徊。这恰恰说明这不是偶然工程习惯，而是一个结构性平衡结果。
+这也说明，词表大小不是 tokenizer 的局部超参数，而是整个模型系统设计的一部分。它决定了模型如何在两个方向上分配负担：
 
-## 7. 我们的理解：30k–50k 是自然平衡点
+- 是把更多结构预先交给显式码本；
+- 还是把更多组合工作留给神经网络在更长序列上自己学习。
 
-现在可以把本文的结论直接写出来：
+如果把这篇与上一篇[Tokenization 的压缩本质](/blog/theory-of-tokenizers/what-tokenization-does)一起看，逻辑会更完整：前者说明 tokenizer 本质上是在做码本压缩，这一篇则说明码本容量为什么不能无限扩张，而必须停在一个更合理的工程平衡点。
 
-> 对现代 LLM 来说，30k–50k 往往是词表大小的自然平衡点。
+下一篇文章，我们会继续这个问题的另一端，讨论为什么看似最统一、最“彻底”的 character-level tokenizer，在现代 Transformer 体系里通常仍然赢不过 subword。
 
-这个平衡点来自四种力量的拉扯：
+## 参考文献
 
-- Zipf law 决定高频模式值得被吸收；
-- embedding 学习限制词表不能无限扩张；
-- sequence length 压力要求词表不能太小；
-- compute cost 要求输入压缩和输出规模同时可控。
+[1] PIANTADOSI S T. Zipf's Word Frequency Law in Natural Language: A Critical Review and Future Directions[J]. *Psychonomic Bulletin & Review*, 2014, 21(5): 1112-1130. DOI: [10.3758/s13423-014-0585-6](https://doi.org/10.3758/s13423-014-0585-6).
 
-所以，词表大小并不是一个随意的工程按钮，而是整个模型设计里的关键折中。它既决定了 tokenizer 的压缩效率，也决定了模型如何在离散符号与连续表示之间建立桥梁。
+[2] SENNRICH R, HADDOW B, BIRCH A. Neural Machine Translation of Rare Words with Subword Units[C]// *Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)*. Berlin, Germany: Association for Computational Linguistics, 2016: 1715-1725. DOI: [10.18653/v1/P16-1162](https://doi.org/10.18653/v1/P16-1162).
 
-下一篇文章，我们会讨论一个看似更“纯粹”的方案：character-level tokenizer。它在理论上似乎最统一、最彻底，但在工程上却几乎从未成为主流。为什么？
+[3] KUDO T, RICHARDSON J. SentencePiece: A Simple and Language Independent Subword Tokenizer and Detokenizer for Neural Text Processing[C]// *Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing: System Demonstrations*. Brussels, Belgium: Association for Computational Linguistics, 2018: 66-71. DOI: [10.18653/v1/D18-2012](https://doi.org/10.18653/v1/D18-2012).
+
+[4] DEVLIN J, CHANG M-W, LEE K, et al. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding[C]// *Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers)*. Minneapolis, Minnesota: Association for Computational Linguistics, 2019: 4171-4186. DOI: [10.18653/v1/N19-1423](https://doi.org/10.18653/v1/N19-1423).
+
+[5] KUDO T. Subword Regularization: Improving Neural Network Translation Models with Multiple Subword Candidates[C]// *Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)*. Melbourne, Australia: Association for Computational Linguistics, 2018: 66-75. DOI: [10.18653/v1/P18-1007](https://doi.org/10.18653/v1/P18-1007).
+
+[6] XUE L, BARUA A, CONSTANT N, et al. ByT5: Towards a Token-Free Future with Pre-trained Byte-to-Byte Models[J]. *Transactions of the Association for Computational Linguistics*, 2022, 10: 291-306. DOI: [10.1162/tacl_a_00461](https://doi.org/10.1162/tacl_a_00461).
