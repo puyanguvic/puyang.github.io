@@ -7,6 +7,8 @@ tags: ["machine learning", "high-dimensional geometry", "representation learning
 
 # 高维空间中的距离集中与度量失效
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/high-dimensional-space-and-machine-learning/distance-breakdown" en-path="/blog/high-dimensional-space-and-machine-learning/distance-breakdown-en" />
+
 高维几何给机器学习带来的第一个冲击，不是“空间更大，所以结构更丰富”，而恰恰相反：在相当宽的一类随机模型下，样本之间的欧氏距离会被压缩到越来越窄的区间中。于是，距离并不会消失，但它作为排序与判别信号的分辨率会系统性下降 [1-5]。
 
 更严格地说，问题不在于某两个样本的距离能否被计算出来，而在于整个样本集里的距离层次是否仍然足够展开。只要最近邻与最远邻的相对差距持续收缩，任何依赖“远近排序”的算法都会变得更脆弱。这正是高维文献中所谓 distance concentration 或 relative contrast collapse 的核心含义 [1][2]。

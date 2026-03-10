@@ -7,6 +7,8 @@ tags: ["tokenizer", "compression", "LLM"]
 
 # Tokenization 的压缩本质
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/theory-of-tokenizers/what-tokenization-does" en-path="/blog/theory-of-tokenizers/what-tokenization-does-en" />
+
 把 tokenizer 仅仅理解为“把文本切成 token 的前处理工具”，会遗漏它在整个语言模型系统中的真正角色。不同 tokenizer 会显著改变序列长度、词表规模、长尾词表示方式以及训练时梯度传播的难度；如果它只是一个中性的分词器，这些系统性差异就很难解释 [1][3-5]。
 
 更准确的理解是：tokenization 首先是一个有限可逆码本的设计问题。它的目标不是追求语言学上最自然的切分，而是在可恢复文本信息的前提下，把原始字符串重编码成更短、更稳定、也更适合神经网络处理的离散序列。

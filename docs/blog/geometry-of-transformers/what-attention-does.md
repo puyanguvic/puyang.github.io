@@ -7,6 +7,8 @@ tags: ["Transformer", "attention", "geometry of representation"]
 
 # Transformer Attention 的几何本质
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/geometry-of-transformers/what-attention-does" en-path="/blog/geometry-of-transformers/what-attention-does-en" />
+
 attention 常被描述成一串熟悉的工程步骤：计算 `Q`、`K`、`V`，做一次 `softmax`，然后对 `V` 加权求和。这个描述在实现层面完全正确，但如果停在这里，就很难解释它为什么能承担上下文检索、关系路由与表示重写等多种职责。真正关键的不是“加权平均”这个形式，而是这些权重是如何被生成出来的，以及它们把输出限制在什么样的几何对象上 [1-7]。
 
 更精确的说法是：attention 通过 query-key 匹配定义一组上下文相关的软坐标，再在 value 空间中完成一次内容自适应重建。它因此更接近动态核回归、重心重建或内容相关投影，而不是简单复制某个 token 的表示。

@@ -7,6 +7,8 @@ tags: ["tokenizer", "character-level", "optimization"]
 
 # Character-Level Tokenizer 的理论优势与工程局限
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/theory-of-tokenizers/why-character-level-rarely-wins" en-path="/blog/theory-of-tokenizers/why-character-level-rarely-wins-en" />
+
 如果只从表示统一性出发，character-level 或 byte-level 路线几乎无可挑剔：它没有 OOV 问题，不依赖手工词表边界，对新词、新脚本和噪声拼写也更自然。问题在于，表示上的统一并不自动转化为系统上的高效。主流大模型之所以长期停留在 subword 路线，并不是因为字符级方案不能表达语言，而是因为它往往不能在整体计算与优化成本上获胜 [1-5]。
 
 更严格地说，字符级建模并没有消灭压缩需求；它只是拒绝在模型外部显式完成压缩，于是这些工作必须在更长的序列上由网络自己重新学出来。

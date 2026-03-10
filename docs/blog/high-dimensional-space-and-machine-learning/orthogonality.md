@@ -7,6 +7,8 @@ tags: ["machine learning", "embeddings", "high-dimensional geometry"]
 
 # 高维向量近似正交的几何机制
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/high-dimensional-space-and-machine-learning/orthogonality" en-path="/blog/high-dimensional-space-and-machine-learning/orthogonality-en" />
+
 上一篇文章说明了为什么高维欧氏距离会逐渐失去分辨率。一个直接的后续问题是：如果半径差异不再可靠，那么高维空间里还有什么几何量值得保留？答案通常是角度。对归一化后的高维向量而言，内积会稳定收缩到零附近，而夹角则集中在 $90^\circ$ 左右 [1][2]。
 
 这个结论并不意味着高维空间“没有结构”。相反，它意味着在范数已经集中之后，方向成为剩余自由度中最稳定、也最适合承载表示组织的部分。现代 embedding 空间的大量性质，正是建立在这一事实之上。

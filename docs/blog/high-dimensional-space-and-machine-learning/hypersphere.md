@@ -7,6 +7,8 @@ tags: ["machine learning", "embeddings", "hypersphere geometry"]
 
 # Embedding 向量的超球面分布及其成因
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/high-dimensional-space-and-machine-learning/hypersphere" en-path="/blog/high-dimensional-space-and-machine-learning/hypersphere-en" />
+
 如果把现代 embedding 视为普通欧氏向量，就很难解释一个稳定经验事实：在许多检索、表征学习和分类系统中，向量往往并不均匀散落在整个空间内部，而是集中分布在某个高维球壳附近。更进一步，很多系统中最有效的相似度并不是未经归一化的欧氏距离，而是 cosine similarity [1-5]。
 
 这两个现象并非彼此独立。前两篇文章已经说明，高维概率会先压缩范数波动，并把可用自由度转移到方向结构上。训练过程随后又会进一步削弱径向噪声，把真正有判别力的差异更多地编码在角度中。于是，embedding 空间在实践中常常更接近一个超球面流形，而不是整个 $\mathbb{R}^d$。

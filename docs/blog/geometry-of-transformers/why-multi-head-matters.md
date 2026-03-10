@@ -7,6 +7,8 @@ tags: ["Transformer", "multi-head attention", "representation geometry"]
 
 # Multi-Head Attention 的必要性与表达优势
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/geometry-of-transformers/why-multi-head-matters" en-path="/blog/geometry-of-transformers/why-multi-head-matters-en" />
+
 如果单个 attention head 已经能通过 query-key 匹配生成软坐标，并在 value 空间完成重建，那么一个自然问题就是：为什么还需要 multi-head？为什么不能只保留一个更宽的 head，让同一套注意力机制处理全部关系？这个问题不能靠“经验上更好”来回答，必须回到算子的几何结构本身 [1-6]。
 
 单头 attention 的真正限制，不是参数太少，而是它只能为每个位置提供一套匹配几何、一组软坐标和一条内容通道。自然语言中的依赖关系显然并不单一：位置偏移、句法依赖、共指链、篇章回溯以及任务相关提示往往需要不同的读取规则。multi-head 的作用，正是在同一层内并行提供多套不同的上下文坐标系统。

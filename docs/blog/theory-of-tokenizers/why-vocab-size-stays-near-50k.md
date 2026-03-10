@@ -7,6 +7,8 @@ tags: ["tokenizer", "vocabulary", "LLM"]
 
 # LLM 词表规模的自然平衡点
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k" en-path="/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k-en" />
+
 既然 tokenizer 可以把高频局部结构收编进码本，一个看似自然的推论就是：词表越大越好，因为词表越大，序列就越短。现实并非如此。不同语言模型虽然词表并不完全一致，但在单语或近单语场景中，词表规模往往稳定落在一个中等区间，而不会无限扩张 [1-6]。
 
 这不是经验巧合，而是系统层面的内点最优。扩大词表确实会缩短序列，但这一收益受 Zipf 长尾分布支配，很快出现边际递减；与此同时，词表参数、输出层成本与长尾 token 稀疏性却会持续上升。词表规模因此不应被理解为“越大越充分”的按钮，而应被理解为压缩收益与建模代价之间的平衡点。

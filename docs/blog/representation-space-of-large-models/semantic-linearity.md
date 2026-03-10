@@ -7,6 +7,8 @@ tags: ["LLM", "embeddings", "representation learning"]
 
 # Embedding 空间中的语义线性结构
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/representation-space-of-large-models/semantic-linearity" en-path="/blog/representation-space-of-large-models/semantic-linearity-en" />
+
 语义线性之所以长期吸引研究者，并不是因为 `king - man + woman ≈ queen` 这类例子本身足够醒目，而是因为它揭示了一个更深层的问题：为什么分布式表示会反复把某些关系压缩成可复用的方向偏移？如果这种现象只是偶然，那么它不值得被系统讨论；如果它反复出现，就必须追问它对应的统计机制是什么 [1-9]。
 
 更稳妥的表述是，embedding 中的线性并不是自然语言满足某种全局欧氏公理，而是训练目标在压缩重复共现结构时产生的一种低复杂度几何编码。它在静态词向量、输入 embedding 和输出 embedding 中最清晰，在强上下文化后的高层隐藏状态里则会明显减弱。

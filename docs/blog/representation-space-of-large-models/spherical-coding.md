@@ -7,6 +7,8 @@ tags: ["LLM", "embeddings", "spherical code"]
 
 # LLM Embedding 的球面编码视角
 
+<BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/representation-space-of-large-models/spherical-coding" en-path="/blog/representation-space-of-large-models/spherical-coding-en" />
+
 一张大模型词表的 embedding 矩阵通常包含数万到数十万个 token，而表示维度却常常只有几千。若沿用低维线性代数的直觉，很容易误以为这样的系统必然“拥挤”。但真正决定容量的并不是维度是否大于词表规模，而是归一化后方向之间能否保持足够低的相关性 [1-9]。
 
 这正是球面编码视角的出发点。只要把每个 token embedding 归一化，整个词表就可以被看成单位球面上的一个点集，也就是一个受语义、频率和预测目标约束的高维码本。这样一来，问题就从“一词能否分到一维”转化为“在给定维度下，多少个方向仍可被可靠区分”。
