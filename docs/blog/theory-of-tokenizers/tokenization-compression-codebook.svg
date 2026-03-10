@@ -1,117 +1,145 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
   <title id="title">Tokenization as Compression with a Learned Codebook</title>
-  <desc id="desc">Shows raw character streams, a learned subword codebook, and a shorter token sequence produced by re-encoding frequent patterns as explicit symbols.</desc>
+  <desc id="desc">Academic-style diagram showing raw character patterns, a learned subword codebook, and a shorter token sequence produced by re-encoding frequent patterns as explicit symbols.</desc>
+
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#faf7ef" />
-      <stop offset="100%" stop-color="#f3efe6" />
+      <stop offset="0%" stop-color="#faf7ef"/>
+      <stop offset="100%" stop-color="#f3efe6"/>
     </linearGradient>
     <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#fbfaf6" />
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fbfaf6"/>
     </linearGradient>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08" />
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08"/>
     </filter>
-    <marker id="navyArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#244f7a" />
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 z" fill="#244f7a"/>
     </marker>
   </defs>
+
   <style>
-    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 30px; font-weight: 700; }
-    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 500; }
-    .pill { fill: #e7eef8; }
-    .pill-text { fill: #28496d; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; }
-    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 28; filter: url(#shadow); }
-    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 21px; font-weight: 700; }
-    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; font-weight: 500; }
-    .label { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 15px; font-weight: 700; }
-    .small { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 500; }
-    .formula-box { fill: #fff6ea; stroke: #edc28f; stroke-width: 1.5; rx: 18; }
-    .step-box { fill: #f6f1e7; stroke: #d7cbb6; stroke-width: 1.5; rx: 18; }
-    .token { fill: #fff2df; stroke: #e3b786; stroke-width: 1.5; rx: 14; }
-    .token2 { fill: #eef5fb; stroke: #a6bfd9; stroke-width: 1.5; rx: 14; }
-    .token3 { fill: #eef6ef; stroke: #a6c5aa; stroke-width: 1.5; rx: 14; }
-    .flow { stroke: #7e8ea4; stroke-width: 2.2; fill: none; marker-end: url(#navyArrow); }
+    .title { fill:#12263f; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:28px; font-weight:700; }
+    .subtitle { fill:#526277; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:14px; font-weight:500; }
+
+    .card { fill:url(#card); stroke:#d7dfeb; stroke-width:1.4; rx:22; filter:url(#shadow); }
+    .card-title { fill:#16324f; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:18px; font-weight:700; }
+    .body { fill:#4d5d73; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:12px; font-weight:500; }
+    .label { fill:#16324f; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:13px; font-weight:700; }
+    .small { fill:#5b6c82; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:11px; font-weight:500; }
+    .center { text-anchor:middle; }
+
+    .formula-box { fill:#fff6ea; stroke:#edc28f; stroke-width:1.3; rx:14; }
+    .step-box { fill:#f6f1e7; stroke:#d7cbb6; stroke-width:1.3; rx:14; }
+
+    .token { fill:#fff2df; stroke:#e3b786; stroke-width:1.2; rx:8; }
+    .token2 { fill:#eef5fb; stroke:#a6bfd9; stroke-width:1.2; rx:8; }
+    .token3 { fill:#eef6ef; stroke:#a6c5aa; stroke-width:1.2; rx:8; }
+
+    .flow { stroke:#7e8ea4; stroke-width:1.9; fill:none; marker-end:url(#arrow); }
   </style>
 
-  <rect x="0" y="0" width="980" height="560" fill="url(#bg)" rx="34" />
+  <rect x="0" y="0" width="980" height="560" fill="url(#bg)" rx="34"/>
 
-  <rect class="pill" x="52" y="36" width="92" height="34" rx="17" />
-  <text class="pill-text" x="98" y="58" text-anchor="middle">FIGURE 1</text>
-  <text class="title" x="52" y="112">Tokenization Re-encodes Text with a Finite Codebook</text>
-  <text class="subtitle" x="52" y="142">The tokenizer does not merely cut strings. It promotes frequent character patterns into explicit codewords and rewrites the input with fewer, denser symbols.</text>
+  <!-- Header -->
+  <text class="title" x="52" y="60">Tokenization Re-encodes Text with a Finite Codebook</text>
+  <text class="subtitle" x="52" y="84">
+    <tspan x="52" dy="0">A tokenizer does not merely cut strings.</tspan>
+    <tspan x="52" dy="17">It promotes frequent character patterns into explicit codewords.</tspan>
+  </text>
 
-  <rect class="card" x="44" y="176" width="272" height="330" rx="28" />
-  <rect class="card" x="334" y="176" width="302" height="330" rx="28" />
-  <rect class="card" x="654" y="176" width="282" height="330" rx="28" />
+  <!-- Central statement -->
+  <rect class="formula-box" x="350" y="114" width="280" height="50" rx="14"/>
+  <text class="label center" x="490" y="135">minimize expected token length</text>
+  <text class="small center" x="490" y="152">with a finite vocabulary and deterministic decode</text>
 
-  <text class="card-title" x="72" y="216">Raw Character Stream</text>
-  <text class="card-text" x="72" y="240">Frequent local patterns repeat across many words and sentences.</text>
-  <rect class="token" x="82" y="286" width="34" height="34" rx="10" />
-  <rect class="token" x="120" y="286" width="34" height="34" rx="10" />
-  <rect class="token" x="158" y="286" width="34" height="34" rx="10" />
-  <rect class="token" x="196" y="286" width="34" height="34" rx="10" />
-  <rect class="token" x="234" y="286" width="34" height="34" rx="10" />
-  <text class="small" x="99" y="308" text-anchor="middle">r</text>
-  <text class="small" x="137" y="308" text-anchor="middle">e</text>
-  <text class="small" x="175" y="308" text-anchor="middle">p</text>
-  <text class="small" x="213" y="308" text-anchor="middle">r</text>
-  <text class="small" x="251" y="308" text-anchor="middle">e</text>
-  <rect class="token" x="82" y="332" width="34" height="34" rx="10" />
-  <rect class="token" x="120" y="332" width="34" height="34" rx="10" />
-  <rect class="token" x="158" y="332" width="34" height="34" rx="10" />
-  <rect class="token" x="196" y="332" width="34" height="34" rx="10" />
-  <rect class="token" x="234" y="332" width="34" height="34" rx="10" />
-  <text class="small" x="99" y="354" text-anchor="middle">s</text>
-  <text class="small" x="137" y="354" text-anchor="middle">e</text>
-  <text class="small" x="175" y="354" text-anchor="middle">n</text>
-  <text class="small" x="213" y="354" text-anchor="middle">t</text>
-  <text class="small" x="251" y="354" text-anchor="middle">a</text>
-  <text class="small" x="84" y="412">same prefixes, suffixes, and chunks</text>
-  <text class="small" x="84" y="434">reappear with highly skewed frequencies</text>
+  <!-- Cards -->
+  <rect class="card" x="44" y="188" width="272" height="282" rx="22"/>
+  <rect class="card" x="334" y="188" width="302" height="282" rx="22"/>
+  <rect class="card" x="654" y="188" width="282" height="282" rx="22"/>
 
-  <text class="card-title" x="362" y="216">Learned Codebook</text>
-  <text class="card-text" x="362" y="240">BPE or unigram LM upgrades high-frequency chunks into explicit entries.</text>
-  <rect class="token2" x="376" y="286" width="92" height="36" rx="12" />
-  <rect class="token2" x="376" y="334" width="92" height="36" rx="12" />
-  <rect class="token2" x="376" y="382" width="92" height="36" rx="12" />
-  <rect class="token3" x="482" y="286" width="116" height="36" rx="12" />
-  <rect class="token3" x="482" y="334" width="116" height="36" rx="12" />
-  <rect class="token3" x="482" y="382" width="116" height="36" rx="12" />
-  <text class="small" x="422" y="309" text-anchor="middle">re</text>
-  <text class="small" x="422" y="357" text-anchor="middle">tion</text>
-  <text class="small" x="422" y="405" text-anchor="middle">ing</text>
-  <text class="small" x="540" y="309" text-anchor="middle">representation</text>
-  <text class="small" x="540" y="357" text-anchor="middle">language</text>
-  <text class="small" x="540" y="405" text-anchor="middle">compress</text>
+  <!-- Left -->
+  <text class="card-title" x="72" y="220">Raw character stream</text>
+  <text class="body" x="72" y="242">Frequent local patterns repeat.</text>
 
-  <text class="card-title" x="682" y="216">Shorter Token Sequence</text>
-  <text class="card-text" x="682" y="240">The rewritten sequence is shorter and denser, which lowers downstream model cost.</text>
-  <rect class="token3" x="690" y="292" width="86" height="38" rx="12" />
-  <rect class="token2" x="784" y="292" width="58" height="38" rx="12" />
-  <rect class="token" x="850" y="292" width="58" height="38" rx="12" />
-  <text class="small" x="733" y="316" text-anchor="middle">represent</text>
-  <text class="small" x="813" y="316" text-anchor="middle">ation</text>
-  <text class="small" x="879" y="316" text-anchor="middle">s</text>
-  <rect class="token2" x="690" y="346" width="66" height="38" rx="12" />
-  <rect class="token3" x="764" y="346" width="86" height="38" rx="12" />
-  <text class="small" x="723" y="370" text-anchor="middle">lang</text>
-  <text class="small" x="807" y="370" text-anchor="middle">uage</text>
-  <text class="small" x="690" y="426">fewer symbols</text>
-  <text class="small" x="690" y="446">higher semantic density</text>
+  <rect class="token" x="82" y="280" width="32" height="32" rx="8"/>
+  <rect class="token" x="118" y="280" width="32" height="32" rx="8"/>
+  <rect class="token" x="154" y="280" width="32" height="32" rx="8"/>
+  <rect class="token" x="190" y="280" width="32" height="32" rx="8"/>
+  <rect class="token" x="226" y="280" width="32" height="32" rx="8"/>
 
-  <path class="flow" d="M320 340 L330 340" />
-  <path class="flow" d="M638 340 L648 340" />
+  <text class="small center" x="98" y="299">r</text>
+  <text class="small center" x="134" y="299">e</text>
+  <text class="small center" x="170" y="299">p</text>
+  <text class="small center" x="206" y="299">r</text>
+  <text class="small center" x="242" y="299">e</text>
 
-  <rect class="formula-box" x="330" y="54" width="320" height="72" rx="18" />
-  <text class="label" x="490" y="84" text-anchor="middle">minimize expected token length</text>
-  <text class="small" x="490" y="110" text-anchor="middle">subject to finite vocabulary and deterministic decode</text>
+  <rect class="token" x="82" y="324" width="32" height="32" rx="8"/>
+  <rect class="token" x="118" y="324" width="32" height="32" rx="8"/>
+  <rect class="token" x="154" y="324" width="32" height="32" rx="8"/>
+  <rect class="token" x="190" y="324" width="32" height="32" rx="8"/>
+  <rect class="token" x="226" y="324" width="32" height="32" rx="8"/>
 
-  <rect class="step-box" x="84" y="516" width="242" height="24" rx="12" />
-  <rect class="step-box" x="368" y="516" width="242" height="24" rx="12" />
-  <rect class="step-box" x="652" y="516" width="242" height="24" rx="12" />
-  <text class="small" x="205" y="533" text-anchor="middle">Language provides reusable local structure</text>
-  <text class="small" x="489" y="533" text-anchor="middle">Tokenizer turns that structure into a codebook</text>
-  <text class="small" x="773" y="533" text-anchor="middle">The model sees a shorter, denser discrete sequence</text>
+  <text class="small center" x="98" y="343">s</text>
+  <text class="small center" x="134" y="343">e</text>
+  <text class="small center" x="170" y="343">n</text>
+  <text class="small center" x="206" y="343">t</text>
+  <text class="small center" x="242" y="343">a</text>
+
+  <rect class="step-box" x="80" y="388" width="178" height="42" rx="12"/>
+  <text class="small center" x="169" y="405">reusable prefixes</text>
+  <text class="small center" x="169" y="420">suffixes and chunks</text>
+
+  <!-- Middle -->
+  <text class="card-title" x="362" y="220">Learned codebook</text>
+  <text class="body" x="362" y="242">Frequent chunks become entries.</text>
+
+  <rect class="token2" x="376" y="280" width="88" height="32" rx="8"/>
+  <rect class="token2" x="376" y="324" width="88" height="32" rx="8"/>
+  <rect class="token2" x="376" y="368" width="88" height="32" rx="8"/>
+
+  <rect class="token3" x="476" y="280" width="120" height="32" rx="8"/>
+  <rect class="token3" x="476" y="324" width="120" height="32" rx="8"/>
+  <rect class="token3" x="476" y="368" width="120" height="32" rx="8"/>
+
+  <text class="small center" x="420" y="299">re</text>
+  <text class="small center" x="420" y="343">tion</text>
+  <text class="small center" x="420" y="387">ing</text>
+
+  <text class="small center" x="536" y="299">representation</text>
+  <text class="small center" x="536" y="343">language</text>
+  <text class="small center" x="536" y="387">compress</text>
+
+  <text class="small center" x="485" y="428">BPE or unigram LM builds an explicit inventory.</text>
+
+  <!-- Right -->
+  <text class="card-title" x="682" y="220">Shorter token sequence</text>
+  <text class="body" x="682" y="242">The rewritten sequence is shorter and denser.</text>
+
+  <rect class="token3" x="690" y="286" width="86" height="34" rx="8"/>
+  <rect class="token2" x="784" y="286" width="58" height="34" rx="8"/>
+  <rect class="token" x="850" y="286" width="48" height="34" rx="8"/>
+
+  <text class="small center" x="733" y="307">represent</text>
+  <text class="small center" x="813" y="307">ation</text>
+  <text class="small center" x="874" y="307">s</text>
+
+  <rect class="token2" x="690" y="334" width="66" height="34" rx="8"/>
+  <rect class="token3" x="764" y="334" width="86" height="34" rx="8"/>
+
+  <text class="small center" x="723" y="355">lang</text>
+  <text class="small center" x="807" y="355">uage</text>
+
+  <rect class="step-box" x="688" y="388" width="180" height="42" rx="12"/>
+  <text class="small center" x="778" y="405">fewer symbols</text>
+  <text class="small center" x="778" y="420">higher semantic density</text>
+
+  <!-- Flows -->
+  <path class="flow" d="M320 324 L330 324"/>
+  <path class="flow" d="M638 324 L648 324"/>
+
+  <!-- Takeaway -->
+  <rect class="step-box" x="182" y="506" width="616" height="22" rx="11"/>
+  <text class="small center" x="490" y="521">Tokenization turns recurring local structure into a finite codebook, yielding a shorter discrete sequence.</text>
 </svg>
