@@ -248,8 +248,6 @@ $$
 
 这也是为什么大模型训练几乎不存在银弹。真正把模型训练出来的，不是某个单独框架名词，而是一整套围绕内存、计算与通信持续重写系统边界的工程过程。
 
-返回专题目录：[Blog](/blog/)。
-
 ## 参考文献
 
 [1] RAJBHANDARI S, RASLEY J, RUWASE O, et al. ZeRO: Memory Optimizations Toward Training Trillion Parameter Models[J]. *arXiv preprint arXiv:1910.02054*, 2020. DOI: [10.48550/arXiv.1910.02054](https://doi.org/10.48550/arXiv.1910.02054).
