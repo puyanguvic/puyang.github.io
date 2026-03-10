@@ -248,8 +248,6 @@ Once a model no longer fits on one GPU, the training problem is no longer just "
 
 That is why large-model training rarely has a silver bullet. What actually trains the model is not a framework name by itself, but an engineering process that repeatedly redraws the system boundary around memory, compute, and communication.
 
-Return to the topic overview: [Blog](/blog/).
-
 ## References
 
 [1] RAJBHANDARI S, RASLEY J, RUWASE O, et al. ZeRO: Memory Optimizations Toward Training Trillion Parameter Models[J]. *arXiv preprint arXiv:1910.02054*, 2020. DOI: [10.48550/arXiv.1910.02054](https://doi.org/10.48550/arXiv.1910.02054).
