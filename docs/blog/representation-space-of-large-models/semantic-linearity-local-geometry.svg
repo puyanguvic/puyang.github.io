@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
   <title id="title">Local Geometry of Semantic Linearity</title>
   <desc id="desc">Three panels showing analogy offsets, reusable local subspaces, and contextual warping that weakens global linearity in language model representations.</desc>
+
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#faf7ef" />
@@ -13,112 +14,165 @@
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08" />
     </filter>
-    <marker id="navyArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#244f7a" />
+
+    <marker id="navyArrow" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 z" fill="#244f7a" />
     </marker>
-    <marker id="orangeArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#cf6d1d" />
+    <marker id="orangeArrow" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 z" fill="#cf6d1d" />
     </marker>
-    <marker id="greenArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#6a8f6b" />
+    <marker id="greenArrow" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 z" fill="#6a8f6b" />
     </marker>
   </defs>
+
   <style>
-    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 30px; font-weight: 700; }
-    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 500; }
-    .pill { fill: #e7eef8; }
-    .pill-text { fill: #28496d; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; }
-    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 28; filter: url(#shadow); }
-    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 21px; font-weight: 700; }
-    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; font-weight: 500; }
+    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 28px; font-weight: 700; }
+    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; font-weight: 500; }
+
+    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 26; filter: url(#shadow); }
+    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 20px; font-weight: 700; }
+    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13.5px; font-weight: 500; }
+
     .label { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 15px; font-weight: 700; }
-    .small { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 500; }
-    .formula-box { fill: #fff6ea; stroke: #edc28f; stroke-width: 1.5; rx: 18; }
-    .step-box { fill: #f6f1e7; stroke: #d7cbb6; stroke-width: 1.5; rx: 18; }
+    .formula { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 18px; font-weight: 700; }
+    .small { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 12.5px; font-weight: 500; }
+    .small-center { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 12.5px; font-weight: 500; text-anchor: middle; }
+
+    .formula-box { fill: #fff6ea; stroke: #edc28f; stroke-width: 1.4; rx: 16; }
+    .step-box { fill: #f6f1e7; stroke: #d7cbb6; stroke-width: 1.4; rx: 16; }
+
     .blue { fill: #244f7a; }
     .orange { fill: #cf6d1d; }
     .green { fill: #6a8f6b; }
     .purple { fill: #7d6aa0; }
-    .soft-line { fill: none; stroke: #8da0b8; stroke-width: 2; stroke-dasharray: 6 6; }
-    .ctx-line { fill: none; stroke: #8fa0b5; stroke-width: 3; }
+
+    .soft-line { fill: none; stroke: #9aa9bc; stroke-width: 1.8; stroke-dasharray: 5.5 5.5; }
+    .ctx-line { fill: none; stroke: #8fa0b5; stroke-width: 2.4; }
+    .guide-line { fill: none; stroke: #b7c3d1; stroke-width: 1.3; }
+
+    .arrow-blue { stroke: #244f7a; stroke-width: 2.8; }
+    .arrow-orange { stroke: #cf6d1d; stroke-width: 2.8; }
+    .arrow-green { stroke: #6a8f6b; stroke-width: 2.8; }
   </style>
 
   <rect x="0" y="0" width="980" height="560" fill="url(#bg)" rx="34" />
 
-  <rect class="pill" x="52" y="36" width="92" height="34" rx="17" />
-  <text class="pill-text" x="98" y="58" text-anchor="middle">FIGURE 1</text>
-  <text class="title" x="52" y="112">Semantic Linearity Is Usually Local, Not Global</text>
-  <text class="subtitle" x="52" y="142">Stable relation offsets emerge when many lexical pairs share similar context statistics, but contextualization bends those offsets away from a single universal axis.</text>
+  <!-- Header -->
+  <text class="title" x="52" y="64">Semantic Linearity Is Usually Local, Not Global</text>
+  <text class="subtitle" x="52" y="90">
+    <tspan x="52" dy="0">Stable relation offsets emerge when many lexical pairs share similar context statistics,</tspan>
+    <tspan x="52" dy="18">but contextualization bends those offsets away from a single universal axis.</tspan>
+  </text>
 
-  <rect class="formula-box" x="670" y="48" width="258" height="74" rx="18" />
-  <text class="label" x="799" y="79" text-anchor="middle">v_b - v_a ≈ v_d - v_c</text>
-  <text class="small" x="799" y="105" text-anchor="middle">relation consistency, not exact arithmetic</text>
+  <!-- Formula box -->
+  <rect class="formula-box" x="692" y="94" width="246" height="72" rx="16" />
+  <text class="formula" x="815" y="118" text-anchor="middle">
+    <tspan>v</tspan><tspan baseline-shift="sub" font-size="11">b</tspan>
+    <tspan> − v</tspan><tspan baseline-shift="sub" font-size="11">a</tspan>
+    <tspan> ≈ v</tspan><tspan baseline-shift="sub" font-size="11">d</tspan>
+    <tspan> − v</tspan><tspan baseline-shift="sub" font-size="11">c</tspan>
+  </text>
+  <text class="small-center" x="815" y="140">idealized relation</text>
+  <text class="small-center" x="815" y="155">often only locally valid</text>
 
-  <rect class="card" x="44" y="176" width="286" height="330" rx="28" />
-  <rect class="card" x="347" y="176" width="286" height="330" rx="28" />
-  <rect class="card" x="650" y="176" width="286" height="330" rx="28" />
+  <!-- Cards -->
+  <rect class="card" x="44" y="176" width="286" height="314" rx="26" />
+  <rect class="card" x="347" y="176" width="286" height="314" rx="26" />
+  <rect class="card" x="650" y="176" width="286" height="314" rx="26" />
 
-  <text class="card-title" x="72" y="216">Analogy Offset</text>
-  <text class="card-text" x="72" y="240">Repeated relations are compressed into reusable vector differences.</text>
-  <circle cx="106" cy="392" r="7" class="blue" />
-  <circle cx="206" cy="312" r="7" class="blue" />
-  <circle cx="152" cy="438" r="7" class="orange" />
-  <circle cx="252" cy="358" r="7" class="orange" />
-  <line x1="106" y1="392" x2="196" y2="320" stroke="#244f7a" stroke-width="4" marker-end="url(#navyArrow)" />
-  <line x1="152" y1="438" x2="242" y2="366" stroke="#cf6d1d" stroke-width="4" marker-end="url(#orangeArrow)" />
-  <line class="soft-line" x1="106" y1="392" x2="152" y2="438" />
-  <line class="soft-line" x1="206" y1="312" x2="252" y2="358" />
-  <text class="label" x="84" y="386">man</text>
-  <text class="label" x="205" y="304">king</text>
-  <text class="label" x="134" y="462">woman</text>
-  <text class="label" x="250" y="380">queen</text>
-  <text class="small" x="76" y="276">same offset family</text>
-  <text class="small" x="76" y="294">works for analogy retrieval</text>
+  <!-- Card 1 -->
+  <text class="card-title" x="72" y="212">Analogy Offset</text>
+  <text class="card-text" x="72" y="235">
+    <tspan x="72" dy="0">Repeated relations are compressed</tspan>
+    <tspan x="72" dy="17">into reusable vector differences.</tspan>
+  </text>
+  <text class="small" x="72" y="270">same offset family</text>
+  <text class="small" x="72" y="287">works for analogy retrieval</text>
 
-  <text class="card-title" x="375" y="216">Subspace Sharing</text>
-  <text class="card-text" x="375" y="240">Gender, tense, and number behave more like local direction families.</text>
-  <circle cx="426" cy="304" r="7" class="blue" />
-  <circle cx="464" cy="274" r="7" class="blue" />
-  <line x1="426" y1="304" x2="455" y2="281" stroke="#244f7a" stroke-width="4" marker-end="url(#navyArrow)" />
-  <text class="small" x="496" y="281">gender</text>
+  <circle cx="108" cy="390" r="6.3" class="blue" />
+  <circle cx="204" cy="314" r="6.3" class="blue" />
+  <circle cx="154" cy="436" r="6.3" class="orange" />
+  <circle cx="250" cy="360" r="6.3" class="orange" />
 
-  <circle cx="408" cy="382" r="7" class="orange" />
-  <circle cx="458" cy="382" r="7" class="orange" />
-  <line x1="408" y1="382" x2="449" y2="382" stroke="#cf6d1d" stroke-width="4" marker-end="url(#orangeArrow)" />
-  <text class="small" x="494" y="386">plural</text>
+  <line x1="108" y1="390" x2="196" y2="321" class="arrow-blue" marker-end="url(#navyArrow)" />
+  <line x1="154" y1="436" x2="242" y2="367" class="arrow-orange" marker-end="url(#orangeArrow)" />
+  <line class="soft-line" x1="108" y1="390" x2="154" y2="436" />
+  <line class="soft-line" x1="204" y1="314" x2="250" y2="360" />
 
-  <circle cx="414" cy="452" r="7" class="green" />
-  <circle cx="452" cy="418" r="7" class="green" />
-  <line x1="414" y1="452" x2="444" y2="425" stroke="#6a8f6b" stroke-width="4" marker-end="url(#greenArrow)" />
-  <text class="small" x="492" y="426">tense</text>
+  <text class="label" x="80" y="384">man</text>
+  <text class="label" x="200" y="306">king</text>
+  <text class="label" x="126" y="460">woman</text>
+  <text class="label" x="246" y="383">queen</text>
 
-  <rect class="step-box" x="505" y="282" width="102" height="40" rx="18" />
-  <rect class="step-box" x="505" y="364" width="102" height="40" rx="18" />
-  <rect class="step-box" x="505" y="436" width="102" height="40" rx="18" />
-  <text class="small" x="556" y="307" text-anchor="middle">local cluster</text>
-  <text class="small" x="556" y="389" text-anchor="middle">transferable</text>
-  <text class="small" x="556" y="461" text-anchor="middle">not universal</text>
+  <!-- Card 2 -->
+  <text class="card-title" x="375" y="212">Subspace Sharing</text>
+  <text class="card-text" x="375" y="235">
+    <tspan x="375" dy="0">Gender, tense, and number behave</tspan>
+    <tspan x="375" dy="17">more like local direction families.</tspan>
+  </text>
 
-  <text class="card-title" x="678" y="216">Contextual Warping</text>
-  <text class="card-text" x="678" y="240">The same token drifts across contexts, weakening any single global offset.</text>
-  <path class="ctx-line" d="M700 430 C734 304, 798 290, 844 356 C866 388, 887 405, 904 350" />
-  <circle cx="712" cy="408" r="7" class="purple" />
-  <circle cx="758" cy="320" r="7" class="purple" />
-  <circle cx="829" cy="344" r="7" class="purple" />
-  <circle cx="894" cy="357" r="7" class="purple" />
-  <text class="label" x="689" y="452">bank</text>
-  <text class="small" x="736" y="426">river bank</text>
-  <text class="small" x="736" y="304">central bank</text>
-  <text class="small" x="820" y="328">investment bank</text>
-  <text class="small" x="858" y="392">context-specific drift</text>
-  <line class="soft-line" x1="720" y1="404" x2="890" y2="357" />
-  <text class="small" x="686" y="276">same lexical type</text>
-  <text class="small" x="686" y="294">different hidden states</text>
+  <circle cx="394" cy="300" r="6.3" class="blue" />
+  <circle cx="439" cy="272" r="6.3" class="blue" />
+  <line x1="394" y1="300" x2="431" y2="277" class="arrow-blue" marker-end="url(#navyArrow)" />
 
-  <rect class="step-box" x="64" y="516" width="262" height="24" rx="12" />
-  <rect class="step-box" x="359" y="516" width="262" height="24" rx="12" />
-  <rect class="step-box" x="654" y="516" width="262" height="24" rx="12" />
-  <text class="small" x="195" y="533" text-anchor="middle">Offsets encode repeated lexical relations</text>
-  <text class="small" x="490" y="533" text-anchor="middle">Directions are usually local subspaces</text>
-  <text class="small" x="785" y="533" text-anchor="middle">Context bends upper-layer geometry</text>
+  <circle cx="394" cy="372" r="6.3" class="orange" />
+  <circle cx="451" cy="372" r="6.3" class="orange" />
+  <line x1="394" y1="372" x2="443" y2="372" class="arrow-orange" marker-end="url(#orangeArrow)" />
+
+  <circle cx="398" cy="440" r="6.3" class="green" />
+  <circle cx="443" cy="408" r="6.3" class="green" />
+  <line x1="398" y1="440" x2="435" y2="414" class="arrow-green" marker-end="url(#greenArrow)" />
+
+  <text class="small" x="470" y="282">gender</text>
+  <text class="small" x="470" y="376">plural</text>
+  <text class="small" x="470" y="422">tense</text>
+
+  <rect class="step-box" x="522" y="262" width="88" height="34" rx="15" />
+  <rect class="step-box" x="522" y="354" width="88" height="34" rx="15" />
+  <rect class="step-box" x="522" y="420" width="88" height="34" rx="15" />
+
+  <text class="small-center" x="566" y="283">local cluster</text>
+  <text class="small-center" x="566" y="375">transferable</text>
+  <text class="small-center" x="566" y="441">not universal</text>
+
+  <!-- Card 3 -->
+  <text class="card-title" x="678" y="212">Contextual Warping</text>
+  <text class="card-text" x="678" y="235">
+    <tspan x="678" dy="0">The same token drifts across contexts,</tspan>
+    <tspan x="678" dy="17">weakening any single global offset.</tspan>
+  </text>
+
+  <text class="small" x="678" y="270">same lexical type</text>
+  <text class="small" x="678" y="287">different hidden states</text>
+
+  <path class="ctx-line" d="M700 418 C728 332, 780 298, 832 334 C862 356, 886 376, 905 340" />
+  <circle cx="712" cy="402" r="6.3" class="purple" />
+  <circle cx="758" cy="322" r="6.3" class="purple" />
+  <circle cx="828" cy="339" r="6.3" class="purple" />
+  <circle cx="894" cy="351" r="6.3" class="purple" />
+  <line class="soft-line" x1="721" y1="399" x2="888" y2="351" />
+
+  <text class="label" x="682" y="444">bank</text>
+
+  <line class="guide-line" x1="708" y1="402" x2="690" y2="389" />
+  <text class="small" x="668" y="388">river</text>
+
+  <line class="guide-line" x1="758" y1="322" x2="778" y2="302" />
+  <text class="small" x="780" y="300">central bank</text>
+
+  <line class="guide-line" x1="828" y1="339" x2="850" y2="326" />
+  <text class="small" x="852" y="325">investment</text>
+
+  <line class="guide-line" x1="894" y1="351" x2="882" y2="378" />
+  <text class="small" x="790" y="387">context drift</text>
+
+  <!-- Bottom summaries -->
+  <rect class="step-box" x="64" y="500" width="246" height="24" rx="12" />
+  <rect class="step-box" x="367" y="500" width="246" height="24" rx="12" />
+  <rect class="step-box" x="670" y="500" width="246" height="24" rx="12" />
+
+  <text class="small-center" x="187" y="516">Offsets encode repeated lexical relations</text>
+  <text class="small-center" x="490" y="516">Directions are usually local subspaces</text>
+  <text class="small-center" x="793" y="516">Context bends upper-layer geometry</text>
 </svg>
