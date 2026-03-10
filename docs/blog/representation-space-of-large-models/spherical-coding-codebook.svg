@@ -1,101 +1,128 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
-  <title id="title">Token Embeddings as a Spherical Codebook</title>
-  <desc id="desc">A diagram showing token embeddings on a hyperspherical codebook, the angular separation objective, and why 4096 dimensions are enough for a 100k vocabulary under the Welch bound.</desc>
+  <title id="title">Vocabulary Geometry as a High-Dimensional Spherical Code</title>
+  <desc id="desc">A refined two-panel figure showing normalized token embeddings as spherical codewords and the Welch-bound capacity of a 4096-dimensional embedding space for a 100k vocabulary.</desc>
+
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#faf7ef" />
-      <stop offset="100%" stop-color="#f3efe6" />
+      <stop offset="0%" stop-color="#faf7ef"/>
+      <stop offset="100%" stop-color="#f3efe6"/>
     </linearGradient>
     <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#fbfaf6" />
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fbfaf6"/>
     </linearGradient>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08" />
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08"/>
     </filter>
-    <marker id="navyArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#244f7a" />
+
+    <marker id="blueArrow" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 z" fill="#244f7a"/>
     </marker>
-    <marker id="orangeArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#cf6d1d" />
+    <marker id="orangeArrow" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 z" fill="#cf6d1d"/>
+    </marker>
+    <marker id="greenArrow" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 z" fill="#6a8f6b"/>
+    </marker>
+    <marker id="purpleArrow" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 z" fill="#7d6aa0"/>
     </marker>
   </defs>
+
   <style>
-    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 30px; font-weight: 700; }
-    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 500; }
-    .pill { fill: #e7eef8; }
-    .pill-text { fill: #28496d; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; }
-    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 28; filter: url(#shadow); }
-    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 22px; font-weight: 700; }
-    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; font-weight: 500; }
-    .label { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 15px; font-weight: 700; }
-    .small { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 500; }
-    .formula-box { fill: #fff6ea; stroke: #edc28f; stroke-width: 1.5; rx: 18; }
-    .step-box { fill: #f6f1e7; stroke: #d7cbb6; stroke-width: 1.5; rx: 18; }
-    .shell-base { fill: #fff0df; stroke: #e2b280; stroke-width: 2; }
-    .shell-ring { fill: none; stroke: #f29c4a; stroke-width: 24; opacity: 0.92; }
-    .blue { fill: #244f7a; }
-    .orange { fill: #cf6d1d; }
-    .green { fill: #6a8f6b; }
-    .purple { fill: #7d6aa0; }
-    .guide { fill: none; stroke: #8fa0b5; stroke-width: 2; stroke-dasharray: 6 6; }
-    .angle { fill: none; stroke: #7d8ea5; stroke-width: 2.2; }
+    .title { fill:#12263f; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:29px; font-weight:700; }
+    .subtitle { fill:#526277; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:15px; font-weight:500; }
+
+    .card { fill:url(#card); stroke:#d7dfeb; stroke-width:1.5; rx:24; filter:url(#shadow); }
+    .card-title { fill:#16324f; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:20px; font-weight:700; }
+    .body { fill:#4d5d73; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:13px; font-weight:500; }
+    .label { fill:#16324f; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:14px; font-weight:700; }
+    .small { fill:#5b6c82; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:12px; font-weight:500; }
+    .small-center { fill:#5b6c82; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:12px; font-weight:500; text-anchor:middle; }
+    .formula { fill:#16324f; font-family:"Avenir Next","PingFang SC","Noto Sans SC","Source Han Sans SC",sans-serif; font-size:18px; font-weight:700; }
+
+    .formula-box { fill:#fff6ea; stroke:#edc28f; stroke-width:1.4; rx:16; }
+    .step-box { fill:#f6f1e7; stroke:#d7cbb6; stroke-width:1.4; rx:16; }
+
+    .shell-base { fill:#fff0df; stroke:#e2b280; stroke-width:2; }
+    .shell-ring { fill:none; stroke:#f29c4a; stroke-width:20; opacity:0.92; }
+
+    .angle { fill:none; stroke:#7d8ea5; stroke-width:2; }
+
+    .arrow-blue { stroke:#244f7a; stroke-width:3; }
+    .arrow-orange { stroke:#cf6d1d; stroke-width:3; }
+    .arrow-green { stroke:#6a8f6b; stroke-width:3; opacity:0.9; }
+    .arrow-purple { stroke:#7d6aa0; stroke-width:3; opacity:0.85; }
   </style>
 
-  <rect x="0" y="0" width="980" height="560" fill="url(#bg)" rx="34" />
+  <rect x="0" y="0" width="980" height="560" fill="url(#bg)" rx="34"/>
 
-  <rect class="pill" x="52" y="36" width="92" height="34" rx="17" />
-  <text class="pill-text" x="98" y="58" text-anchor="middle">FIGURE 1</text>
-  <text class="title" x="52" y="112">Vocabulary Geometry as a High-Dimensional Spherical Code</text>
-  <text class="subtitle" x="52" y="142">Once token vectors are read primarily through angles, the key question becomes angular separation, not one-dimension-per-token allocation.</text>
+  <!-- Header -->
+  <text class="title" x="52" y="68">Vocabulary Geometry as a High-Dimensional Spherical Code</text>
+  <text class="subtitle" x="52" y="98">
+    <tspan x="52" dy="0">Normalized token rows behave like codewords on a shared sphere.</tspan>
+    <tspan x="52" dy="19">Capacity is governed by angular separation rather than one axis per token.</tspan>
+  </text>
 
-  <rect class="card" x="44" y="176" width="432" height="330" rx="28" />
-  <rect class="card" x="506" y="176" width="430" height="330" rx="28" />
+  <!-- Panels -->
+  <rect class="card" x="44" y="150" width="430" height="330" rx="24"/>
+  <rect class="card" x="506" y="150" width="430" height="330" rx="24"/>
 
-  <text class="card-title" x="74" y="216">Left: Token Codebook on a Shared Shell</text>
-  <text class="card-text" x="74" y="240">After normalization, each vocabulary item becomes a point on the sphere and separation is measured by angle.</text>
-  <circle class="shell-base" cx="256" cy="352" r="136" opacity="0.72" />
-  <circle class="shell-ring" cx="256" cy="352" r="116" />
-  <circle cx="256" cy="352" r="5" fill="#7d8ea5" />
-  <line x1="256" y1="352" x2="337" y2="273" stroke="#244f7a" stroke-width="4" marker-end="url(#navyArrow)" />
-  <line x1="256" y1="352" x2="372" y2="338" stroke="#cf6d1d" stroke-width="4" marker-end="url(#orangeArrow)" />
-  <line x1="256" y1="352" x2="191" y2="257" stroke="#6a8f6b" stroke-width="4" marker-end="url(#navyArrow)" opacity="0.85" />
-  <line x1="256" y1="352" x2="171" y2="429" stroke="#7d6aa0" stroke-width="4" marker-end="url(#orangeArrow)" opacity="0.8" />
-  <path class="angle" d="M305 305 A66 66 0 0 1 371 343" />
-  <text class="small" x="351" y="303">θ_min</text>
-  <text class="label" x="342" y="267">token i</text>
-  <text class="label" x="379" y="340">token j</text>
-  <text class="small" x="92" y="456">semantic neighbors may cluster locally</text>
-  <text class="small" x="92" y="476">but global pairwise correlations stay small</text>
+  <!-- Left panel -->
+  <text class="card-title" x="74" y="188">Shared spherical codebook</text>
+  <text class="body" x="74" y="212">Each token is a direction; similarity is read through angle.</text>
 
-  <rect class="formula-box" x="84" y="272" width="132" height="70" rx="16" />
-  <text class="label" x="150" y="300" text-anchor="middle">C ⊂ S^(d-1)</text>
-  <text class="small" x="150" y="326" text-anchor="middle">μ = max |c_i^T c_j|</text>
+  <circle class="shell-base" cx="286" cy="332" r="118" opacity="0.72"/>
+  <circle class="shell-ring" cx="286" cy="332" r="100"/>
+  <circle cx="286" cy="332" r="4.5" fill="#7d8ea5"/>
 
-  <text class="card-title" x="536" y="216">Right: Capacity Is Angular, Not Axis-Based</text>
-  <text class="card-text" x="536" y="240">The Welch bound shows that a 4096-dimensional codebook can host a 100k vocabulary with near-orthogonal directions.</text>
+  <line x1="286" y1="332" x2="352" y2="268" class="arrow-blue" marker-end="url(#blueArrow)"/>
+  <line x1="286" y1="332" x2="383" y2="321" class="arrow-orange" marker-end="url(#orangeArrow)"/>
+  <line x1="286" y1="332" x2="232" y2="255" class="arrow-green" marker-end="url(#greenArrow)"/>
+  <line x1="286" y1="332" x2="210" y2="397" class="arrow-purple" marker-end="url(#purpleArrow)"/>
 
-  <rect class="formula-box" x="536" y="274" width="370" height="84" rx="18" />
-  <text class="label" x="561" y="307">Welch bound</text>
-  <text class="label" x="561" y="335">μ^2 ≥ (N - d) / (d (N - 1))</text>
+  <path class="angle" d="M326 298 A54 54 0 0 1 379 325"/>
+  <text class="small" x="362" y="294">θ_min</text>
 
-  <rect class="step-box" x="536" y="382" width="112" height="78" rx="18" />
-  <rect class="step-box" x="664" y="382" width="112" height="78" rx="18" />
-  <rect class="step-box" x="792" y="382" width="112" height="78" rx="18" />
-  <text class="label" x="592" y="410" text-anchor="middle">d = 4096</text>
-  <text class="small" x="592" y="434" text-anchor="middle">1 / sqrt(d)</text>
-  <text class="small" x="592" y="452" text-anchor="middle">≈ 0.0156</text>
-  <text class="label" x="720" y="410" text-anchor="middle">N = 100k</text>
-  <text class="small" x="720" y="434" text-anchor="middle">Welch lower bound</text>
-  <text class="small" x="720" y="452" text-anchor="middle">μ ≈ 0.0153</text>
-  <text class="label" x="848" y="410" text-anchor="middle">θ ≈ 89.1°</text>
-  <text class="small" x="848" y="434" text-anchor="middle">near orthogonal</text>
-  <text class="small" x="848" y="452" text-anchor="middle">still room for structure</text>
+  <text class="label" x="356" y="262">token i</text>
+  <text class="label" x="389" y="325">token j</text>
 
-  <rect class="step-box" x="90" y="516" width="244" height="24" rx="12" />
-  <rect class="step-box" x="368" y="516" width="244" height="24" rx="12" />
-  <rect class="step-box" x="646" y="516" width="244" height="24" rx="12" />
-  <text class="small" x="212" y="533" text-anchor="middle">Normalize token rows into codewords</text>
-  <text class="small" x="490" y="533" text-anchor="middle">Use angles to read separation and similarity</text>
-  <text class="small" x="768" y="533" text-anchor="middle">Training injects semantics into the codebook</text>
+  <rect class="formula-box" x="82" y="246" width="152" height="76" rx="16"/>
+  <text class="label" x="158" y="274" text-anchor="middle">C ⊂ S^(d−1)</text>
+  <text class="small-center" x="158" y="300">μ = max |cᵢᵀcⱼ|</text>
+
+  <text class="small-center" x="258" y="447">Local structure can coexist with low global coherence.</text>
+
+  <!-- Right panel -->
+  <text class="card-title" x="536" y="188">Angular capacity</text>
+  <text class="body" x="536" y="212">
+    <tspan x="536" dy="0">Welch bound gives the coherence floor</tspan>
+    <tspan x="536" dy="17">for a codebook of size N in dimension d.</tspan>
+  </text>
+
+  <rect class="formula-box" x="536" y="252" width="370" height="84" rx="16"/>
+  <text class="label" x="562" y="281">Welch bound</text>
+  <text class="formula" x="562" y="312">μ² ≥ (N − d) / (d (N − 1))</text>
+
+  <rect class="step-box" x="536" y="360" width="112" height="82" rx="16"/>
+  <rect class="step-box" x="665" y="360" width="112" height="82" rx="16"/>
+  <rect class="step-box" x="794" y="360" width="112" height="82" rx="16"/>
+
+  <text class="label" x="592" y="389" text-anchor="middle">d = 4096</text>
+  <text class="small-center" x="592" y="413">1 / √d</text>
+  <text class="small-center" x="592" y="431">≈ 0.0156</text>
+
+  <text class="label" x="721" y="389" text-anchor="middle">N = 100k</text>
+  <text class="small-center" x="721" y="413">Welch floor</text>
+  <text class="small-center" x="721" y="431">μ ≈ 0.0153</text>
+
+  <text class="label" x="850" y="389" text-anchor="middle">θ ≈ 89.1°</text>
+  <text class="small-center" x="850" y="413">near orthogonal</text>
+  <text class="small-center" x="850" y="431">still structured</text>
+
+  <text class="small-center" x="721" y="458">A 4096-D embedding space already supports a 100k vocabulary.</text>
+
+  <!-- Bottom takeaway -->
+  <rect class="step-box" x="176" y="502" width="628" height="28" rx="14"/>
+  <text class="small-center" x="490" y="520">Normalize rows, control coherence, and let training organize the codebook semantically.</text>
 </svg>
