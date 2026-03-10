@@ -21,7 +21,7 @@ export default defineConfig({
     hostname: siteUrl
   },
   themeConfig: {
-    logo: "/image/profile.png",
+    logo: "/image/profile.jpg",
     nav: [
       { text: "Home", link: "/" },
       { text: "Blog", link: "/blog/" },

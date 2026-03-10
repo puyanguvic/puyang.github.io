@@ -18,6 +18,6 @@
         <a href="/cv/puyang-resume.pdf">CV</a>
       </div>
     </div>
-    <img class="home-intro__image" src="/image/profile.png" alt="Pu Yang" />
+    <img class="home-intro__image" src="/image/profile.jpg" alt="Pu Yang" />
   </section>
 </template>
