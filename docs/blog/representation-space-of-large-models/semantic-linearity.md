@@ -1,129 +1,150 @@
 ---
 title: "Embedding 空间中的语义线性结构"
 date: 2026-03-09T11:00:00-08:00
-summary: "从 king - man + woman 的经典现象出发，讨论语义子空间、群表示与语义变换为什么会呈现出近似线性结构。"
+summary: "从类比任务、PMI 因子分解与语义子空间出发，讨论 embedding 空间中的语义关系为何常呈现近似线性。"
 tags: ["LLM", "embeddings", "representation learning"]
 ---
 
 # Embedding 空间中的语义线性结构
 
-现代机器学习里最让人印象深刻的一类现象，就是语义关系似乎能够在向量空间中以“方向”的形式被表达出来。最经典的例子当然是：
+在表示学习里，一个持续吸引研究者的现象是：某些语义关系能够稳定地表现为向量差分，即
+
+$$
+v_b - v_a \approx v_d - v_c.
+$$
+
+最经典的例子当然是
 
 $$
 \text{king} - \text{man} + \text{woman} \approx \text{queen}.
 $$
 
-这类例子之所以有吸引力，是因为它把原本很抽象的语言关系，转化成了一个几何问题：如果我们从一个词向量里减去“男性”的方向，再加上“女性”的方向，结果会落在“女王”附近。也就是说，语义似乎不仅能被编码成点的位置，还能被编码成点与点之间的位移。
+但如果把这个现象只理解为“词向量会做算术”，其实仍然太浅。更重要的问题是：为什么训练目标会反复诱导出这种结构？为什么某些关系能被压缩为可复用的方向，而另一些却不能？以及，这种线性究竟是全局规律，还是局部近似？
 
-这听起来像魔法，但它真正启发人的地方不在于某个单独例子，而在于背后的问题：为什么语义关系会近似线性？为什么很多概念变化，看起来像是在 embedding 空间里沿某个方向做平移？而这种“线性”到底是真的线性，还是一种局部近似？
+> 核心结论：embedding 空间中的语义线性，通常不是语言本身满足了全局线性公理，而是分布式训练目标、共享共现统计与低秩压缩共同诱导出的局部近似；它在静态词向量以及 LLM 的输入/输出 embedding 中最明显，在强上下文化后的高层表示中则会显著减弱 [1-9]。
 
-这篇文章想从经典例子、语义子空间、群表示和表示学习的角度，回答这个问题。
+## 1. 类比现象真正说明了什么？
 
-## 1. 经典例子：king − man + woman 为什么会工作？
+Mikolov 等人在词类比任务中观察到，许多语义与句法关系都可以被“关系向量”近似表达：如果两个词对共享同一种关系，那么它们的差分往往会彼此接近 [1][2]。GloVe 则进一步把这种现象提升为建模目标的一部分，明确讨论了为什么某些“意义方向”会在向量空间中浮现出来 [3]。
 
-我们先看最常被引用的类比任务。假设词向量空间里存在以下关系：
-
-- `king` 和 `queen` 都表示“君主”
-- `man` 和 `woman` 表示“性别差异”
-
-如果 embedding 学得足够好，那么“从男性到女性”的变换，很可能不是散落在整个空间里的杂乱扰动，而是一个相对稳定的方向。这时
+更严格地说，类比任务测试的不是单个词的绝对位置，而是下面这个**关系一致性假设**：
 
 $$
-\text{king} - \text{man}
+v_{\text{queen}} - v_{\text{king}}
+\approx
+v_{\text{woman}} - v_{\text{man}}.
 $$
 
-可以被理解为“从 king 中去掉男性因素”，再加上 `woman` 的方向，就得到一个兼具“君主”与“女性”属性的位置，也就是 `queen`。
+如果同一类关系在许多词对上都共享相似的位移，那么最近邻搜索就会把
 
-当然，真实情况没有这么整洁。词向量不是逻辑电路，语义也不是几根独立轴。`king - man + woman = queen` 之所以常被拿来展示，不是因为它严格成立，而是因为它说明了一件更深层的事：embedding 空间中的某些语义变化具有可复用的几何模式。
+$$
+v_b - v_a + v_c
+$$
 
-也就是说，语义不是只能通过绝对位置表示，它还可以通过相对位移表达。你可以把一个向量看成“某个实体当前所处的语义状态”，那么减去一个方向、加上另一个方向，就像是在做语义变换。
+映射到一个合理答案附近。于是，`king - man + woman` 能工作，并不是因为空间里存在一条精确的“女性轴”，而是因为“男性到女性”的变换在若干相关词对上表现出可复用的几何模式 [1-3]。
 
-这个观点一旦成立，embedding 空间就不再只是一个查表系统，而更像一个可计算的表示空间。模型不仅知道“词是什么”，还在某种程度上知道“概念之间可以怎样变化”。
+![语义线性的局部结构示意图](./semantic-linearity-local-geometry.svg)
 
-## 2. 语义子空间：gender、tense、plural
+*图 1. 语义线性更适合理解为“局部稳定的关系偏移”：在静态 embedding 中，一些常见关系会形成可复用方向；而在更强的上下文化表示中，同一词项会随语境发生明显漂移。*
 
-要理解语义线性，最关键的概念是 **语义子空间**。所谓子空间，并不一定是严格的线性子空间，而是指某类语义变化大致沿着某些稳定方向或局部方向簇展开。
+## 2. 为什么共现学习会鼓励线性偏移？
 
-### gender
+理解这一点的关键，不是从类比题本身出发，而是回到 embedding 的训练目标。Levy 与 Goldberg 证明，Skip-gram with Negative Sampling 可以被理解为一种对 shifted PMI 矩阵的隐式因子分解 [4]；Arora 等人则给出了一条更系统的概率论解释，说明词向量与 PMI 结构之间存在稳定联系 [5]。据此，一个更稳妥的解释是：
 
-性别是最容易被举例的一种关系。很多早期词向量实验都发现，`man -> woman`、`king -> queen`、`actor -> actress` 之间具有相似的位移趋势。它们并不是完全一样，但常常会共享一个大致方向。这意味着“性别变换”在 embedding 中有可能对应一类可重复使用的几何操作。
+$$
+v_w^\top u_c \approx \operatorname{PMI}(w,c) + b_w + b_c.
+$$
 
-### tense
+于是对任意词对 $(a,b)$，有
 
-动词时态也常常表现出类似结构。例如 `walk -> walked`、`play -> played`、`go -> went`。虽然语言中的时态变化复杂得多，尤其不规则动词会破坏简单平移，但如果模型在统计上学到了大量过去时上下文，它就可能在局部空间里形成某种“从现在时到过去时”的迁移模式。
+$$
+(v_b - v_a)^\top u_c
+\approx
+\log \frac{p(c \mid b)}{p(c \mid a)}.
+$$
 
-### plural
+这条式子非常关键。它意味着词向量差分并不只是几何游戏；它对应的是**两个词对上下文分布比值的差异**。如果两对词共享相近的上下文比值轮廓，那么它们的差分就会在许多上下文方向上产生相似投影，因此自然会表现为相近的位移 [3-5]。
 
-单复数也是一个典型例子。`cat -> cats`、`dog -> dogs`、`car -> cars` 之间的差分常常呈现出可迁移的规律。这里重要的不是每一对都完全平行，而是这些变换可以在整体上形成相似的结构。
+从这个角度看，线性结构出现至少有三层原因：
 
-这些现象共同说明，embedding 并不是把每个词孤立地放进一个盒子，而是把不同语义因素组织成了某种分解结构。我们可以把它理解为：
+- 许多语义关系会在语料中重复出现，从而产生相似的上下文统计变换。
+- 低维 embedding 被迫压缩高维共现结构，最经济的方式往往是把重复关系编码成共享方向，而不是为每个词对单独记忆一个例外。
+- 线性偏移便于复用。对下游模型而言，加法、内积和线性映射都是最廉价、最稳定的计算单元。
 
-- 一个词向量的某部分结构与性别有关；
-- 某部分结构与时态有关；
-- 某部分结构与数量有关；
-- 某部分结构与语义类别、语法功能、使用上下文有关。
+因此，线性并不是“语义天然是直线”的证据，而更像是训练目标在高维空间里找到的一种低复杂度参数化方式。
 
-这并不等于说每个因素都刚好占一个正交维度，更准确的理解是：模型在高维空间里学会了某种近似解耦，使得一些常见语义变换可以在局部或统计意义上表现为可重复的方向模式。
+## 3. 语义“方向”更接近子空间，而不是单一轴
 
-## 3. 为什么线性结构会出现？
+实际 embedding 空间远没有类比题展示得那么整齐。首先，不同关系之间会耦合；其次，多义词会把多个语义模式叠加到同一个词向量中。Arora 等人在 TACL 2018 的工作中证明，词义结构常常更适合被理解为若干低维方向成分的线性叠加，而不是“一个词对应一条完美语义轴” [6]。
 
-这个问题的关键不是语言本身是否线性，而是训练目标为什么会鼓励线性结构出现。
+因此，对 gender、tense、plural 这些经典例子，一个更专业的表述应当是：
 
-embedding 的训练往往基于共现、预测或对比目标。模型需要让“在类似上下文里出现的对象”在表示空间里彼此靠近，让“承担类似功能的变化”形成稳定模式。如果一种语义变换反复出现，比如性别切换、时态切换、单复数切换，那么模型最节省参数、最便于泛化的方式，往往不是为每个词单独记一个例外，而是学习某种共享变换。
+- 它们往往对应**局部稳定的方向簇**或低维子空间；
+- 这些方向在相近词类内部更可迁移，在跨词类、跨语域时更容易失真；
+- 关系越抽象、越依赖语境，其线性可复用性通常越弱。
 
-共享变换最容易以什么形式表达？答案往往是局部线性结构。因为线性结构有三个优势：
+这也解释了为什么有些类比题表现很好，而有些只在特定词集上成立。线性结构并不是全局坐标系中的一条轴，而更像是一个在局部邻域内足够稳定的切向模式。
 
-1. 计算简单。加减向量本身就是最便宜的变换。
-2. 易于泛化。如果某个方向在很多样本上重复出现，模型更容易把它提炼出来。
-3. 易于组合。多个语义因素可以在一定程度上叠加，而不必完全重写整个表示。
+## 4. 群与对称性视角：为什么它仍然有解释力？
 
-所以，embedding 里出现线性现象，并不是因为语义天然是欧氏空间里的直线，而是因为学习系统在高维空间里寻找了一种对训练目标最经济、最稳定的编码方式。
+如果把“单数到复数”“现在时到过去时”“男性到女性”理解为一类可重复变换，那么 embedding 学习可以被视为在数据中寻找近似共享的作用规则。形式上，若某种语义操作 $g$ 在局部邻域内可以近似写成
 
-## 4. 群表示：把语义变换理解为对称性学习
+$$
+v_{g \cdot x} \approx T_g v_x,
+$$
 
-要更进一步理解语义线性，我们可以借用一个更深的数学视角：**群表示（group representation）**。
+那么对 $T_g$ 做一阶近似就会得到线性偏移。这个视角与现代等变表示学习中的思想是一致的：共享变换结构可以显著降低样本复杂度，并提高泛化能力 [9]。
 
-群表示的核心思想是，把“变换”表示成空间中的某种作用。比如旋转、平移、镜像这些对称性操作，都可以通过矩阵或线性算子作用在向量上。在物理和信号处理中，这种思想非常常见。
+当然，这里必须保持严格：语言并不是一个干净的群作用系统，语义变换也并不满足全局封闭性、可逆性与精确等变性。把群表示拿来理解 embedding，更准确地说是一种**分析框架**，而不是关于自然语言的严格公理化声明。
 
-如果我们把语义变化也理解为某种“对称性”或“变换规则”，那么 embedding 学习其实可以被看成一种 **symmetry learning**：模型不是只在记住对象本身，而是在学习对象如何在不同语义变换下保持某种结构稳定。
+## 5. 为什么在线性最强的地方，恰好也是最“词典式”的地方？
 
-例如，“单数变复数”是一种变换，“现在时变过去时”是一种变换，“男性概念变女性概念”也是一种变换。模型若能把这些变换编码成局部一致的几何操作，它就获得了强大的组合与泛化能力。因为它不需要重新学习所有对象，只需要学习一组作用规则。
+在线性规律最容易被观察到的，往往不是 LLM 的高层上下文化隐藏状态，而是更接近词类型表征的那部分空间，例如输入 embedding、输出 embedding，以及经过特殊归一化后的句向量空间 [7][8]。原因并不神秘：
 
-从这个角度看，`king - man + woman` 并不只是一个巧合的算术游戏，而像是在揭示：embedding 可能近似承载了某些语义变换的表示。虽然实际语言远比理想群作用复杂，包含多义词、语境依赖和非线性耦合，但线性近似之所以有价值，正是因为它让复杂语义中最稳定的那部分结构得以显现。
+- 输入/输出 embedding 更接近“词项级”统计汇总，因此更容易保留稳定的类型关系；
+- 输出层常与输入 embedding 共享或紧密耦合，使得词表几何同时服务于表示与预测 [8]；
+- 一旦进入高层上下文化阶段，同一个词会因句法位置、指代、话题和搭配而发生显著漂移，单一全局方向就很难继续解释全部变化 [7]。
 
-## 5. 线性语义是“真相”还是“近似”？
+Ethayarajh 的研究表明，BERT、ELMo 与 GPT-2 的高层表示既明显各向异性，又高度依赖上下文；对同一词而言，静态 embedding 只能解释其上下文化表示中很小的一部分方差 [7]。这意味着：
 
-这里必须保持清醒。说“语义在 embedding 空间中是线性的”，如果理解得过头，就会误入歧途。现实中，语义显然不是纯线性的：
+> 语义线性并没有在大模型里消失，但它更像是底层词汇几何的性质，而不是所有层都共享的一条全局定律。
 
-- 同一个词在不同上下文中的意思会变化；
-- 不同语义因素之间常常强烈耦合；
-- 高阶语义关系往往依赖组合、层级和推理，而不是简单平移。
+从工程上看，可以把不同表示层级的“线性可复用性”粗略总结如下：
 
-因此，更准确的说法应该是：
+| 表示层级 | 线性规律的可见度 | 主要原因 |
+| --- | --- | --- |
+| 静态词向量 | 高 | 词类型共现统计被直接压缩进固定向量 |
+| LLM 输入/输出 embedding | 中到高 | 词表几何同时服务于词项表示与 softmax 预测 [8] |
+| 中高层上下文化隐藏状态 | 中到低 | 同一词项会随语境、句法位置与话语功能发生明显漂移 [7] |
 
-> embedding 空间中的很多语义关系表现出局部的、统计意义上的近似线性。
+## 6. 结语
 
-这已经非常强大了。因为机器学习并不要求世界完全线性，它只需要从海量数据中提炼出足够稳定、足够可用的结构。只要一些常见语义变换能在空间中被近似表达为方向，模型就已经能够利用这种结构来做检索、迁移和泛化。
+embedding 空间中的语义线性，并不意味着语言被“欧氏化”了；它意味着模型在压缩大规模共现统计时，倾向于把最稳定、最可复用的关系编码成方向结构。类比现象之所以重要，不是因为它展示了一个漂亮的例子，而是因为它揭示出表示学习的一个基本偏好：**共享关系优先于孤立记忆，局部线性优先于逐点特判**。
 
-所以，线性不是语义的全部真相，但它很可能是语义空间中最可操作、最容易被神经网络学习到的那一部分。
+因此，更准确的总结应当是：
 
-## 6. 我们的理解：语义变换可以被看成 embedding 方向
+> 语义关系之所以常表现为向量方向，不是因为语义本身天然线性，而是因为线性结构是分布式表示在有限维度里压缩重复关系时最经济的结果。
 
-如果要把本文压缩成一个观点，我会写成下面这句话：
+如果把这个结论放回整个系列中看，它与前文讨论的[高维向量近似正交的几何机制](/blog/high-dimensional-space-and-machine-learning/orthogonality)和[Embedding 向量的超球面分布及其成因](/blog/high-dimensional-space-and-machine-learning/hypersphere)是连在一起的：高维几何先提供方向容量与球壳约束，线性语义再把其中一部分容量组织成可复用的关系偏移。
 
-> 在表示学习里，很多稳定的语义变换都可以被理解为 embedding 空间中的方向。
+下一篇文章，我们会把视角从“语义方向”推进到“球面码本”，讨论为什么 LLM 的 token embedding 更适合被理解为受语义约束的高维球面编码系统。
 
-这个方向不一定是全球统一的，不一定严格平行，不一定对所有词都完美适用；但在统计上、局部上、任务相关的范围内，它常常足够稳定，足够可计算，足够有解释力。
+## 参考文献
 
-这件事对理解大模型尤其重要。因为大模型并不是把语义硬编码进规则系统，而是在高维空间里学习一套表示体系。在这个体系中：
+[1] MIKOLOV T, YIH W-T, ZWEIG G. Linguistic Regularities in Continuous Space Word Representations[C]// *Proceedings of the 2013 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies*. Atlanta, Georgia: Association for Computational Linguistics, 2013: 746-751. Available: [https://aclanthology.org/N13-1090/](https://aclanthology.org/N13-1090/).
 
-- token 有位置；
-- 语义关系有方向；
-- 变换具有可复用性；
-- 复杂概念能够由多个因素组合。
+[2] MIKOLOV T, SUTSKEVER I, CHEN K, et al. Distributed Representations of Words and Phrases and their Compositionality[C]// *Advances in Neural Information Processing Systems 26*. Red Hook, NY: Curran Associates, 2013: 3111-3119. Available: [https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality).
 
-从这个角度看，embedding 不只是“查 token 的向量”，而是一种几何语言。模型通过向量位置表达对象，通过向量方向表达变换，通过局部结构表达相似性与差异性。
+[3] PENNINGTON J, SOCHER R, MANNING C D. GloVe: Global Vectors for Word Representation[C]// *Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)*. Doha, Qatar: Association for Computational Linguistics, 2014: 1532-1543. DOI: [10.3115/v1/D14-1162](https://doi.org/10.3115/v1/D14-1162).
 
-也正因为如此，embedding 才会成为现代大模型最基础的一层结构。它不是输入前的小准备，而是整个语义计算的起点。
+[4] LEVY O, GOLDBERG Y. Neural Word Embedding as Implicit Matrix Factorization[C]// *Advances in Neural Information Processing Systems 27*. Red Hook, NY: Curran Associates, 2014: 2177-2185. Available: [https://papers.nips.cc/paper/5477-neural-word-embedding-as-implicit-matrix-factorization](https://papers.nips.cc/paper/5477-neural-word-embedding-as-implicit-matrix-factorization).
 
-下一篇文章，我们会把视角从“线性语义”转向“球面编码”，讨论为什么 LLM embedding 其实可以被理解成一种高维球面上的编码系统。
+[5] ARORA S, LI Y, LIANG Y, et al. A Latent Variable Model Approach to PMI-based Word Embeddings[J]. *Transactions of the Association for Computational Linguistics*, 2016, 4: 385-399. DOI: [10.1162/tacl_a_00106](https://doi.org/10.1162/tacl_a_00106).
+
+[6] ARORA S, LI Y, LIANG Y, et al. Linear Algebraic Structure of Word Senses, with Applications to Polysemy[J]. *Transactions of the Association for Computational Linguistics*, 2018, 6: 483-495. DOI: [10.1162/tacl_a_00034](https://doi.org/10.1162/tacl_a_00034).
+
+[7] ETHAYARAJH K. How Contextual are Contextualized Word Representations? Comparing the Geometry of BERT, ELMo, and GPT-2 Embeddings[C]// *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)*. Hong Kong, China: Association for Computational Linguistics, 2019: 55-65. DOI: [10.18653/v1/D19-1006](https://doi.org/10.18653/v1/D19-1006).
+
+[8] PRESS O, WOLF L. Using the Output Embedding to Improve Language Models[C]// *Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics: Volume 2, Short Papers*. Valencia, Spain: Association for Computational Linguistics, 2017: 157-163. Available: [https://aclanthology.org/E17-2025/](https://aclanthology.org/E17-2025/).
+
+[9] KONDOR R, TRIVEDI S. On the Generalization of Equivariance and Convolution in Neural Networks to the Action of Compact Groups[C]// *Proceedings of the 35th International Conference on Machine Learning*. PMLR, 2018: 2747-2755. Available: [https://proceedings.mlr.press/v80/kondor18a.html](https://proceedings.mlr.press/v80/kondor18a.html).

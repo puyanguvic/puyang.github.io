@@ -1,160 +1,170 @@
 ---
 title: "Multi-Head Attention 的必要性与表达优势"
 date: 2026-03-09T11:40:00-08:00
-summary: "从单一子空间的局限出发，解释 multi-head attention 如何为模型提供多个语义子空间与坐标系。"
+summary: "从单头注意力的几何瓶颈出发，解释 multi-head attention 为什么等价于并行构造多个上下文坐标系。"
 tags: ["Transformer", "multi-head attention", "representation geometry"]
 ---
 
 # Multi-Head Attention 的必要性与表达优势
 
-如果说 attention 的本质是“子空间投影 + 表示重建”，那么接下来一个自然问题就是：为什么还需要 **multi-head**？为什么不能只用一个更大的 attention，把所有事情都做完？
+如果说 attention 的本质，是由 query-key 几何生成软坐标，再在 value 空间做重建，那么接下来的自然问题就是：为什么还需要 **multi-head**？为什么不能只保留一个更宽的 head，把所有事情都交给同一套注意力结构？
 
-从公式角度看，多头机制似乎只是把同样的计算重复做几次：
+Vaswani 等人引入 multi-head attention 时给出的直觉是：模型需要“从不同表示子空间联合关注信息” [1]。这个直觉是对的，但还可以说得更严格一些：
 
-- 每个 head 有自己的 $W_Q, W_K, W_V$；
-- 每个 head 生成一套 query、key、value；
-- 每个 head 做自己的 attention；
-- 最后把结果拼接起来再线性映射。
+> multi-head attention 的关键价值，不是简单重复同一运算，而是并行定义多套不同的匹配几何、软坐标系统与内容重建通道。
 
-如果只从工程实现看，这可能让人误以为 multi-head 只是“多做几遍、提高容量”。但从几何和表示学习角度看，它远不止增加容量那么简单。它真正提供的是：
+换句话说，单头注意力给模型的是一张上下文坐标图；多头注意力给模型的是多张并行坐标图。它们共同构成一个更高维、更可解耦的上下文读取系统。
 
-> 多个并行的语义子空间，以及多个彼此相对独立的语义坐标系。
+> 核心结论：每个 attention head 都对应一套独立的 query-key 度量和 value 映射，因此 multi-head attention 本质上是在并行构造多个“上下文坐标系”。它的作用不只是增加容量，而是把不同关系类型分散到不同几何视角中处理，再通过拼接与线性映射重新整合 [1-6]。
 
-这篇文章就想解释，为什么单一 attention 子空间是不够的，以及为什么 multi-head attention 对 Transformer 的表达能力如此关键。
+## 1. 从公式上看，多头到底多了什么？
 
-## 1. 单一子空间的局限
-
-先想象只有单个 attention head 的情况。此时，每个 token 都只能通过一组 query、key、value 投影到同一个表示结构里。换句话说，模型只能用同一套几何规则，去处理所有类型的关系。
-
-这会立刻遇到问题。因为自然语言中的关系类型非常多，而且往往彼此纠缠：
-
-- 句法依赖：主谓、动宾、修饰关系；
-- 指代关系：代词与其先行词；
-- 语义关系：实体属性、事件角色、因果与比较；
-- 篇章关系：定义、承接、转折、总结；
-- 任务关系：当前 token 需要预测谁，需要复制谁，需要引用哪里。
-
-如果只有一个子空间，模型就必须把所有这些关系都压进同一套 query-key 匹配规则里。这会带来两个严重问题：
-
-### 1.1 语义冲突
-
-不同任务需要关注的方向可能完全不同。一个 head 想做句法对齐时，需要强调结构依赖；想做实体指代时，又需要强调语义一致性；想做位置关联时，可能更关注邻近与顺序。如果所有关系都在同一个子空间里竞争，匹配信号会非常混杂。
-
-### 1.2 表示耦合
-
-单一子空间意味着模型只能用一套局部坐标解释所有上下文。这会导致不同语义因素彼此缠绕，难以形成稳定而可复用的结构。结果往往是：一个方向同时承担太多任务，谁也做不好。
-
-从几何上说，单头 attention 给模型的只是一个坐标系，而复杂语言现象通常需要多个互补坐标系共同描述。
-
-## 2. 多头机制：多个语义子空间并行工作
-
-multi-head attention 的精妙之处就在这里。它不是把同一个空间切成几份，而是让模型学习多套不同的投影方式：
+标准 multi-head attention 可写为
 
 $$
-Q_h = XW_Q^{(h)}, \qquad K_h = XW_K^{(h)}, \qquad V_h = XW_V^{(h)}.
+\mathrm{MHA}(X)
+=
+\mathrm{Concat}(H_1, \dots, H_m) W_O,
 $$
 
-每个 head 都把原始表示 $X$ 投影到一个不同的子空间里。于是：
+其中第 $h$ 个 head 为
 
-- head 1 可以更关注局部句法；
-- head 2 可以更关注长程指代；
-- head 3 可以更关注实体属性；
-- head 4 可以更关注位置模式；
-- 其他 head 可以学到更抽象的主题、角色或任务相关信号。
+$$
+H_h = A_h V_h,
+\qquad
+A_h = \mathrm{softmax}\!\left(\frac{Q_h K_h^\top}{\sqrt{d_h}}\right),
+$$
 
-这意味着 Transformer 在同一个层里，并不是只看世界的一种方式，而是在同时启用多个观察视角。每个 head 都像一个几何探针，在自己的子空间里执行“投影 + 重建”。
+且
 
-因此，多头机制的本质不是重复，而是 **并行语义分解**。它让模型能把复杂表示拆到多个子空间中处理，再在后续层中重新组合。
+$$
+Q_h = XW_Q^{(h)}, \qquad
+K_h = XW_K^{(h)}, \qquad
+V_h = XW_V^{(h)}.
+$$
 
-## 3. 为什么多头等价于多个语义坐标系？
+这组公式最值得注意的，不是“有很多个 head”，而是每个 head 都有自己的一套：
 
-坐标系这个比喻很重要。因为 attention 的权重其实是在某个子空间内为当前 query 生成一组局部坐标。若只有一个 head，那么所有 token 的关系都只能在这一个坐标系里表达。
+- query-key 匹配度量；
+- 注意力分布 $A_h$；
+- value 内容映射；
+- 最终重建结果 $H_h$。
 
-多头之后，情况就完全不同了。每个 head 都定义自己的：
+因此，多头并不只是把同一个注意力矩阵复制多份；它是在并行学习多种不同的“谁该被读取、被读出来之后该提供什么”的规则。
 
-- query 方向；
-- key 几何结构；
-- value 重建方式；
-- 相似性度量偏好。
+## 2. 单头注意力的真正瓶颈是什么？
 
-换句话说，每个 head 都在说：
+单头 attention 并不是不能工作，而是它必须让所有关系共享同一套坐标系统。对固定 query 而言，单头只能产生一组权重
 
-> 如果从我的视角看，这个上下文应该按什么方式被组织、匹配和重建？
+$$
+\alpha_i \in \Delta^{n-1},
+$$
 
-这就是多个语义坐标系。它们不要求彼此完全独立，也不要求每个 head 都有清晰的人类可解释语义，但在功能上，它们的确让模型获得了多套并行的表示系统。
+并据此做一次 value 重建。这会带来三个直接限制。
 
-这件事非常关键，因为很多语言结构不是单尺度、单关系的。一个 token 同时可以有：
+### 只有一种匹配几何
 
-- 句法上的父节点；
-- 语义上的指代对象；
-- 篇章上的关联段落；
-- 任务上的目标输出约束。
+单头只能通过一套双线性形式 $W_Q^\top W_K$ 来定义“相关性”。而自然语言中的相关性并不唯一：句法依赖、共指关系、位置偏移、篇章回溯和任务相关读取，往往需要完全不同的度量规则。
 
-如果没有多头机制，模型很难在一个统一坐标系中同时处理这么多关系。多头机制提供了必要的几何解耦空间。
+### 只有一组软坐标
 
-## 4. 语义解耦：multi-head 的真正价值
+对于同一个 token，单头只能给出一张注意力分布图。如果当前 token 同时需要“主语是谁”“代词指谁”“局部修饰语是什么”这三类信息，那么所有需求都必须在同一组坐标中竞争。
 
-所谓语义解耦，不是说每个 head 都会神奇地只学一个纯净概念，而是说模型终于有了把不同关系放到不同投影视角中的自由度。
+### 只有一条内容通道
 
-这种解耦至少体现在三个层面。
+因为单头只有一组 value 映射，它无法自然地区分“我关注这个位置是为了拿句法角色”还是“我关注这个位置是为了拿语义属性”。匹配与内容读取容易耦合在一起。
 
-### 4.1 匹配规则解耦
+因此，单头的根本局限不是参数太少，而是：**它把太多异质关系压进了同一套几何读取机制中**。
 
-不同 head 可以学习不同的 query-key 匹配模式。有的偏向局部，有的偏向全局；有的偏向语法，有的偏向语义；有的偏向形式线索，有的偏向统计共现。
+## 3. 多头为什么可以被看成多个上下文坐标系？
 
-### 4.2 表示内容解耦
+一旦引入多头，第 $i$ 个 token 在每个 head 上都会得到一组独立的软坐标
 
-因为每个 head 有独立的 value 投影，所以即使多个 head 都关注同一个 token，它们也可以提取那个 token 的不同方面。一个 head 取出语法角色，另一个取出语义属性，第三个取出上下文状态。
+$$
+\alpha_i^{(h)} \in \Delta^{n-1}.
+$$
 
-### 4.3 计算路径解耦
+这意味着同一个位置不再只有一种“看上下文”的方式，而是同时拥有多种局部坐标展开。更具体地说，每个 head 都在回答一个稍有不同的问题：
 
-多个 head 的输出在拼接后进入后续层，这相当于为模型提供了多条并行的信息流。后续层可以再决定如何整合这些流，而不必在前一层强迫所有信息用同一种形式表达。
+- 从这个视角看，哪些 token 与当前 query 最相关？
+- 这种相关性应按什么关系定义？
+- 一旦选中这些位置，应当取回哪一类内容表示？
 
-正因如此，multi-head attention 的意义远超“更大模型”。它真正带来的是结构上的 modularity，也就是模块化表示能力。
+![multi-head attention 的并行坐标系示意图](./multi-head-coordinate-systems.svg)
 
-## 5. 为什么多头不是越多越好？
+*图 1. 单头注意力只能在一套匹配几何上生成一组软坐标；多头注意力则会并行生成多组坐标，并在不同 value 通道上完成多个重建，再由输出映射整合。*
 
-这里也要补一句，multi-head 虽然重要，但并不意味着 head 数越多越好。因为每增加一个 head，都在引入新的子空间、新的参数和新的协同成本。
+因此，把 multi-head attention 理解为“多个语义坐标系”是有技术含义的，而不是修辞：每个 head 的确都定义了独立的匹配度量、独立的单纯形坐标，以及独立的内容重建路径。
 
-如果 head 太少，模型可能不够解耦；
-如果 head 太多，每个 head 的维度会过小，表达能力反而下降，或者很多 head 学到冗余结构。
+## 4. 为什么这会带来更强的表达能力？
 
-所以合理的 multi-head 设计，本质上是在平衡两个目标：
+多头带来的提升，至少来自三层机制。
 
-- 需要足够多的语义坐标系，来分解复杂关系；
-- 也需要每个坐标系内部有足够表达能力，避免子空间过窄。
+### 关系解耦
 
-这也是为什么现实中的 Transformer 架构总是在层数、hidden size、head 数之间做联合设计。multi-head 不是孤立超参数，而是整个表示几何设计的一部分。
+不同 head 可以分别学习不同关系类型。有的 head 更像位置算子，有的更像句法选择器，有的更像篇章回溯器。Clark 等人和 Voita 等人都观察到，部分 head 会稳定呈现出特定模式，例如关注分隔符、固定偏移、句法依赖或共指结构 [2][3]。
 
-## 6. Multi-head Attention 的核心几何意义
+### 内容解耦
 
-把前后两篇文章连起来看，attention 的几何意义已经比较清楚了：
+即使多个 head 都关注同一位置，由于 $W_V^{(h)}$ 不同，它们也可以从同一 token 中提取不同方面的内容。一个 head 可能取出结构线索，另一个取出语义属性，第三个则取出任务相关的预测提示。
 
-- 单个 head：在一个子空间里做投影与重建；
-- 多个 head：在多个子空间里并行做投影与重建。
+### 计算并行化
 
-也就是说，Transformer 每层都不是只有一次“看上下文”，而是同时进行多次不同视角的上下文几何解析。这个过程非常像：
+Weiss 等人的 RASP 视角说明，Transformer 的许多序列计算本质上可以被分解成若干并行的 selection / aggregation 步骤，而 head 数直接影响这类并行组合能否在少层数内完成 [6]。从这个角度看，多头不只是“表达更多”，而是“允许更多关系同时被计算”。
 
-1. 用 head 1 看句法；
-2. 用 head 2 看实体关系；
-3. 用 head 3 看长距离依赖；
-4. 用 head 4 看局部组合模式；
-5. 再把这些视角综合起来，形成新的 token 表示。
+因此，多头机制的价值不只是容量增大，而是让模型有条件把复杂任务分散到多条并行的几何路径上执行。
 
-这正是 Transformer 能在同一层里同时建模多类关系的原因。它不是靠单一大型矩阵一股脑完成所有工作，而是靠多个子空间分工合作。
+## 5. 实证上，多头真会学出分工吗？
 
-## 7. 结论：multi-head attention 提供多个语义坐标系
+答案是：会，但不是每个 head 都同样重要。
 
-现在可以把这篇文章的结论明确写出来：
+Voita 等人在 ACL 2019 中发现，一小部分 head 会承担稳定、重要且常带有语言学可解释性的功能，而很多其余 head 可以被大规模剪枝，性能仅轻微下降 [3]。Michel 等人在 NeurIPS 2019 中也给出类似结论：大量 attention heads 在测试时可以被移除，但某些层和某些 head 对性能明显更关键 [4]。
 
-> multi-head attention 的真正价值，不只是增加参数或容量，而是为模型提供多个并行的语义子空间，也就是多个语义坐标系。
+这说明一个容易被误解的事实：
 
-有了这些坐标系，Transformer 才能把复杂语言关系分散到不同视角中处理，再在后续层中重新组合。没有 multi-head，attention 仍然可以工作，但它必须把所有语义关系塞进单一子空间，表达会更混乱，也更难解耦。
+> multi-head 的价值，并不要求每个 head 都不可替代；它只要求模型拥有把关系分散到多个通道中的自由度。
 
-因此，从几何视角看：
+换句话说，冗余并不等于无用。多头机制可以提供更宽松的优化空间，让重要 head 形成稳定分工，同时允许其他 head 作为备份、近似或训练过程中的辅助通道存在。
 
-- single-head attention 是单一视角的局部投影与重建；
-- multi-head attention 是多视角的并行投影与重建；
-- Transformer 的强大之处，就在于它能够反复执行这种多坐标系表示更新。
+从工程上看，可以把经验事实粗略总结如下：
 
-这也是我理解 Transformer 的一个核心观点：它本质上不是只会“聚合上下文”，而是在不断构造、切换和组合多个语义坐标系。attention 给了它动态投影能力，multi-head 给了它多视角分解能力，两者结合，才构成了今天大模型最核心的表示引擎。
+| 观察 | 含义 |
+| --- | --- |
+| 一些 head 表现出稳定功能模式 [2][3] | 多头确实会产生一定程度的分工 |
+| 大量 head 可被剪枝 [3][4] | 分工存在冗余，并非每个 head 都关键 |
+| 关键 head 通常集中在特定层或特定关系类型 [3][4] | multi-head 的价值是结构性的，而不是平均分布的 |
+
+## 6. 为什么头数也不是越多越好？
+
+如果保持模型总宽度不变，head 数增加意味着单个 head 的维度 $d_h$ 下降。于是会出现一个经典权衡：
+
+- 头太少：关系不够解耦，许多异质读取需求被迫挤在同一套几何中。
+- 头太多：每个 head 的通道过窄，容易产生冗余或表达不足。
+
+这也是为什么 Michel 等人的结果并不否定 multi-head，反而说明了一个更精确的结论：**多头是必要的，但具体多少头有效，取决于模型宽度、层数、任务与训练过程** [4]。
+
+此外，Cordonnier 等人证明，多头 self-attention 在合适参数化下可表达卷积层 [5]。这一点也能解释为什么“多个头”比“一个很宽的头”更有结构优势：前者天然支持多种局部或全局模式并行存在，后者则必须把这些模式揉进同一套权重系统中。
+
+## 7. 结语
+
+如果要把本文压缩成一句话，我会写：
+
+> multi-head attention 的核心价值，是为模型并行提供多套上下文坐标系，而不是简单重复同一注意力运算。
+
+这也解释了为什么 Transformer 能在同一层里同时处理句法依赖、位置模式、共指关系、篇章回溯和任务相关读取：它不是靠单一大型注意力矩阵“一次性看懂一切”，而是靠多个 head 从不同视角同时解析上下文，再把这些局部几何读数整合成新的 token 表示。
+
+如果把这篇与前文的[Transformer Attention 的几何本质](/blog/geometry-of-transformers/what-attention-does)一起看，逻辑会更完整：单个 head 已经是一套“软坐标 + 重建”机制，而 multi-head 则把这种机制并行复制到多种不同的匹配几何中。两者结合，才构成了 Transformer 最核心的上下文表示引擎。
+
+## 参考文献
+
+[1] VASWANI A, SHAZEER N, PARMAR N, et al. Attention Is All You Need[C]// *Advances in Neural Information Processing Systems 30*. Red Hook, NY: Curran Associates, 2017. Available: [https://papers.nips.cc/paper/7181-attention-is-all-you-need](https://papers.nips.cc/paper/7181-attention-is-all-you-need).
+
+[2] CLARK K, KHANDELWAL U, LEVY O, et al. What Does BERT Look At? An Analysis of BERT's Attention[C]// *Proceedings of the 2019 ACL Workshop BlackboxNLP: Analyzing and Interpreting Neural Networks for NLP*. Florence, Italy: Association for Computational Linguistics, 2019: 276-286. DOI: [10.18653/v1/W19-4828](https://doi.org/10.18653/v1/W19-4828).
+
+[3] VOITA E, TALBOT D, MOISEEV F, et al. Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting, the Rest Can Be Pruned[C]// *Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics*. Florence, Italy: Association for Computational Linguistics, 2019: 5797-5808. DOI: [10.18653/v1/P19-1580](https://doi.org/10.18653/v1/P19-1580).
+
+[4] MICHEL P, LEVY O, NEUBIG G. Are Sixteen Heads Really Better than One?[C]// *Advances in Neural Information Processing Systems 32*. Red Hook, NY: Curran Associates, 2019. Available: [https://papers.nips.cc/paper/9551-are-sixteen-heads-really-better-than-one](https://papers.nips.cc/paper/9551-are-sixteen-heads-really-better-than-one).
+
+[5] CORDONNIER J-B, LOUKAS A, JAGGI M. On the Relationship between Self-Attention and Convolutional Layers[C]// *International Conference on Learning Representations*. 2020. Available: [https://openreview.net/forum?id=zoPf7R-2wZr](https://openreview.net/forum?id=zoPf7R-2wZr).
+
+[6] WEISS G, GOLDBERG Y, YAHAV E. Thinking Like Transformers[C]// *Proceedings of the 38th International Conference on Machine Learning*. PMLR, 2021: 11080-11090. Available: [https://proceedings.mlr.press/v139/weiss21a.html](https://proceedings.mlr.press/v139/weiss21a.html).

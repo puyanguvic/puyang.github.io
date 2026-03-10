@@ -1,118 +1,170 @@
 ---
 title: "LLM Embedding 的球面编码视角"
 date: 2026-03-09T11:10:00-08:00
-summary: "从通信理论中的 spherical code 出发，讨论 token embedding 的分布、容量以及为什么高维球面特别适合做语义编码。"
+summary: "从球面码、Welch 下界与高维角度集中出发，解释为什么 LLM token embedding 可以被视为受语义约束的高维码本。"
 tags: ["LLM", "embeddings", "spherical code"]
 ---
 
 # LLM Embedding 的球面编码视角
 
-当我们谈大模型的 embedding 时，最常见的直觉是：每个 token 对应一个向量，这些向量只是模型内部的数字表示。这个描述当然没错，但它太弱了。因为它没有解释一个更本质的问题：为什么这样一个高维向量系统，能够稳定地承载数万到数十万个 token，同时还保留足够丰富的语义关系？
+如果把大模型的 token embedding 仅仅理解为“一张词表对应一堆向量”，我们会错过一个更有解释力的问题：为什么一个只有 `d=4096` 左右维度的空间，能够稳定地承载 `50k`、`100k` 甚至更大规模的词表，同时又保留足够强的可分性、相似性与可计算性？
 
-理解这个问题，一个非常有启发性的视角来自通信理论：**spherical code**，球面编码。
+一个更专业的视角来自编码理论与球面几何：把 embedding 表理解为一个**受语义约束的高维码本**。在这个视角下，每个 token 对应一个码字，模型的任务不是给每个 token 分配一根独立坐标轴，而是在高维球面上组织一个既可分、又可比较、还能被下游线性算子高效读取的点集。
 
-如果我们把每个 token embedding 看成高维球面上的一个点，那么整个 embedding 表就不仅是一堆向量，而更像一个高维编码系统。不同 token 对应不同码字，它们需要尽可能可分、可比较、可组合，同时还要让训练和检索变得可行。
-
-这篇文章就从这个角度出发，讨论为什么 LLM embedding 很像一种球面编码。
+> 核心结论：把归一化后的 token embedding 看作球面码（spherical code）并不是一个修辞比喻，而是一个相当严谨的近似模型。它抓住了三个关键事实：表示主要由方向关系读取，容量主要由角间隔而非“独占维度”决定，而训练目标则在这个高维码本上进一步压入语义与频率结构 [1-9]。
 
 ## 1. 什么是 spherical code？
 
-在通信理论中，球面编码的基本问题是：如果我们只能把信号点放在单位球面上，那么怎样安排这些点，才能让不同码字尽可能容易区分、在噪声下尽可能稳定？
+在编码理论里，一个球面码可以写成
 
-把所有点放在球面上有一个明显好处：每个码字都拥有相同能量。这样系统的区分主要依赖角度，而不是长度。换句话说，我们把比较问题变成了“哪个方向更接近”，而不是“哪个点离原点更远”。
+$$
+C = \{c_1, c_2, \dots, c_N\} \subset \mathbb{S}^{d-1},
+$$
 
-这和现代 embedding 空间非常相似。很多时候，向量长度的变化并不是我们最想保留的信息；真正重要的是方向关系。于是把向量理解为球面上的点，是一种非常自然的近似。
+也就是单位球面上的 $N$ 个点。通常关心的两个量是最小角间隔
 
-球面编码的目标不是让所有点严格正交，而是在有限维度内尽可能均匀地分布大量点，使它们彼此可区分。这一点和语言模型的 token embedding 几乎完全同构：
+$$
+\theta_{\min}(C) = \min_{i \ne j} \arccos(c_i^\top c_j),
+$$
 
-- 词表里的 token 数量巨大；
-- 每个 token 需要一个可区分的位置；
-- 相似 token 之间又不应该完全随机散开；
-- 下游计算需要内积、cosine 或注意力机制来高效比较这些位置。
+以及最大相关性
 
-从这个视角看，embedding 表就是一个带有语义结构约束的球面码本。
+$$
+\mu(C) = \max_{i \ne j} |c_i^\top c_j|.
+$$
 
-## 2. embedding 分布：为什么 token embedding 往往近似正交？
+二者是等价的：$\theta_{\min}$ 越大，$\mu$ 越小，码字越容易区分 [1][2]。因此，球面码的基本问题并不是“如何让每个点占一个维度”，而是“在固定维度下，如何让大量点尽可能均匀地分布在球面上”。
 
-上一篇文章讲过，高维随机向量天然会近似正交。这在 embedding 表里也有强烈体现。虽然训练后的 token embedding 不是随机初始化那样的完全无结构分布，但对于大量彼此无强关联的 token 来说，它们常常仍然表现出“近乎正交”的角分布。
+这与 token embedding 的实际角色高度相似。若把 embedding 矩阵记为
 
-这不是巧合，而是高维容量的自然结果。因为如果向量之间大量共享相似方向，码字就会互相干扰，token 之间的可分性就会下降。模型为了保持判别能力，往往会在高维空间里把不同 token 分散到许多不同方向上。结果就是：
+$$
+E \in \mathbb{R}^{V \times d},
+$$
 
-- 相关 token 在局部上保留一些相似性；
-- 不相关 token 在整体上尽量分离；
-- 大部分 token 对之间的内积维持在较小范围。
+并把每一行归一化为
 
-这正是球面编码的典型特征。你不要求每个码字完全等距，但会希望它们在全局上足够展开。
+$$
+\hat e_i = \frac{e_i}{\|e_i\|},
+$$
 
-更重要的是，token embedding 不只是“存字典”。它还要和 attention、MLP、位置编码、上下文更新等模块协同工作。所以一个好的 embedding 分布既要保证码字区分度，又要保留后续线性变换的可操作性。这种平衡恰恰是高维球面几何特别擅长提供的。
+那么词表就变成了单位球面上的一组点。此时，比较 token 是否相近，本质上就变成了比较 $\hat e_i^\top \hat e_j$ 或它对应的夹角。也就是说，**一旦范数波动相对稳定，embedding 表就自然近似成一个球面码本**。
 
-## 3. 为什么 4096 维可以表示 100k token？
+## 2. 为什么这个视角对语言模型特别合适？
 
-很多人第一次看到大模型的词表大小时会感到困惑：如果只有 4096 维，怎么可能稳定表示十万个 token？按低维直觉看，这样的空间似乎早就应该拥挤不堪了。
+首先，现代语言模型的大量关键计算本来就偏向角度读出。无论是相似度检索、归一化后的 embedding 比较，还是 softmax 头对词表的逐项评分，本质上都依赖内积结构。Press 与 Wolf 还指出，输出 embedding 不只是预测头的附属参数，而是语言模型质量的重要组成部分；在权重共享或紧耦合设置下，输入/输出词表几何会被同时用于表示与解码 [5]。
 
-但高维空间的容量远超低维直觉。关键不是维度必须大于 token 数，而是高维球面上可以放置非常多彼此差异明显的方向。4096 维并不意味着只有 4096 个“位置”，而意味着存在极其庞大的方向组合空间。
+其次，高维表示学习普遍会削弱径向自由度、强化方向结构。Wang 与 Isola 在 ICML 2020 中把“局部对齐 + 全局均匀”刻画为球面表示学习的核心张力 [4]；Li 等人与 Gao 等人则分别从 BERT-flow 和 SimCSE 出发，给出 NLP 里的直接证据：未经处理的预训练表示往往存在各向异性，而适当的归一化、流变换或对比学习会显著改善其球面均匀性与语义可读性 [6][7]。
 
-更具体地说，大模型并不要求：
+更谨慎地说，从 [4-7] 可以推得一个很稳妥的判断：语言模型 embedding 不一定被显式训练成“理想球面码”，但其有效几何往往越来越接近“长度受控、方向主导、内积可读”的高维码本。
 
-1. 每个 token 都与其他所有 token 等距；
-2. 每个 token 都拥有完全独立的一个维度；
-3. 所有语义关系都靠单一轴来表达。
+![token embedding 的球面码本视角示意图](./spherical-coding-codebook.svg)
 
-模型真正需要的是：这些 token 的表示足够可分，同时能与训练目标对齐。只要 embedding 在高维球面上形成一个组织良好的码本，就完全可以容纳 100k 量级的 token。
+*图 1. 把归一化后的词表看作球面码后，问题会从“维度够不够分”转为“角间隔是否足够大”。对大模型而言，真正关键的是高维球面上的方向容量，而不是一词一维。*
 
-而且，4096 维不仅在“容量”上足够，在“冗余”和“组合性”上也很有优势。模型可以利用不同方向承载不同类型的结构：
+## 3. 为什么 `4096` 维足以容纳 `100k` token？
 
-- 词汇身份；
-- 语义类别；
-- 语法角色；
-- 频率与稳定性；
-- 与上下文交互时的可变性。
+这是球面编码视角最有力的一点。很多人会误以为：如果只有 `4096` 维，就不可能稳定表示 `100k` 个 token。这个直觉来自低维线性代数，而不是来自高维几何。
 
-换句话说，4096 维不是在给 100k token 分 4096 个桶，而是在提供一个极高自由度的编码场。只要编码规则合理，token 数量远大于维度并不构成问题。
+对于单位向量集合，经典的 Welch 下界给出 [2]
 
-## 4. embedding 容量来自什么？
+$$
+\mu(C)^2 \ge \frac{N-d}{d(N-1)}.
+$$
 
-如果继续追问，embedding 的容量真正来自哪里？我认为至少有三层来源。
+把 $N = 100000$、$d = 4096$ 代入，有
 
-### 高维方向容量
+$$
+\mu(C) \ge \sqrt{\frac{100000-4096}{4096 \cdot 99999}} \approx 0.0153.
+$$
 
-这是最底层的几何事实。高维球面允许大量近似正交方向共存，从而为大规模码字分布提供了基础。
+这意味着什么？它意味着即便在“最理想的均匀排布”下，最坏情况下的两两余弦相似度也只需要大于约 `0.0153`。换成角度，就是大约
 
-### 训练目标塑造结构
+$$
+\arccos(0.0153) \approx 89.1^\circ.
+$$
 
-如果没有训练，向量只是随机散点；有了训练之后，模型会把高频共现、语义邻近、语法功能等规律压进空间。这让码本不只是“能区分”，而且“有结构”。
+这个数值非常说明问题：`100k` 个码字放进 `4096` 维空间，并不要求它们彼此远离到不可思议的程度；只要大多数方向接近正交即可。而对高维随机单位向量而言，典型内积波动本来就只有
 
-### 下游模块共同约束
+$$
+\operatorname{Std}(\hat x^\top \hat y) \approx \frac{1}{\sqrt{d}} = \frac{1}{64} \approx 0.0156,
+$$
 
-embedding 不是独立存在的，它必须与后续层的线性变换和非线性计算兼容。注意力模块需要用内积比较 token，输出层又常常与 embedding 表共享结构或保持紧密关系。这些机制共同推动 embedding 演化成一个既适合判别、又适合计算的高维编码系统。
+这和上面的 Welch 量级几乎一致 [2][3]。换句话说：
 
-因此，embedding 容量不是单纯的维度问题，而是几何、学习目标和模型架构共同作用的结果。
+> 从纯几何容量上看，`4096` 维承载 `100k` 级词表并不勉强，反而正处在一个非常自然的量级区间。
 
-## 5. 球面编码视角能解释什么？
+真正困难的，从来不是“把 token 塞进去”，而是“在塞进去的同时还保留语义、频率、句法和预测兼容性”。
 
-把 embedding 看成球面编码，有几个非常直接的好处。
+如果把词表规模继续放大，量级关系也并不会突然崩坏：
 
-第一，它解释了为什么 cosine similarity 常常比单纯欧氏距离更自然。因为如果点主要分布在球面上，那么真正重要的是角位置，而不是长度。
+| 词表规模 $N$ | 维度 $d$ | Welch 下界 $\mu_{\min}$ | 对应角度下界 |
+| --- | --- | --- | --- |
+| `50k` | `4096` | `0.01497` | `89.14°` |
+| `100k` | `4096` | `0.01530` | `89.12°` |
+| `200k` | `4096` | `0.01546` | `89.11°` |
 
-第二，它解释了为什么大模型可以稳定容纳巨大词表。因为高维球面本身就是一个超大容量的码本空间。
+这个表最值得注意的地方是：当 $N \gg d$ 时，约束的主量级已经接近 $1/\sqrt{d}$，因此真正决定词表几何上限的，往往不是“能否放下”，而是“是否还能保留训练目标想要的结构” [2][3]。
 
-第三，它帮助我们理解“语义相似”和“码字分离”之间并不矛盾。一个好的编码系统既要让相关对象局部接近，又要让整体结构保持可区分。球面几何正好支持这种局部聚类、全局分散的格局。
+## 4. embedding 容量到底来自哪里？
 
-第四，它让我们把 embedding 从“参数表”提升为“编码系统”。一旦这么看，很多现象都会变得清楚：近似正交、长度集中、cosine 检索、高维容量，这些并不是零散现象，而是同一个几何结构的不同侧面。
+如果继续追问，容量至少来自三层相互耦合的机制。
 
-## 6. 我们的理解：embedding 是一种高维语义编码系统
+### 高维球面的方向容量
 
-如果要用一句话总结本文，我会写：
+这是最底层的几何来源。高维球面允许大量近似正交方向共存，随机点对的角度会自然集中到 `90` 度附近 [3]。因此，词表规模远大于维度，并不构成理论障碍。
 
-> embedding 不是简单的向量集合，而是一种高维语义编码系统。
+### 训练目标塑造了“非均匀但有组织”的码本
 
-这里“编码系统”这四个字非常重要。它强调 embedding 的角色不是被动存储，而是主动组织。模型需要在一个有限维的空间里编码海量对象，让它们既可区分、又可比较，还能支持推理、检索和泛化。这与经典通信系统设计码本的任务有惊人的相似性。
+理想球面码追求的是尽量均匀展开；语言模型并不追求绝对均匀，而是追求**任务相关的均匀性**。高频 token、语义邻近 token、功能词与内容词，在空间中的位置不会完全对称。Kobayashi 等人对 Transformer prediction head 的分析表明，词频信息会在输出头中形成稳定偏置与几何效应 [8]。因此，真实的 LLM 码本不是“纯几何最优码”，而是“几何容量 + 语料统计 + 预测目标”共同决定的折中解。
 
-当然，语言模型的 embedding 远比传统球面码本复杂。它不是静态解码器面对噪声信道，而是整个大模型语义计算链条的一部分。但球面编码这个比喻仍然非常有力，因为它抓住了两个最关键的事实：
+### 下游读取方式奖励角度友好的组织
 
-1. embedding 的核心是高维几何组织，而不是单个坐标值；
-2. 大模型之所以能承载巨大词表，是因为它在高维球面上学会了一套高效的语义编码方案。
+只要模型大量使用内积、归一化和 softmax 读取词表，方向结构就比绝对长度更稳定、更容易被共享。这个判断在视觉表征中也有直接工程先例：UniformFace 明确把类别中心视为超球面上的均匀分布点集，并通过均匀化约束提升整体判别力 [9]。这当然不是语言模型的直接证据，但它说明“把大规模类别表理解为球面码本”在现代深度学习里是成熟而有效的设计思想。
 
-所以，当我们看 LLM embedding 时，不应该只问“这个 token 的向量是多少”，而更应该问：“这个 token 在整个高维码本里处于什么位置？它与其他 token 构成了怎样的方向关系？这个空间是如何被训练塑形成一个可计算、可检索、可泛化的语义系统的？”
+## 5. 球面编码视角能解释什么，又不能解释什么？
 
-一旦换成这个视角，embedding 就不再只是模型最底层的一块参数，而变成了理解大模型表示能力的入口。
+这个视角至少解释了三件非常关键的事。
+
+- 为什么 cosine similarity 往往比未经归一化的欧氏距离更自然：如果表示主要活在球面上，那么角度就是首要变量。
+- 为什么巨型词表不会自动把 embedding 空间挤爆：高维球面的容量远比低维直觉大得多。
+- 为什么“全局可分”与“局部语义相近”可以同时成立：球面码要求的是整体低相关，而不是处处等距，因此完全允许局部聚类与全局展开并存。
+
+但它同样有边界。
+
+- 它不能单独解释上下文化语义。真实 LLM 隐状态会随上下文、层深与任务读出方式发生显著变化 [6][7]。
+- 它不能保证码本各向同性。预训练语言模型天然会出现频率偏置、语法偏置与各向异性热点 [6-8]。
+- 它也不是说 embedding 必须严格单位范数。更准确的说法是：在很多关键操作里，把长度因素压缩掉之后，球面几何成了更稳健的近似。
+
+因此，“球面码”最好的用法不是把它当成完整真相，而是把它当成**描述词表几何的一阶模型**。
+
+## 6. 结语
+
+把 LLM embedding 看成球面码本，有一个很直接的收益：我们不再用“每个 token 需要一个独立维度”这种低维直觉去理解词表，而是改用“在高维球面上组织一个受约束的方向系统”去理解它。
+
+这会把很多零散现象串起来：近似正交、球壳分布、cosine 检索、巨型词表容量、输出头几何、频率偏置，它们并不是互不相关的小技巧，而是同一类高维码本结构在不同模块中的投影。
+
+如果与前文的[高维向量近似正交的几何机制](/blog/high-dimensional-space-and-machine-learning/orthogonality)和[Embedding 向量的超球面分布及其成因](/blog/high-dimensional-space-and-machine-learning/hypersphere)一起阅读，这个结论会更完整：先是高维概率把表示压到球壳并把方向推向近似正交，随后训练目标再把这片高容量方向场塑造成带有词频、语义和预测约束的实际码本。
+
+如果要把本文压缩成一句话，我会写：
+
+> embedding 不是简单的参数表，而是一张被训练出来的高维语义码本；球面编码视角抓住了它最核心的几何约束。
+
+## 参考文献
+
+[1] CONWAY J H, SLOANE N J A. *Sphere Packings, Lattices and Groups*[M]. 3rd ed. New York: Springer, 1999. DOI: [10.1007/978-1-4757-6568-7](https://doi.org/10.1007/978-1-4757-6568-7).
+
+[2] DATTA S, HOWARD S D, COCHRAN D. Geometry of the Welch Bounds[J]. *Linear Algebra and its Applications*, 2012, 437(10): 2455-2470. DOI: [10.1016/j.laa.2012.05.036](https://doi.org/10.1016/j.laa.2012.05.036).
+
+[3] CAI T T, FAN J, JIANG T. Distributions of Angles in Random Packing on Spheres[J]. *Journal of Machine Learning Research*, 2013, 14(57): 1837-1864. Available: [https://jmlr.org/papers/v14/cai13a.html](https://jmlr.org/papers/v14/cai13a.html).
+
+[4] WANG T, ISOLA P. Understanding Contrastive Representation Learning through Alignment and Uniformity on the Hypersphere[C]// *Proceedings of the 37th International Conference on Machine Learning*. PMLR, 2020: 9929-9939. Available: [https://proceedings.mlr.press/v119/wang20k.html](https://proceedings.mlr.press/v119/wang20k.html).
+
+[5] PRESS O, WOLF L. Using the Output Embedding to Improve Language Models[C]// *Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics: Volume 2, Short Papers*. Valencia, Spain: Association for Computational Linguistics, 2017: 157-163. Available: [https://aclanthology.org/E17-2025/](https://aclanthology.org/E17-2025/).
+
+[6] LI B, ZHOU H, HE J, et al. On the Sentence Embeddings from Pre-trained Language Models[C]// *Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)*. Online: Association for Computational Linguistics, 2020: 9119-9130. DOI: [10.18653/v1/2020.emnlp-main.733](https://doi.org/10.18653/v1/2020.emnlp-main.733).
+
+[7] GAO T, YAO X, CHEN D. SimCSE: Simple Contrastive Learning of Sentence Embeddings[C]// *Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing*. Online and Punta Cana, Dominican Republic: Association for Computational Linguistics, 2021: 6894-6910. DOI: [10.18653/v1/2021.emnlp-main.552](https://doi.org/10.18653/v1/2021.emnlp-main.552).
+
+[8] KOBAYASHI G, KURIBAYASHI T, YOKOI S, et al. Transformer Language Models Handle Word Frequency in Prediction Head[C]// *Findings of the Association for Computational Linguistics: ACL 2023*. Toronto, Canada: Association for Computational Linguistics, 2023: 4523-4535. DOI: [10.18653/v1/2023.findings-acl.276](https://doi.org/10.18653/v1/2023.findings-acl.276).
+
+[9] DUAN Y, LU J, ZHOU J. UniformFace: Learning Deep Equidistributed Representation for Face Recognition[C]// *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*. 2019: 3415-3424. Available: [https://openaccess.thecvf.com/content_CVPR_2019/html/Duan_UniformFace_Learning_Deep_Equidistributed_Representation_for_Face_Recognition_CVPR_2019_paper.html](https://openaccess.thecvf.com/content_CVPR_2019/html/Duan_UniformFace_Learning_Deep_Equidistributed_Representation_for_Face_Recognition_CVPR_2019_paper.html).

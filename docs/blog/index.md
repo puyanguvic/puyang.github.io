@@ -16,17 +16,21 @@ description: Notes and short posts.
 :::
 
 ::: details Mar 9, 2026 · 大模型的表示空间
-这个系列讨论大模型 embedding 的几何结构，以及为什么语义关系能够在高维向量空间中被编码、组合与检索。
+这个系列讨论大模型 embedding 的几何组织方式：为什么某些语义关系会呈现近似线性，为什么词表可以被看作高维球面上的受约束码本，以及这些几何性质如何共同支撑检索、预测与泛化。
 
 1. [Embedding 空间中的语义线性结构](/blog/representation-space-of-large-models/semantic-linearity)
+   从类比任务、PMI 因子分解与语义子空间出发，讨论语义关系为何常表现为局部稳定的方向偏移。
 2. [LLM Embedding 的球面编码视角](/blog/representation-space-of-large-models/spherical-coding)
+   从球面码、Welch 下界与高维角度集中出发，解释为什么 `4096` 维空间足以承载 `100k` 级词表。
 :::
 
 ::: details Mar 9, 2026 · Transformer的几何结构
-这个系列讨论 Transformer 的核心计算如何用几何语言来理解，尤其是 attention 作为子空间投影与表示重建的角色。
+这个系列讨论 Transformer 的核心计算如何用几何语言来理解：attention 如何生成上下文相关的软坐标并重建表示，multi-head 机制又为什么等价于并行构造多个上下文坐标系。
 
 1. [Transformer Attention 的几何本质](/blog/geometry-of-transformers/what-attention-does)
+   从 query-key 匹配、概率单纯形与 value 重建出发，解释 attention 为什么不是简单加权平均。
 2. [Multi-Head Attention 的必要性与表达优势](/blog/geometry-of-transformers/why-multi-head-matters)
+   从单头注意力的几何瓶颈出发，说明多头机制如何把异质关系分散到多个并行视角中处理。
 :::
 
 ::: details Mar 9, 2026 · Tokenizer的理论
