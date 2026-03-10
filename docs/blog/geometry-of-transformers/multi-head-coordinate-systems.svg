@@ -1,109 +1,190 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
-  <title id="title">Multi-Head Attention as Parallel Coordinate Systems</title>
-  <desc id="desc">Compares a single attention head that forces all relations into one coordinate system with multiple heads that build parallel coordinate systems and recombine them.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="500" viewBox="0 0 980 500" role="img" aria-labelledby="title desc">
+  <title id="title">Multi-head attention as parallel coordinate systems</title>
+  <desc id="desc">Comparison between single-head attention and multi-head attention using a cleaner conference-style schematic.</desc>
+
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#faf7ef" />
-      <stop offset="100%" stop-color="#f3efe6" />
-    </linearGradient>
-    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#fbfaf6" />
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08" />
-    </filter>
-    <marker id="navyArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#244f7a" />
+    <marker id="arrowGray" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
     </marker>
-    <marker id="orangeArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#cf6d1d" />
-    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+
+      .title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .panel {
+        fill: #fcfdff;
+        stroke: #d6dee8;
+        stroke-width: 1.2;
+        rx: 10;
+      }
+
+      .panel-title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .text {
+        fill: #475569;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 11.8px;
+        font-weight: 400;
+      }
+
+      .small {
+        fill: #64748b;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 10.8px;
+        font-weight: 400;
+      }
+
+      .math {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12.8px;
+        font-weight: 500;
+      }
+
+      .box {
+        fill: #f8fafc;
+        stroke: #d9e2ec;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .box-warm {
+        fill: #fffaf0;
+        stroke: #ead9b8;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .flow {
+        stroke: #64748b;
+        stroke-width: 1.7;
+        fill: none;
+        marker-end: url(#arrowGray);
+      }
+
+      .orange { fill: #d97706; }
+      .blue { fill: #2563eb; }
+      .green { fill: #059669; }
+
+      .simplex-warm {
+        fill: #fffaf0;
+        stroke: #d6b46b;
+        stroke-width: 1.4;
+      }
+
+      .simplex-cool {
+        fill: #f3f7fd;
+        stroke: #9bb7db;
+        stroke-width: 1.4;
+      }
+
+      .simplex-green {
+        fill: #f2faf4;
+        stroke: #a7c7af;
+        stroke-width: 1.4;
+      }
+    </style>
   </defs>
-  <style>
-    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 30px; font-weight: 700; }
-    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 500; }
-    .pill { fill: #e7eef8; }
-    .pill-text { fill: #28496d; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; }
-    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 28; filter: url(#shadow); }
-    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 22px; font-weight: 700; }
-    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; font-weight: 500; }
-    .label { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 15px; font-weight: 700; }
-    .small { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 500; }
-    .formula-box { fill: #fff6ea; stroke: #edc28f; stroke-width: 1.5; rx: 18; }
-    .step-box { fill: #f6f1e7; stroke: #d7cbb6; stroke-width: 1.5; rx: 18; }
-    .blue { fill: #244f7a; }
-    .orange { fill: #cf6d1d; }
-    .green { fill: #6a8f6b; }
-    .purple { fill: #7d6aa0; }
-    .teal { fill: #4b8f96; }
-    .box { fill: #fff9f0; stroke: #dfcdb4; stroke-width: 1.5; rx: 18; }
-    .flow { stroke: #7e8ea4; stroke-width: 2.2; fill: none; marker-end: url(#navyArrow); }
-  </style>
 
-  <rect x="0" y="0" width="980" height="560" fill="url(#bg)" rx="34" />
+  <rect class="bg" x="0" y="0" width="980" height="500"/>
 
-  <rect class="pill" x="52" y="36" width="92" height="34" rx="17" />
-  <text class="pill-text" x="98" y="58" text-anchor="middle">FIGURE 1</text>
-  <text class="title" x="52" y="112">Multi-Head Attention Builds Parallel Context Coordinate Systems</text>
-  <text class="subtitle" x="52" y="142">A single head forces every relation into one attention map; multiple heads create parallel maps and recombine them through the output projection.</text>
+  <!-- Title -->
+  <text class="title" x="48" y="40">Multi-head attention uses parallel coordinate systems</text>
 
-  <rect class="card" x="44" y="176" width="276" height="330" rx="28" />
-  <rect class="card" x="338" y="176" width="598" height="330" rx="28" />
+  <!-- Global equation -->
+  <rect class="box" x="726" y="18" width="196" height="50" rx="7"/>
+  <text class="math" x="824" y="38" text-anchor="middle">MHA(X) = Concat(H_i) W_O</text>
+  <text class="small" x="824" y="56" text-anchor="middle">parallel heads, then mixing</text>
 
-  <text class="card-title" x="72" y="216">Single Head</text>
-  <text class="card-text" x="72" y="240">One metric, one attention map, one reconstruction path.</text>
-  <rect class="box" x="84" y="278" width="196" height="64" rx="16" />
-  <rect class="box" x="84" y="364" width="196" height="64" rx="16" />
-  <text class="label" x="182" y="305" text-anchor="middle">one QK metric</text>
-  <text class="small" x="182" y="328" text-anchor="middle">syntax, coreference, position</text>
-  <text class="label" x="182" y="391" text-anchor="middle">one attention simplex</text>
-  <text class="small" x="182" y="414" text-anchor="middle">all relations compete here</text>
-  <path class="flow" d="M182 342 L182 362" />
-  <text class="small" x="88" y="454">good enough for one view</text>
-  <text class="small" x="88" y="474">weak for heterogeneous relations</text>
+  <!-- Panels -->
+  <rect class="panel" x="40" y="88" width="272" height="356" rx="10"/>
+  <rect class="panel" x="332" y="88" width="608" height="356" rx="10"/>
 
-  <text class="card-title" x="366" y="216">Multi-Head</text>
-  <text class="card-text" x="366" y="240">Each head learns its own geometry, coordinates, and value channel before recombination.</text>
+  <!-- Left panel -->
+  <text class="panel-title" x="58" y="116">Single head</text>
+  <text class="text" x="58" y="138">
+    <tspan x="58" dy="0">One compatibility map must capture</tspan>
+    <tspan x="58" dy="15">different relation types together.</tspan>
+  </text>
 
-  <rect class="box" x="380" y="280" width="148" height="62" rx="16" />
-  <rect class="box" x="560" y="280" width="148" height="62" rx="16" />
-  <rect class="box" x="740" y="280" width="148" height="62" rx="16" />
-  <text class="label" x="454" y="306" text-anchor="middle">Head 1</text>
-  <text class="small" x="454" y="328" text-anchor="middle">local syntax</text>
-  <text class="label" x="634" y="306" text-anchor="middle">Head 2</text>
-  <text class="small" x="634" y="328" text-anchor="middle">coreference</text>
-  <text class="label" x="814" y="306" text-anchor="middle">Head 3</text>
-  <text class="small" x="814" y="328" text-anchor="middle">position / discourse</text>
+  <rect class="box-warm" x="76" y="180" width="200" height="54" rx="7"/>
+  <text class="math" x="176" y="202" text-anchor="middle">one QK metric</text>
+  <text class="small" x="176" y="220" text-anchor="middle">syntax, reference, position mixed</text>
 
-  <polygon points="454,372 412,438 496,438" fill="#fff4e3" stroke="#e2b280" stroke-width="2" />
-  <polygon points="634,372 592,438 676,438" fill="#eef5fb" stroke="#9eb9d7" stroke-width="2" />
-  <polygon points="814,372 772,438 856,438" fill="#eef6ef" stroke="#a8c5aa" stroke-width="2" />
-  <circle cx="454" cy="392" r="6" class="orange" />
-  <circle cx="430" cy="424" r="6" class="orange" />
-  <circle cx="478" cy="424" r="6" class="orange" />
-  <circle cx="640" cy="406" r="6" class="blue" />
-  <circle cx="614" cy="424" r="6" class="blue" />
-  <circle cx="654" cy="390" r="6" class="blue" />
-  <circle cx="804" cy="414" r="6" class="green" />
-  <circle cx="788" cy="394" r="6" class="green" />
-  <circle cx="834" cy="424" r="6" class="green" />
-  <text class="small" x="454" y="456" text-anchor="middle">α^(1)</text>
-  <text class="small" x="634" y="456" text-anchor="middle">α^(2)</text>
-  <text class="small" x="814" y="456" text-anchor="middle">α^(3)</text>
+  <line class="flow" x1="176" y1="236" x2="176" y2="260"/>
 
-  <path class="flow" d="M454 342 L454 368" />
-  <path class="flow" d="M634 342 L634 368" />
-  <path class="flow" d="M814 342 L814 368" />
+  <polygon class="simplex-warm" points="176,278 132,350 220,350"/>
+  <circle cx="176" cy="298" r="6" class="orange"/>
+  <circle cx="152" cy="336" r="6" class="orange"/>
+  <circle cx="200" cy="336" r="6" class="orange"/>
 
-  <rect class="formula-box" x="560" y="64" width="310" height="72" rx="18" />
-  <text class="label" x="715" y="92" text-anchor="middle">MHA(X) = Concat(H₁, ..., H_m) W_O</text>
-  <text class="small" x="715" y="118" text-anchor="middle">parallel reconstructions, then recombination</text>
+  <text class="small" x="176" y="368" text-anchor="middle">one attention simplex α</text>
 
-  <rect class="step-box" x="82" y="516" width="242" height="24" rx="12" />
-  <rect class="step-box" x="368" y="516" width="242" height="24" rx="12" />
-  <rect class="step-box" x="654" y="516" width="242" height="24" rx="12" />
-  <text class="small" x="203" y="533" text-anchor="middle">Single head mixes many relations together</text>
-  <text class="small" x="489" y="533" text-anchor="middle">Different heads separate matching geometries</text>
-  <text class="small" x="775" y="533" text-anchor="middle">Output projection merges the partial views</text>
+  <line class="flow" x1="176" y1="378" x2="176" y2="402"/>
+
+  <rect class="box" x="76" y="404" width="200" height="24" rx="7"/>
+  <text class="small" x="176" y="420" text-anchor="middle">all relations compete in one map</text>
+
+  <!-- Right panel -->
+  <text class="panel-title" x="350" y="116">Multi-head</text>
+  <text class="text" x="350" y="138">
+    <tspan x="350" dy="0">Different heads learn different matching</tspan>
+    <tspan x="350" dy="15">geometries and separate coordinates.</tspan>
+  </text>
+
+  <!-- Head 1 -->
+  <rect class="box-warm" x="366" y="186" width="150" height="50" rx="7"/>
+  <text class="math" x="441" y="206" text-anchor="middle">Head 1</text>
+  <text class="small" x="441" y="223" text-anchor="middle">local syntax</text>
+  <line class="flow" x1="441" y1="238" x2="441" y2="258"/>
+  <polygon class="simplex-warm" points="441,274 401,338 481,338"/>
+  <circle cx="441" cy="292" r="5.8" class="orange"/>
+  <circle cx="420" cy="326" r="5.8" class="orange"/>
+  <circle cx="462" cy="326" r="5.8" class="orange"/>
+  <text class="small" x="441" y="356" text-anchor="middle">α^(1)</text>
+
+  <!-- Head 2 -->
+  <rect class="box" x="560" y="186" width="150" height="50" rx="7"/>
+  <text class="math" x="635" y="206" text-anchor="middle">Head 2</text>
+  <text class="small" x="635" y="223" text-anchor="middle">coreference</text>
+  <line class="flow" x1="635" y1="238" x2="635" y2="258"/>
+  <polygon class="simplex-cool" points="635,274 595,338 675,338"/>
+  <circle cx="635" cy="306" r="5.8" class="blue"/>
+  <circle cx="614" cy="326" r="5.8" class="blue"/>
+  <circle cx="654" cy="290" r="5.8" class="blue"/>
+  <text class="small" x="635" y="356" text-anchor="middle">α^(2)</text>
+
+  <!-- Head 3 -->
+  <rect class="box" x="754" y="186" width="150" height="50" rx="7"/>
+  <text class="math" x="829" y="206" text-anchor="middle">Head 3</text>
+  <text class="small" x="829" y="223" text-anchor="middle">position</text>
+  <line class="flow" x1="829" y1="238" x2="829" y2="258"/>
+  <polygon class="simplex-green" points="829,274 789,338 869,338"/>
+  <circle cx="829" cy="314" r="5.8" class="green"/>
+  <circle cx="808" cy="294" r="5.8" class="green"/>
+  <circle cx="850" cy="326" r="5.8" class="green"/>
+  <text class="small" x="829" y="356" text-anchor="middle">α^(3)</text>
+
+  <!-- Merge -->
+  <line class="flow" x1="441" y1="372" x2="441" y2="394"/>
+  <line class="flow" x1="635" y1="372" x2="635" y2="394"/>
+  <line class="flow" x1="829" y1="372" x2="829" y2="394"/>
+
+  <rect class="box" x="550" y="398" width="206" height="30" rx="7"/>
+  <text class="small" x="653" y="417" text-anchor="middle">Concat(H_i), then apply W_O</text>
+
+  <!-- Bottom note -->
+  <text class="small" x="490" y="470" text-anchor="middle">
+    Multi-head attention separates different relation types before recombination.
+  </text>
 </svg>
