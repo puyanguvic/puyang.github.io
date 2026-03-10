@@ -29,6 +29,36 @@ export const BLOG_LOCALE_STORAGE_KEY = "blog-language";
 export const blogSeries: BlogSeries[] = [
   {
     date: {
+      zh: "2026年3月10日",
+      en: "Mar 10, 2026"
+    },
+    title: {
+      zh: "工程和系统视角",
+      en: "Engineering and Systems Perspectives"
+    },
+    description: {
+      zh: "本组文章从真实训练瓶颈出发，讨论大模型为什么会一步步从单卡走向参数分片、张量并行、流水线并行与通信优化。重点不是背某个框架名词，而是看系统在什么限制下被迫重新分工。",
+      en: "This series starts from real training bottlenecks and explains why large-model training evolves from single-GPU execution toward state sharding, tensor parallelism, pipeline schedules, and communication-aware optimization. The point is not to memorize framework names, but to see which system constraint forces each step."
+    },
+    posts: [
+      {
+        href: {
+          zh: "/blog/engineering_system_view/training-models-larger-than-one-gpu",
+          en: "/blog/engineering_system_view/training-models-larger-than-one-gpu-en"
+        },
+        title: {
+          zh: "当模型大到一张 GPU 装不下时，我们是怎么把它训练出来的？",
+          en: "How Do We Train a Model That No Longer Fits on One GPU?"
+        },
+        summary: {
+          zh: "从参数、梯度、优化器状态与激活的内存构成出发，解释大模型训练为什么会一步步走向 ZeRO/FSDP、张量并行、流水线并行与通信优化的组合。",
+          en: "Starting from the memory composition of parameters, gradients, optimizer state, and activations, it explains why large-model training evolves toward ZeRO/FSDP, tensor parallelism, pipeline parallelism, and communication-aware optimization."
+        }
+      }
+    ]
+  },
+  {
+    date: {
       zh: "2026年3月9日",
       en: "Mar 9, 2026"
     },

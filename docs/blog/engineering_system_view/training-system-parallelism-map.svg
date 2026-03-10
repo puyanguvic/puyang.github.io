@@ -1,0 +1,103 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Large-model training bottleneck migration and parallelism map</title>
+  <desc id="desc">A systems diagram showing how bottlenecks move from model-state memory to operator scale, network depth, activation memory, and exposed communication, together with the corresponding techniques such as FSDP, tensor parallelism, pipeline parallelism, sequence parallelism, checkpointing, and communication overlap.</desc>
+  <style>
+    .bg { fill: #f6f8fb; }
+    .panel { fill: #ffffff; stroke: #d5dbe7; stroke-width: 2; rx: 18; }
+    .head { fill: #0f172a; font: 700 26px "Inter", "Segoe UI", sans-serif; }
+    .sub { fill: #334155; font: 600 18px "Inter", "Segoe UI", sans-serif; }
+    .text { fill: #334155; font: 500 17px "Inter", "Segoe UI", sans-serif; }
+    .small { fill: #475569; font: 500 16px "Inter", "Segoe UI", sans-serif; }
+    .chipA { fill: #dbeafe; stroke: #93c5fd; stroke-width: 1.5; rx: 12; }
+    .chipB { fill: #dcfce7; stroke: #86efac; stroke-width: 1.5; rx: 12; }
+    .chipC { fill: #fef3c7; stroke: #fcd34d; stroke-width: 1.5; rx: 12; }
+    .chipD { fill: #fae8ff; stroke: #d8b4fe; stroke-width: 1.5; rx: 12; }
+    .chipE { fill: #ffe4e6; stroke: #fda4af; stroke-width: 1.5; rx: 12; }
+    .mono { fill: #0f172a; font: 700 20px "JetBrains Mono", "SFMono-Regular", monospace; }
+    .arrow { stroke: #64748b; stroke-width: 3; stroke-linecap: round; }
+  </style>
+
+  <rect class="bg" width="1200" height="760" rx="28"/>
+
+  <text class="head" x="60" y="72">When one GPU stops being enough, the bottleneck migrates across system layers</text>
+
+  <rect class="panel" x="50" y="110" width="330" height="560" rx="18"/>
+  <text class="sub" x="78" y="152">1. Bottleneck that becomes dominant</text>
+
+  <rect class="chipA" x="78" y="182" width="274" height="72" rx="12"/>
+  <text class="text" x="98" y="212">Model-state memory</text>
+  <text class="small" x="98" y="238">parameters + gradients + optimizer state</text>
+
+  <rect class="chipB" x="78" y="274" width="274" height="72" rx="12"/>
+  <text class="text" x="98" y="304">Single-operator scale</text>
+  <text class="small" x="98" y="330">one Linear / QKV / FFN no longer fits well</text>
+
+  <rect class="chipC" x="78" y="366" width="274" height="72" rx="12"/>
+  <text class="text" x="98" y="396">Network depth and activation lifetime</text>
+  <text class="small" x="98" y="422">too many layers or too many saved activations</text>
+
+  <rect class="chipD" x="78" y="458" width="274" height="72" rx="12"/>
+  <text class="text" x="98" y="488">Memory traffic and workspace</text>
+  <text class="small" x="98" y="514">HBM traffic, attention matrix materialization</text>
+
+  <rect class="chipE" x="78" y="550" width="274" height="72" rx="12"/>
+  <text class="text" x="98" y="580">Exposed communication</text>
+  <text class="small" x="98" y="606">collectives, stage transfers, sync on critical path</text>
+
+  <rect class="panel" x="435" y="110" width="350" height="560" rx="18"/>
+  <text class="sub" x="463" y="152">2. Technique that addresses it first</text>
+
+  <rect class="chipA" x="463" y="182" width="294" height="72" rx="12"/>
+  <text class="text" x="483" y="212">ZeRO / FSDP</text>
+  <text class="small" x="483" y="238">remove replica redundancy by sharding state</text>
+
+  <rect class="chipB" x="463" y="274" width="294" height="72" rx="12"/>
+  <text class="text" x="483" y="304">Tensor Parallelism</text>
+  <text class="small" x="483" y="330">split one layer into distributed linear algebra</text>
+
+  <rect class="chipC" x="463" y="366" width="294" height="72" rx="12"/>
+  <text class="text" x="483" y="396">Pipeline Parallelism</text>
+  <text class="small" x="483" y="422">partition depth into stages and schedule micro-batches</text>
+
+  <rect class="chipD" x="463" y="458" width="294" height="72" rx="12"/>
+  <text class="text" x="483" y="488">Checkpointing / Sequence Parallelism / FlashAttention</text>
+  <text class="small" x="483" y="514">compress activation residency and memory movement</text>
+
+  <rect class="chipE" x="463" y="550" width="294" height="72" rx="12"/>
+  <text class="text" x="483" y="580">Overlap, topology mapping, bucketization</text>
+  <text class="small" x="483" y="606">minimize communication that remains on the critical path</text>
+
+  <rect class="panel" x="840" y="110" width="310" height="560" rx="18"/>
+  <text class="sub" x="868" y="152">3. What the system is really optimizing</text>
+
+  <text class="text" x="868" y="212">Capacity first, then efficiency</text>
+  <text class="small" x="868" y="242">fit the model, then reduce the exposed cost</text>
+
+  <text class="text" x="868" y="308">A practical topology view</text>
+  <text class="mono" x="868" y="344">world size = DP × TP × PP</text>
+  <text class="small" x="868" y="376">+ optional sequence/context or expert axes</text>
+
+  <text class="text" x="868" y="448">Best mapping is hardware-aware</text>
+  <text class="small" x="868" y="478">TP stays on the fastest local links;</text>
+  <text class="small" x="868" y="504">PP follows stage bandwidth and balance;</text>
+  <text class="small" x="868" y="530">DP/FSDP usually stretches across weaker links</text>
+
+  <text class="text" x="868" y="596">End-state objective</text>
+  <text class="small" x="868" y="626">satisfy memory constraints while minimizing</text>
+  <text class="small" x="868" y="652">exposed communication and pipeline bubble</text>
+
+  <path class="arrow" d="M380 218H435"/>
+  <path class="arrow" d="M380 310H435"/>
+  <path class="arrow" d="M380 402H435"/>
+  <path class="arrow" d="M380 494H435"/>
+  <path class="arrow" d="M380 586H435"/>
+
+  <path class="arrow" d="M785 218H840"/>
+  <path class="arrow" d="M785 310H840"/>
+  <path class="arrow" d="M785 402H840"/>
+  <path class="arrow" d="M785 494H840"/>
+  <path class="arrow" d="M785 586H840"/>
+  <path class="arrow" d="M430 700H1130"/>
+  <polygon points="1130,700 1114,691 1114,709" fill="#64748b"/>
+  <text class="small" x="440" y="692">As scale increases, the bottleneck is progressively pushed from storage toward exposed communication.</text>
+</svg>
