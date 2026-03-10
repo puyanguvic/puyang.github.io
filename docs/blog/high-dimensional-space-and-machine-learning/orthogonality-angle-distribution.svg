@@ -1,89 +1,206 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
-  <title id="title">Angle Concentration in High Dimensions</title>
-  <desc id="desc">Comparison of the wide angle distribution in low dimensions and the strong concentration around ninety degrees in high dimensions, together with the 1 over d variance of normalized inner products.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" role="img" aria-labelledby="title desc">
+  <title id="title">Approximate orthogonality in high dimensions</title>
+  <desc id="desc">Low-dimensional random directions exhibit a broad angle distribution, whereas high-dimensional normalized vectors concentrate near ninety degrees.</desc>
+
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#faf7ef" />
-      <stop offset="100%" stop-color="#f3efe6" />
-    </linearGradient>
-    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#fbfaf6" />
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08" />
-    </filter>
-    <marker id="blueArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#2f6ca3" />
+    <marker id="arrowBlue" markerWidth="6" markerHeight="6" refX="4.8" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#2f6ca3"/>
     </marker>
-    <marker id="orangeArrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 z" fill="#cf6d1d" />
+    <marker id="arrowOrange" markerWidth="6" markerHeight="6" refX="4.8" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#cf6d1d"/>
     </marker>
+    <style>
+      .bg { fill: #ffffff; }
+
+      .title {
+        fill: #111827;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 19px;
+        font-weight: 700;
+      }
+
+      .panel {
+        fill: #ffffff;
+        stroke: #d1d5db;
+        stroke-width: 1.1;
+        rx: 8;
+      }
+
+      .panel-title {
+        fill: #111827;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .text {
+        fill: #4b5563;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 11.2px;
+        font-weight: 400;
+      }
+
+      .small {
+        fill: #6b7280;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 10.4px;
+        font-weight: 400;
+      }
+
+      .label {
+        fill: #111827;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .formula {
+        fill: #111827;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12.2px;
+        font-weight: 500;
+      }
+
+      .formula-box {
+        fill: #f9fafb;
+        stroke: #d1d5db;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .circle {
+        fill: #f8fafc;
+        stroke: #cbd5e1;
+        stroke-width: 1.3;
+      }
+
+      .axis {
+        stroke: #6b7280;
+        stroke-width: 1.4;
+      }
+
+      .tick {
+        stroke: #9ca3af;
+        stroke-width: 1;
+      }
+
+      .curve-low-fill { fill: rgba(47,108,163,0.08); }
+      .curve-low-stroke {
+        fill: none;
+        stroke: #2f6ca3;
+        stroke-width: 2.6;
+      }
+
+      .curve-high-fill { fill: rgba(207,109,29,0.10); }
+      .curve-high-stroke {
+        fill: none;
+        stroke: #cf6d1d;
+        stroke-width: 2.6;
+      }
+
+      .angle-arc {
+        fill: none;
+        stroke: #6b7280;
+        stroke-width: 1.4;
+      }
+
+      .note-box {
+        fill: #fafaf9;
+        stroke: #d6d3d1;
+        stroke-width: 1;
+        rx: 6;
+      }
+    </style>
   </defs>
-  <style>
-    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 30px; font-weight: 700; }
-    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 500; }
-    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 28; filter: url(#shadow); }
-    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 22px; font-weight: 700; }
-    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 15px; font-weight: 500; }
-    .pill { fill: #e7eef8; }
-    .pill-text { fill: #28496d; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; }
-    .circle { fill: #eef4fb; stroke: #8caed0; stroke-width: 2; }
-    .axis { stroke: #6f8097; stroke-width: 2.3; }
-    .tick { stroke: #93a3b8; stroke-width: 1.6; }
-    .curve-low { fill: rgba(69, 126, 182, 0.14); stroke: #2f6ca3; stroke-width: 4; }
-    .curve-high { fill: rgba(242, 156, 74, 0.18); stroke: #cf6d1d; stroke-width: 4; }
-    .angle-arc { fill: none; stroke: #7d8ea5; stroke-width: 2.2; }
-    .label { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 700; }
-    .small { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; font-weight: 500; }
-    .formula-box { fill: #fff6ea; stroke: #edc28f; stroke-width: 1.5; rx: 18; }
-  </style>
 
-  <rect x="0" y="0" width="980" height="560" fill="url(#bg)" rx="34" />
+  <rect class="bg" x="0" y="0" width="980" height="520"/>
 
-  <rect class="pill" x="52" y="36" width="92" height="34" rx="17" />
-  <text class="pill-text" x="98" y="58" text-anchor="middle">FIGURE 1</text>
-  <text class="title" x="52" y="112">Approximate Orthogonality in High Dimensions</text>
-  <text class="subtitle" x="52" y="142">For normalized random vectors, the mean inner product stays near 0 and the variance is about 1/d, greatly increasing directional capacity.</text>
+  <!-- Title -->
+  <text class="title" x="48" y="34">Approximate orthogonality in high dimensions</text>
 
-  <rect class="card" x="44" y="176" width="418" height="332" rx="28" />
-  <rect class="card" x="518" y="176" width="418" height="332" rx="28" />
+  <!-- Compact formula box moved down -->
+  <rect class="formula-box" x="374" y="48" width="232" height="52" rx="7"/>
+  <text class="formula" x="490" y="69" text-anchor="middle">E[cos θ] ≈ 0</text>
+  <text class="small" x="490" y="87" text-anchor="middle">Var(cos θ) ≈ 1 / d</text>
 
-  <text class="card-title" x="74" y="216">Low Dimension: Wide Angle Range</text>
-  <text class="card-text" x="74" y="242">Random directions can be acute, obtuse, or nearly parallel.</text>
-  <circle class="circle" cx="160" cy="322" r="70" />
-  <line x1="160" y1="322" x2="226" y2="286" stroke="#2f6ca3" stroke-width="4" marker-end="url(#blueArrow)" />
-  <line x1="160" y1="322" x2="196" y2="387" stroke="#2f6ca3" stroke-width="4" marker-end="url(#blueArrow)" />
-  <line x1="160" y1="322" x2="104" y2="282" stroke="#2f6ca3" stroke-width="4" marker-end="url(#blueArrow)" />
-  <path class="angle-arc" d="M199 303 A44 44 0 0 1 189 357" />
-  <text class="small" x="211" y="338">wide angle range</text>
-  <line class="axis" x1="92" y1="452" x2="414" y2="452" />
-  <line class="tick" x1="120" y1="446" x2="120" y2="458" />
-  <line class="tick" x1="253" y1="446" x2="253" y2="458" />
-  <line class="tick" x1="386" y1="446" x2="386" y2="458" />
-  <path class="curve-low" d="M108 452 C148 422, 183 350, 227 340 C268 330, 314 356, 358 408 C375 428, 392 441, 404 452 Z" />
-  <text class="small" x="120" y="480" text-anchor="middle">0°</text>
-  <text class="small" x="253" y="480" text-anchor="middle">90°</text>
-  <text class="small" x="386" y="480" text-anchor="middle">180°</text>
+  <!-- Panels moved down -->
+  <rect class="panel" x="40" y="112" width="430" height="340" rx="8"/>
+  <rect class="panel" x="510" y="112" width="430" height="340" rx="8"/>
 
-  <text class="card-title" x="548" y="216">High Dimension: Angles Near 90°</text>
-  <text class="card-text" x="548" y="242">Normalized inner products cluster near 0, and large deviations become rare.</text>
-  <circle class="circle" cx="634" cy="322" r="70" />
-  <line x1="634" y1="322" x2="704" y2="322" stroke="#cf6d1d" stroke-width="4" marker-end="url(#orangeArrow)" />
-  <line x1="634" y1="322" x2="634" y2="252" stroke="#cf6d1d" stroke-width="4" marker-end="url(#orangeArrow)" />
-  <line x1="634" y1="322" x2="602" y2="259" stroke="#cf6d1d" stroke-width="4" marker-end="url(#orangeArrow)" opacity="0.55" />
-  <path class="angle-arc" d="M674 322 A40 40 0 0 0 634 282" />
-  <text class="small" x="683" y="298">θ ≈ 90°</text>
-  <line class="axis" x1="566" y1="452" x2="888" y2="452" />
-  <line class="tick" x1="594" y1="446" x2="594" y2="458" />
-  <line class="tick" x1="727" y1="446" x2="727" y2="458" />
-  <line class="tick" x1="860" y1="446" x2="860" y2="458" />
-  <path class="curve-high" d="M610 452 C680 451, 703 345, 727 302 C737 283, 747 283, 757 302 C781 345, 804 451, 874 452 Z" />
-  <text class="small" x="594" y="480" text-anchor="middle">0°</text>
-  <text class="small" x="727" y="480" text-anchor="middle">90°</text>
-  <text class="small" x="860" y="480" text-anchor="middle">180°</text>
+  <!-- Left panel -->
+  <text class="panel-title" x="58" y="138">Lower dimension</text>
+  <text class="text" x="58" y="157">
+    <tspan x="58" dy="0">Angles span a broad range.</tspan>
+  </text>
 
-  <rect class="formula-box" x="332" y="54" width="250" height="72" rx="18" />
-  <text class="label" x="457" y="84" text-anchor="middle">E[cos θ] ≈ 0</text>
-  <text class="small" x="457" y="110" text-anchor="middle">Var(cos θ) ≈ 1 / d</text>
+  <!-- left schematic -->
+  <circle class="circle" cx="164" cy="260" r="58"/>
+  <line x1="164" y1="260" x2="219" y2="230" stroke="#2f6ca3" stroke-width="2.6" marker-end="url(#arrowBlue)"/>
+  <line x1="164" y1="260" x2="194" y2="314" stroke="#2f6ca3" stroke-width="2.6" marker-end="url(#arrowBlue)"/>
+  <line x1="164" y1="260" x2="118" y2="227" stroke="#2f6ca3" stroke-width="2.6" marker-end="url(#arrowBlue)"/>
+  <path class="angle-arc" d="M196 244 A34 34 0 0 1 189 289"/>
+  <text class="small" x="208" y="275">broad range</text>
+
+  <!-- left distribution -->
+  <line class="axis" x1="92" y1="366" x2="414" y2="366"/>
+  <line class="tick" x1="120" y1="362" x2="120" y2="370"/>
+  <line class="tick" x1="253" y1="362" x2="253" y2="370"/>
+  <line class="tick" x1="386" y1="362" x2="386" y2="370"/>
+
+  <path class="curve-low-fill" d="M108 366
+    C145 342, 181 289, 226 280
+    C267 273, 311 296, 356 337
+    C374 354, 392 362, 404 366 Z"/>
+  <path class="curve-low-stroke" d="M108 366
+    C145 342, 181 289, 226 280
+    C267 273, 311 296, 356 337
+    C374 354, 392 362, 404 366"/>
+
+  <text class="small" x="120" y="387" text-anchor="middle">0°</text>
+  <text class="small" x="253" y="387" text-anchor="middle">90°</text>
+  <text class="small" x="386" y="387" text-anchor="middle">180°</text>
+
+  <rect class="note-box" x="108" y="409" width="296" height="24" rx="6"/>
+  <text class="small" x="256" y="425" text-anchor="middle">broad angular distribution</text>
+
+  <!-- Right panel -->
+  <text class="panel-title" x="528" y="138">Higher dimension</text>
+  <text class="text" x="528" y="157">
+    <tspan x="528" dy="0">Angles concentrate near 90°.</tspan>
+  </text>
+
+  <!-- right schematic -->
+  <circle class="circle" cx="634" cy="260" r="58"/>
+  <line x1="634" y1="260" x2="694" y2="260" stroke="#cf6d1d" stroke-width="2.6" marker-end="url(#arrowOrange)"/>
+  <line x1="634" y1="260" x2="634" y2="200" stroke="#cf6d1d" stroke-width="2.6" marker-end="url(#arrowOrange)"/>
+  <line x1="634" y1="260" x2="608" y2="207" stroke="#cf6d1d" stroke-width="2.6" marker-end="url(#arrowOrange)" opacity="0.35"/>
+  <path class="angle-arc" d="M667 260 A33 33 0 0 0 634 227"/>
+  <text class="small" x="676" y="242">θ ≈ 90°</text>
+
+  <!-- right distribution -->
+  <line class="axis" x1="566" y1="366" x2="888" y2="366"/>
+  <line class="tick" x1="594" y1="362" x2="594" y2="370"/>
+  <line class="tick" x1="727" y1="362" x2="727" y2="370"/>
+  <line class="tick" x1="860" y1="362" x2="860" y2="370"/>
+
+  <path class="curve-high-fill" d="M610 366
+    C678 365, 700 289, 724 257
+    C734 244, 744 244, 754 257
+    C778 289, 800 365, 874 366 Z"/>
+  <path class="curve-high-stroke" d="M610 366
+    C678 365, 700 289, 724 257
+    C734 244, 744 244, 754 257
+    C778 289, 800 365, 874 366"/>
+
+  <text class="small" x="594" y="387" text-anchor="middle">0°</text>
+  <text class="small" x="727" y="387" text-anchor="middle">90°</text>
+  <text class="small" x="860" y="387" text-anchor="middle">180°</text>
+
+  <rect class="note-box" x="590" y="409" width="294" height="24" rx="6"/>
+  <text class="small" x="737" y="425" text-anchor="middle">mass concentrates near orthogonality</text>
+
+  <!-- Bottom note -->
+  <text class="small" x="490" y="478" text-anchor="middle">
+    For normalized random vectors, angular variability shrinks with dimension and approximate orthogonality becomes typical.
+  </text>
 </svg>
