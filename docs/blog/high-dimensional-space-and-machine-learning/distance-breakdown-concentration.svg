@@ -1,75 +1,248 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="540" viewBox="0 0 980 540" role="img" aria-labelledby="title desc">
-  <title id="title">Distance Concentration</title>
-  <desc id="desc">Comparison of broad pairwise-distance distributions in low dimensions and narrow concentration in high dimensions, including the shrinking gap between nearest and farthest neighbors.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" role="img" aria-labelledby="title desc">
+  <title id="title">High dimension weakens nearest-neighbor contrast</title>
+  <desc id="desc">In lower dimensions, distance distributions are more spread out and skewed, so nearest and farthest neighbors are better separated. In higher dimensions, distances concentrate near a dominant scale, so the relative gap shrinks.</desc>
+
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#faf7ef" />
-      <stop offset="100%" stop-color="#f3efe6" />
-    </linearGradient>
-    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#fbfaf6" />
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#10233b" flood-opacity="0.08" />
-    </filter>
+    <marker id="arrowBlue" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto-start-reverse">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto-start-reverse">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#d97706"/>
+    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+
+      .title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 21px;
+        font-weight: 700;
+      }
+
+      .panel {
+        fill: #fcfdff;
+        stroke: #d6dee8;
+        stroke-width: 1.2;
+        rx: 10;
+      }
+
+      .panel-title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .text {
+        fill: #475569;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12px;
+        font-weight: 400;
+      }
+
+      .small {
+        fill: #64748b;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 11px;
+        font-weight: 400;
+      }
+
+      .label {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12.5px;
+        font-weight: 600;
+      }
+
+      .axis {
+        stroke: #64748b;
+        stroke-width: 1.6;
+      }
+
+      .tick {
+        stroke: #94a3b8;
+        stroke-width: 1.2;
+      }
+
+      .dash {
+        stroke: #94a3b8;
+        stroke-width: 1.2;
+        stroke-dasharray: 4 4;
+      }
+
+      .curve-low-fill {
+        fill: rgba(37, 99, 235, 0.10);
+      }
+
+      .curve-low-stroke {
+        fill: none;
+        stroke: #2563eb;
+        stroke-width: 3;
+      }
+
+      .curve-high-fill {
+        fill: rgba(217, 119, 6, 0.12);
+      }
+
+      .curve-high-stroke {
+        fill: none;
+        stroke: #d97706;
+        stroke-width: 3;
+      }
+
+      .mark-low {
+        stroke: #2563eb;
+        stroke-width: 2.4;
+      }
+
+      .mark-high {
+        stroke: #d97706;
+        stroke-width: 2.4;
+      }
+
+      .gap-low {
+        stroke: #2563eb;
+        stroke-width: 1.7;
+        marker-start: url(#arrowBlue);
+        marker-end: url(#arrowBlue);
+      }
+
+      .gap-high {
+        stroke: #d97706;
+        stroke-width: 1.7;
+        marker-start: url(#arrowOrange);
+        marker-end: url(#arrowOrange);
+      }
+
+      .note-box {
+        fill: #f8fafc;
+        stroke: #d9e2ec;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .note-box-warm {
+        fill: #fffaf0;
+        stroke: #ead9b8;
+        stroke-width: 1;
+        rx: 7;
+      }
+    </style>
   </defs>
-  <style>
-    .title { fill: #12263f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 30px; font-weight: 700; }
-    .subtitle { fill: #526277; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 500; }
-    .card { fill: url(#card); stroke: #d7dfeb; stroke-width: 1.5; rx: 28; filter: url(#shadow); }
-    .card-title { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 22px; font-weight: 700; }
-    .card-text { fill: #4d5d73; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 15px; font-weight: 500; }
-    .pill { fill: #e7eef8; }
-    .pill-text { fill: #28496d; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.6px; }
-    .axis { stroke: #6f8097; stroke-width: 2.4; }
-    .tick { stroke: #93a3b8; stroke-width: 1.6; }
-    .curve-low { fill: rgba(69, 126, 182, 0.16); stroke: #2f6ca3; stroke-width: 4; }
-    .curve-high { fill: rgba(242, 156, 74, 0.18); stroke: #cf6d1d; stroke-width: 4; }
-    .mark-low { stroke: #214f79; stroke-width: 4; }
-    .mark-high { stroke: #b55e15; stroke-width: 4; }
-    .dash { stroke: #98a7ba; stroke-width: 2; stroke-dasharray: 7 7; }
-    .label { fill: #16324f; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 16px; font-weight: 700; }
-    .small { fill: #5b6c82; font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif; font-size: 14px; font-weight: 500; }
-  </style>
 
-  <rect x="0" y="0" width="980" height="540" fill="url(#bg)" rx="34" />
+  <rect class="bg" x="0" y="0" width="980" height="520"/>
 
-  <rect class="pill" x="52" y="36" width="92" height="34" rx="17" />
-  <text class="pill-text" x="98" y="58" text-anchor="middle">FIGURE 2</text>
-  <text class="title" x="52" y="112">Distance Concentration: Neighbor Gaps Shrink</text>
-  <text class="subtitle" x="52" y="142">When pairwise distances collapse into the same narrow band, ranking still exists, but relative resolution drops sharply.</text>
+  <text class="title" x="48" y="40">High dimension weakens nearest-neighbor contrast</text>
 
-  <rect class="card" x="44" y="176" width="418" height="314" rx="28" />
-  <rect class="card" x="518" y="176" width="418" height="314" rx="28" />
+  <!-- Panels -->
+  <rect class="panel" x="40" y="88" width="430" height="376" rx="10"/>
+  <rect class="panel" x="510" y="88" width="430" height="376" rx="10"/>
 
-  <text class="card-title" x="74" y="216">Low Dimension: Broad Distances</text>
-  <text class="card-text" x="74" y="242">Near and far points form clearer layers, so ranking is more stable.</text>
+  <!-- LEFT PANEL -->
+  <text class="panel-title" x="58" y="116">Lower dimension</text>
+  <text class="text" x="58" y="138">
+    <tspan x="58" dy="0">Distances are more spread out and more skewed,</tspan>
+    <tspan x="58" dy="15">so nearest and farthest neighbors are better separated.</tspan>
+  </text>
 
-  <line class="axis" x1="92" y1="408" x2="414" y2="408" />
-  <line class="tick" x1="140" y1="402" x2="140" y2="414" />
-  <line class="tick" x1="230" y1="402" x2="230" y2="414" />
-  <line class="tick" x1="320" y1="402" x2="320" y2="414" />
-  <path class="curve-low" d="M104 408 C138 403, 158 332, 194 295 C229 259, 274 253, 313 287 C344 314, 364 366, 392 408 Z" />
-  <line class="mark-low" x1="138" y1="408" x2="138" y2="310" />
-  <line class="mark-low" x1="344" y1="408" x2="344" y2="324" />
-  <text class="label" x="122" y="294">D_min</text>
-  <text class="label" x="320" y="308">D_max</text>
-  <text class="small" x="254" y="454" text-anchor="middle">A larger relative gap makes nearest neighbors stand out</text>
+  <!-- left axes -->
+  <line class="axis" x1="88" y1="338" x2="430" y2="338"/>
+  <line class="axis" x1="88" y1="338" x2="88" y2="196"/>
 
-  <text class="card-title" x="548" y="216">High Dimension: Narrow Distance Band</text>
-  <text class="card-text" x="548" y="242">Typical distance is about √(2d), with only limited extreme deviations.</text>
+  <line class="tick" x1="140" y1="332" x2="140" y2="344"/>
+  <line class="tick" x1="230" y1="332" x2="230" y2="344"/>
+  <line class="tick" x1="320" y1="332" x2="320" y2="344"/>
 
-  <line class="axis" x1="566" y1="408" x2="888" y2="408" />
-  <line class="tick" x1="640" y1="402" x2="640" y2="414" />
-  <line class="tick" x1="728" y1="402" x2="728" y2="414" />
-  <line class="tick" x1="816" y1="402" x2="816" y2="414" />
-  <path class="curve-high" d="M596 408 C640 405, 676 342, 706 236 C716 200, 741 200, 751 236 C781 342, 817 405, 861 408 Z" />
-  <line class="mark-high" x1="695" y1="408" x2="695" y2="268" />
-  <line class="mark-high" x1="759" y1="408" x2="759" y2="268" />
-  <line class="dash" x1="727" y1="408" x2="727" y2="212" />
-  <text class="label" x="676" y="252">D_min</text>
-  <text class="label" x="739" y="252">D_max</text>
-  <text class="small" x="727" y="198" text-anchor="middle">typical distance ≈ √(2d)</text>
-  <text class="small" x="727" y="454" text-anchor="middle">Ranking remains, but the relative gap becomes much smaller</text>
+  <!-- left curve -->
+  <path class="curve-low-fill" d="M100 338
+    C112 338, 122 337, 132 330
+    C145 320, 156 294, 172 266
+    C188 238, 212 222, 238 224
+    C266 226, 292 244, 316 274
+    C338 300, 360 322, 402 338 Z"/>
+  <path class="curve-low-stroke" d="M100 338
+    C112 338, 122 337, 132 330
+    C145 320, 156 294, 172 266
+    C188 238, 212 222, 238 224
+    C266 226, 292 244, 316 274
+    C338 300, 360 322, 402 338"/>
+
+  <!-- left markers -->
+  <line class="dash" x1="156" y1="338" x2="156" y2="238"/>
+  <line class="dash" x1="334" y1="338" x2="334" y2="238"/>
+
+  <line class="mark-low" x1="156" y1="338" x2="156" y2="326"/>
+  <line class="mark-low" x1="334" y1="338" x2="334" y2="326"/>
+
+  <text class="label" x="156" y="226" text-anchor="middle">D_min</text>
+  <text class="label" x="334" y="226" text-anchor="middle">D_max</text>
+
+  <!-- left gap: inside axis region -->
+  <line class="gap-low" x1="168" y1="304" x2="322" y2="304"/>
+  <text class="small" x="245" y="292" text-anchor="middle">D_max − D_min</text>
+
+  <!-- left axis labels -->
+  <text class="small" x="259" y="358" text-anchor="middle">distance</text>
+  <text class="small" x="64" y="268" text-anchor="middle" transform="rotate(-90 64 268)">density</text>
+
+  <rect class="note-box" x="104" y="410" width="302" height="28" rx="7"/>
+  <text class="small" x="255" y="428" text-anchor="middle">neighbor ranking has clearer geometric separation</text>
+
+  <!-- RIGHT PANEL -->
+  <text class="panel-title" x="528" y="116">Higher dimension</text>
+  <text class="text" x="528" y="138">
+    <tspan x="528" dy="0">Distances concentrate near a dominant scale μ_d,</tspan>
+    <tspan x="528" dy="15">so the extreme gap is small relative to that scale.</tspan>
+  </text>
+
+  <!-- right axes -->
+  <line class="axis" x1="558" y1="338" x2="900" y2="338"/>
+  <line class="axis" x1="558" y1="338" x2="558" y2="196"/>
+
+  <line class="tick" x1="632" y1="332" x2="632" y2="344"/>
+  <line class="tick" x1="720" y1="332" x2="720" y2="344"/>
+  <line class="tick" x1="808" y1="332" x2="808" y2="344"/>
+
+  <!-- right curve -->
+  <path class="curve-high-fill" d="M590 338
+    C646 338, 674 330, 694 286
+    C706 232, 716 208, 724 206
+    C732 208, 742 232, 754 286
+    C774 330, 802 338, 858 338 Z"/>
+  <path class="curve-high-stroke" d="M590 338
+    C646 338, 674 330, 694 286
+    C706 232, 716 208, 724 206
+    C732 208, 742 232, 754 286
+    C774 330, 802 338, 858 338"/>
+
+  <!-- right mu -->
+  <line class="dash" x1="724" y1="338" x2="724" y2="182"/>
+  <text class="label" x="724" y="170" text-anchor="middle">μ_d ≍ √d</text>
+
+  <!-- right markers -->
+  <line class="dash" x1="696" y1="338" x2="696" y2="230"/>
+  <line class="dash" x1="752" y1="338" x2="752" y2="230"/>
+
+  <line class="mark-high" x1="696" y1="338" x2="696" y2="326"/>
+  <line class="mark-high" x1="752" y1="338" x2="752" y2="326"/>
+
+  <text class="label" x="696" y="218" text-anchor="middle">D_min</text>
+  <text class="label" x="752" y="218" text-anchor="middle">D_max</text>
+
+  <!-- right gap: inside axis region -->
+  <line class="gap-high" x1="704" y1="304" x2="744" y2="304"/>
+  <text class="small" x="724" y="292" text-anchor="middle">D_max − D_min</text>
+
+  <!-- right axis labels -->
+  <text class="small" x="729" y="358" text-anchor="middle">distance</text>
+  <text class="small" x="534" y="268" text-anchor="middle" transform="rotate(-90 534 268)">density</text>
+
+  <rect class="note-box-warm" x="586" y="410" width="298" height="28" rx="7"/>
+  <text class="small" x="735" y="428" text-anchor="middle">the contrast between extremes becomes weak</text>
+
+  <text class="small" x="490" y="492" text-anchor="middle">
+    As dimension grows, D_max − D_min may still vary, but it becomes small compared with the dominant scale μ_d.
+  </text>
 </svg>
+
+
