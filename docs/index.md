@@ -1,3 +1,7 @@
+---
+aside: false
+---
+
 # About
 
 <HomeIntro />
