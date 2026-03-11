@@ -1,5 +1,4 @@
 import { defineConfig } from "vitepress";
-import { buildThemeBlogSidebar } from "./theme/blogData";
 
 const siteUrl = process.env.CUSTOM_DOMAIN
   ? `https://${process.env.CUSTOM_DOMAIN}`
@@ -39,7 +38,12 @@ export default defineConfig({
       copyright: `Copyright ${new Date().getFullYear()} Pu Yang`
     },
     sidebar: {
-      "/blog/": buildThemeBlogSidebar(),
+      "/blog/": [
+        {
+          text: "Overview",
+          link: "/blog/"
+        }
+      ],
       "/projects/": [
         {
           text: "Projects",

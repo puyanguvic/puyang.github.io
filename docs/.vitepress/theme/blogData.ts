@@ -2,18 +2,34 @@ export type BlogLocale = "zh" | "en";
 
 export type LocalizedText = Record<BlogLocale, string>;
 
+export type BlogPageData = {
+  url: string;
+  title: string;
+  date: string;
+  summary: string;
+  seriesZh?: string;
+  seriesEn?: string;
+  seriesDescriptionZh?: string;
+  seriesDescriptionEn?: string;
+};
+
 export type BlogPost = {
-  href: Record<BlogLocale, string>;
+  key: string;
+  date: string;
+  href: LocalizedText;
   title: LocalizedText;
   summary: LocalizedText;
 };
 
 export type BlogSeries = {
-  date: LocalizedText;
+  key: string;
+  date: string;
   title: LocalizedText;
   description: LocalizedText;
   posts: BlogPost[];
 };
+
+type PartialLocalizedText = Partial<Record<BlogLocale, string>>;
 
 type BlogSidebarSection = {
   text: string;
@@ -24,14 +40,24 @@ type BlogSidebarSection = {
   }>;
 };
 
+type ParsedBlogUrl = {
+  canonicalKey: string;
+  seriesKey: string;
+  locale: BlogLocale;
+};
+
 export const BLOG_LOCALE_STORAGE_KEY = "blog-language";
 
-export const blogSeries: BlogSeries[] = [
+const GENERAL_SERIES_KEY = "general";
+
+const LEGACY_SERIES_METADATA: Record<
+  string,
   {
-    date: {
-      zh: "2026年3月10日",
-      en: "Mar 10, 2026"
-    },
+    title: PartialLocalizedText;
+    description: PartialLocalizedText;
+  }
+> = {
+  engineering_system_view: {
     title: {
       zh: "工程和系统视角",
       en: "Engineering and Systems Perspectives"
@@ -39,29 +65,9 @@ export const blogSeries: BlogSeries[] = [
     description: {
       zh: "本组文章从真实训练瓶颈出发，讨论大模型为什么会一步步从单卡走向参数分片、张量并行、流水线并行与通信优化。重点不是背某个框架名词，而是看系统在什么限制下被迫重新分工。",
       en: "This series starts from real training bottlenecks and explains why large-model training evolves from single-GPU execution toward state sharding, tensor parallelism, pipeline schedules, and communication-aware optimization. The point is not to memorize framework names, but to see which system constraint forces each step."
-    },
-    posts: [
-      {
-        href: {
-          zh: "/blog/engineering_system_view/training-models-larger-than-one-gpu",
-          en: "/blog/engineering_system_view/training-models-larger-than-one-gpu-en"
-        },
-        title: {
-          zh: "当模型大到一张 GPU 装不下时，我们是怎么把它训练出来的？",
-          en: "How Do We Train a Model That No Longer Fits on One GPU?"
-        },
-        summary: {
-          zh: "从参数、梯度、优化器状态与激活的内存构成出发，解释大模型训练为什么会一步步走向 ZeRO/FSDP、张量并行、流水线并行与通信优化的组合。",
-          en: "Starting from the memory composition of parameters, gradients, optimizer state, and activations, it explains why large-model training evolves toward ZeRO/FSDP, tensor parallelism, pipeline parallelism, and communication-aware optimization."
-        }
-      }
-    ]
+    }
   },
-  {
-    date: {
-      zh: "2026年3月9日",
-      en: "Mar 9, 2026"
-    },
+  "high-dimensional-space-and-machine-learning": {
     title: {
       zh: "高维空间与机器学习",
       en: "High-Dimensional Space and Machine Learning"
@@ -69,57 +75,9 @@ export const blogSeries: BlogSeries[] = [
     description: {
       zh: "本组文章从最基础的高维几何出发，说明为什么机器学习不能直接把原始欧氏空间当成语义空间来用。主线是：距离在高维中先失去分辨率，方向结构随后成为更稳定的几何信号，而训练后的表示又进一步被压到近似球面上。",
       en: "This series starts from basic high-dimensional geometry and explains why machine learning cannot treat the raw Euclidean space as a semantic space. The main arc is that distances lose resolution first, directional structure becomes the more stable signal, and trained representations are then pushed toward an approximately spherical shell."
-    },
-    posts: [
-      {
-        href: {
-          zh: "/blog/high-dimensional-space-and-machine-learning/distance-breakdown",
-          en: "/blog/high-dimensional-space-and-machine-learning/distance-breakdown-en"
-        },
-        title: {
-          zh: "高维空间中的距离集中与度量失效",
-          en: "Distance Concentration and Metric Breakdown in High Dimensions"
-        },
-        summary: {
-          zh: "先形式化“距离失效”究竟失效在哪里，再从薄壳现象与极值收缩解释为什么最近邻与最远邻会逐渐难以区分。",
-          en: "It first makes precise what exactly breaks when distance stops being useful, then uses the thin-shell effect and extreme-value shrinkage to explain why nearest and farthest neighbors become harder to distinguish."
-        }
-      },
-      {
-        href: {
-          zh: "/blog/high-dimensional-space-and-machine-learning/orthogonality",
-          en: "/blog/high-dimensional-space-and-machine-learning/orthogonality-en"
-        },
-        title: {
-          zh: "高维向量近似正交的几何机制",
-          en: "Why High-Dimensional Vectors Become Nearly Orthogonal"
-        },
-        summary: {
-          zh: "说明在范数已集中之后，角度为何比长度更稳定，以及高维球面为什么能容纳大量彼此低相关的方向。",
-          en: "It shows why angles become more stable than lengths once norms concentrate, and why high-dimensional spheres can hold many weakly correlated directions."
-        }
-      },
-      {
-        href: {
-          zh: "/blog/high-dimensional-space-and-machine-learning/hypersphere",
-          en: "/blog/high-dimensional-space-and-machine-learning/hypersphere-en"
-        },
-        title: {
-          zh: "Embedding 向量的超球面分布及其成因",
-          en: "Why Embeddings Gather on an Approximate Hypersphere"
-        },
-        summary: {
-          zh: "将前两篇与现代表示学习目标结合起来，解释 embedding 为什么常呈现近似球壳分布，以及余弦相似度为何更自然。",
-          en: "It connects the first two pieces to modern representation-learning objectives and explains why embeddings often lie on an approximate shell and why cosine similarity becomes the natural metric."
-        }
-      }
-    ]
+    }
   },
-  {
-    date: {
-      zh: "2026年3月9日",
-      en: "Mar 9, 2026"
-    },
+  "representation-space-of-large-models": {
     title: {
       zh: "大模型的表示空间",
       en: "Representation Space of Large Models"
@@ -127,43 +85,9 @@ export const blogSeries: BlogSeries[] = [
     description: {
       zh: "本组文章讨论 LLM 词表与 embedding 空间的组织原则。核心问题不是“向量会不会做算术”，而是训练目标如何把重复关系压缩为稳定方向，以及高维词表为什么更适合被理解为一个受语义约束的球面码本。",
       en: "This series examines how LLM vocabularies and embedding spaces are organized. The core question is not whether vectors can do arithmetic, but how training compresses recurring relations into stable directions and why a large vocabulary is better viewed as a semantically constrained spherical codebook."
-    },
-    posts: [
-      {
-        href: {
-          zh: "/blog/representation-space-of-large-models/semantic-linearity",
-          en: "/blog/representation-space-of-large-models/semantic-linearity-en"
-        },
-        title: {
-          zh: "Embedding 空间中的语义线性结构",
-          en: "Semantic Linearity in Embedding Space"
-        },
-        summary: {
-          zh: "从类比现象回到 PMI 因子分解，解释语义线性何以出现、为何只在局部稳定，以及为什么它在上下文化表示中会减弱。",
-          en: "It traces the familiar analogy phenomenon back to PMI factorization, explaining why semantic linearity appears, why it is only locally stable, and why it weakens in contextual representations."
-        }
-      },
-      {
-        href: {
-          zh: "/blog/representation-space-of-large-models/spherical-coding",
-          en: "/blog/representation-space-of-large-models/spherical-coding-en"
-        },
-        title: {
-          zh: "LLM Embedding 的球面编码视角",
-          en: "A Spherical-Coding View of LLM Embeddings"
-        },
-        summary: {
-          zh: "从球面码、coherence 与 Welch 下界出发，说明有限维 embedding 为什么足以容纳巨型词表，以及这种视角能解释什么、不能解释什么。",
-          en: "Using spherical codes, coherence, and the Welch bound, it shows why finite-dimensional embeddings can still host very large vocabularies and clarifies what this perspective can and cannot explain."
-        }
-      }
-    ]
+    }
   },
-  {
-    date: {
-      zh: "2026年3月9日",
-      en: "Mar 9, 2026"
-    },
+  "geometry-of-transformers": {
     title: {
       zh: "Transformer 的几何结构",
       en: "The Geometry of Transformers"
@@ -171,43 +95,9 @@ export const blogSeries: BlogSeries[] = [
     description: {
       zh: "本组文章把 Transformer 的核心算子写回几何语言。attention 不是“简单加权平均”，而是由 query-key 几何诱导出的软坐标系统；多头注意力也不是重复运算，而是并行构造多套不同的上下文坐标系。",
       en: "This series rewrites the core Transformer operators in geometric terms. Attention is not a simple weighted average, but a soft coordinate system induced by query-key geometry; multi-head attention is not repetition, but parallel construction of different contextual coordinate systems."
-    },
-    posts: [
-      {
-        href: {
-          zh: "/blog/geometry-of-transformers/what-attention-does",
-          en: "/blog/geometry-of-transformers/what-attention-does-en"
-        },
-        title: {
-          zh: "Transformer Attention 的几何本质",
-          en: "The Geometric Core of Transformer Attention"
-        },
-        summary: {
-          zh: "从双线性匹配、概率单纯形与重心重建出发，解释 attention 如何完成上下文相关的读取与重写。",
-          en: "Starting from bilinear matching, the probability simplex, and barycentric reconstruction, it explains how attention performs context-dependent reading and rewriting."
-        }
-      },
-      {
-        href: {
-          zh: "/blog/geometry-of-transformers/why-multi-head-matters",
-          en: "/blog/geometry-of-transformers/why-multi-head-matters-en"
-        },
-        title: {
-          zh: "Multi-Head Attention 的必要性与表达优势",
-          en: "Why Multi-Head Attention Matters"
-        },
-        summary: {
-          zh: "从单头注意力的几何瓶颈出发，说明为什么关系解耦、内容解耦与并行计算都需要多头结构。",
-          en: "It begins with the geometric bottlenecks of single-head attention and shows why relation disentangling, content disentangling, and parallel computation all rely on multi-head structure."
-        }
-      }
-    ]
+    }
   },
-  {
-    date: {
-      zh: "2026年3月9日",
-      en: "Mar 9, 2026"
-    },
+  "theory-of-tokenizers": {
     title: {
       zh: "Tokenizer 的理论",
       en: "A Theory of Tokenizers"
@@ -215,60 +105,201 @@ export const blogSeries: BlogSeries[] = [
     description: {
       zh: "本组文章讨论 tokenizer 在整个 LLM 系统中的角色。论证主线是：tokenization 首先是码本压缩问题；词表规模因此存在自然平衡点；而所谓 token-free 路线并没有取消压缩，只是把压缩移入了模型内部。",
       en: "This series studies the role of tokenizers in the full LLM system. The main claim is that tokenization is first a codebook-compression problem; vocabulary size therefore has a natural balance point; and so-called token-free approaches do not remove compression, but move it inside the model."
+    }
+  },
+  [GENERAL_SERIES_KEY]: {
+    title: {
+      zh: "未分组文章",
+      en: "General"
     },
-    posts: [
-      {
-        href: {
-          zh: "/blog/theory-of-tokenizers/what-tokenization-does",
-          en: "/blog/theory-of-tokenizers/what-tokenization-does-en"
-        },
-        title: {
-          zh: "Tokenization 的压缩本质",
-          en: "What Tokenization Really Does"
-        },
-        summary: {
-          zh: "说明 tokenizer 为什么应被理解为有限可逆码本，以及它如何利用语言分布的统计偏斜来缩短序列并降低学习负担。",
-          en: "It explains why a tokenizer should be understood as a finite reversible codebook, and how it exploits statistical skew in language to shorten sequences and reduce the learning burden."
-        }
-      },
-      {
-        href: {
-          zh: "/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k",
-          en: "/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k-en"
-        },
-        title: {
-          zh: "LLM 词表规模的自然平衡点",
-          en: "Why Vocabulary Size Stays Near 50k"
-        },
-        summary: {
-          zh: "从序列长度收益递减、长尾稀疏和输出层成本三方面解释词表为什么不会无限扩张。",
-          en: "It explains from diminishing sequence-length returns, long-tail sparsity, and output-layer cost why the vocabulary does not expand without bound."
-        }
-      },
-      {
-        href: {
-          zh: "/blog/theory-of-tokenizers/why-character-level-rarely-wins",
-          en: "/blog/theory-of-tokenizers/why-character-level-rarely-wins-en"
-        },
-        title: {
-          zh: "Character-Level Tokenizer 的理论优势与工程局限",
-          en: "Why Character-Level Tokenizers Rarely Win"
-        },
-        summary: {
-          zh: "说明字符级方案为何在表示上统一、在系统上却常常更贵，以及为什么成功的 token-free 模型往往仍会重新引入内部压缩。",
-          en: "It shows why character-level schemes are elegant at the representation level yet often more expensive as systems, and why successful token-free models usually reintroduce internal compression."
-        }
-      }
-    ]
+    description: {
+      zh: "",
+      en: ""
+    }
   }
-];
+};
 
-export function buildBlogSidebarSections(locale: BlogLocale): BlogSidebarSection[] {
+function normalizeText(value: string | undefined) {
+  return value?.trim() ?? "";
+}
+
+function fillLocalizedText(
+  source: PartialLocalizedText,
+  fallback: PartialLocalizedText = {},
+  finalFallback = ""
+): LocalizedText {
+  const zh = normalizeText(source.zh) || normalizeText(fallback.zh) || normalizeText(source.en) || normalizeText(fallback.en) || finalFallback;
+  const en = normalizeText(source.en) || normalizeText(fallback.en) || normalizeText(source.zh) || normalizeText(fallback.zh) || finalFallback;
+
+  return { zh, en };
+}
+
+function toEpochMs(date: string) {
+  const timestamp = Date.parse(date);
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
+function compareDatesAsc(left: string, right: string) {
+  return toEpochMs(left) - toEpochMs(right);
+}
+
+function compareDatesDesc(left: string, right: string) {
+  return toEpochMs(right) - toEpochMs(left);
+}
+
+function prettifySeriesKey(seriesKey: string) {
+  return seriesKey
+    .split(/[-_]/g)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function parseBlogUrl(url: string): ParsedBlogUrl | null {
+  const normalizedUrl = url.replace(/\/$/, "").replace(/\.html$/, "");
+
+  if (!normalizedUrl || normalizedUrl === "/blog") {
+    return null;
+  }
+
+  const segments = normalizedUrl.replace(/^\//, "").split("/");
+
+  if (segments[0] !== "blog" || segments.length < 2) {
+    return null;
+  }
+
+  const articleSlug = segments[segments.length - 1];
+  const locale = articleSlug.endsWith("-en") ? "en" : "zh";
+  const canonicalSlug = locale === "en" ? articleSlug.slice(0, -3) : articleSlug;
+  const articleSegments = segments.slice(1, -1).concat(canonicalSlug);
+  const seriesKey = segments.length > 2 ? segments[1] : GENERAL_SERIES_KEY;
+
+  return {
+    canonicalKey: articleSegments.join("/"),
+    seriesKey,
+    locale
+  };
+}
+
+function buildSeriesMetadata(seriesKey: string, pages: BlogPageData[]) {
+  const titlesFromFrontmatter: PartialLocalizedText = {};
+  const descriptionsFromFrontmatter: PartialLocalizedText = {};
+
+  for (const page of pages) {
+    if (!titlesFromFrontmatter.zh && normalizeText(page.seriesZh)) {
+      titlesFromFrontmatter.zh = page.seriesZh;
+    }
+
+    if (!titlesFromFrontmatter.en && normalizeText(page.seriesEn)) {
+      titlesFromFrontmatter.en = page.seriesEn;
+    }
+
+    if (!descriptionsFromFrontmatter.zh && normalizeText(page.seriesDescriptionZh)) {
+      descriptionsFromFrontmatter.zh = page.seriesDescriptionZh;
+    }
+
+    if (!descriptionsFromFrontmatter.en && normalizeText(page.seriesDescriptionEn)) {
+      descriptionsFromFrontmatter.en = page.seriesDescriptionEn;
+    }
+  }
+
+  const legacyMetadata = LEGACY_SERIES_METADATA[seriesKey];
+  const fallbackTitle = prettifySeriesKey(seriesKey);
+
+  return {
+    title: fillLocalizedText(titlesFromFrontmatter, legacyMetadata?.title, fallbackTitle),
+    description: fillLocalizedText(descriptionsFromFrontmatter, legacyMetadata?.description, "")
+  };
+}
+
+export function buildBlogSeries(pages: BlogPageData[]): BlogSeries[] {
+  const filteredPages = pages.filter((page) => page.url && page.title);
+  const pagesBySeries = new Map<string, BlogPageData[]>();
+  const postsByKey = new Map<
+    string,
+    {
+      seriesKey: string;
+      date: string;
+      href: PartialLocalizedText;
+      title: PartialLocalizedText;
+      summary: PartialLocalizedText;
+    }
+  >();
+
+  for (const page of filteredPages) {
+    const parsed = parseBlogUrl(page.url);
+
+    if (!parsed) {
+      continue;
+    }
+
+    const seriesPages = pagesBySeries.get(parsed.seriesKey) ?? [];
+    seriesPages.push(page);
+    pagesBySeries.set(parsed.seriesKey, seriesPages);
+
+    const existingPost = postsByKey.get(parsed.canonicalKey) ?? {
+      seriesKey: parsed.seriesKey,
+      date: page.date,
+      href: {},
+      title: {},
+      summary: {}
+    };
+
+    if (!existingPost.date || compareDatesDesc(page.date, existingPost.date) < 0) {
+      existingPost.date = page.date;
+    }
+
+    existingPost.href[parsed.locale] = page.url;
+    existingPost.title[parsed.locale] = page.title;
+    existingPost.summary[parsed.locale] = page.summary;
+    postsByKey.set(parsed.canonicalKey, existingPost);
+  }
+
+  const postsBySeries = new Map<string, BlogPost[]>();
+
+  for (const [canonicalKey, post] of postsByKey.entries()) {
+    const canonicalUrl = `/blog/${canonicalKey}`;
+    const seriesPosts = postsBySeries.get(post.seriesKey) ?? [];
+
+    seriesPosts.push({
+      key: canonicalKey,
+      date: post.date,
+      href: fillLocalizedText(post.href, {}, canonicalUrl),
+      title: fillLocalizedText(post.title, {}, canonicalKey),
+      summary: fillLocalizedText(post.summary, {}, "")
+    });
+
+    postsBySeries.set(post.seriesKey, seriesPosts);
+  }
+
+  const seriesList: BlogSeries[] = [];
+
+  for (const [seriesKey, seriesPosts] of postsBySeries.entries()) {
+    const seriesPages = pagesBySeries.get(seriesKey) ?? [];
+    const metadata = buildSeriesMetadata(seriesKey, seriesPages);
+    const sortedPosts = [...seriesPosts].sort((left, right) => compareDatesAsc(left.date, right.date));
+    const latestDate = sortedPosts.reduce((currentLatest, post) => (
+      compareDatesDesc(post.date, currentLatest) < 0 ? post.date : currentLatest
+    ), sortedPosts[0]?.date ?? "");
+
+    seriesList.push({
+      key: seriesKey,
+      date: latestDate,
+      title: metadata.title,
+      description: metadata.description,
+      posts: sortedPosts
+    });
+  }
+
+  return seriesList.sort((left, right) => compareDatesDesc(left.date, right.date));
+}
+
+export function buildBlogSidebarSections(seriesList: BlogSeries[], locale: BlogLocale): BlogSidebarSection[] {
   const overviewText = locale === "zh" ? "总览" : "Overview";
 
   return [
     { text: overviewText, link: "/blog/" },
-    ...blogSeries.map((series) => ({
+    ...seriesList.map((series) => ({
       text: series.title[locale],
       items: series.posts.map((post) => ({
         text: post.title[locale],
@@ -278,18 +309,27 @@ export function buildBlogSidebarSections(locale: BlogLocale): BlogSidebarSection
   ];
 }
 
-export function buildThemeBlogSidebar() {
-  return [
-    { text: "Overview", link: "/blog/" },
-    ...(["zh", "en"] as BlogLocale[]).flatMap((locale) =>
-      blogSeries.map((series) => ({
-        text: series.title[locale],
-        collapsed: true,
-        items: series.posts.map((post) => ({
-          text: post.title[locale],
-          link: post.href[locale]
-        }))
-      }))
-    )
-  ];
+export function formatBlogDate(date: string, locale: BlogLocale) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(date);
+
+  if (!match) {
+    return date;
+  }
+
+  const [, year, month, day] = match;
+  const utcDate = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+  const formatLocale = locale === "zh" ? "zh-CN" : "en-US";
+  const formatOptions: Intl.DateTimeFormatOptions = locale === "zh"
+    ? { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }
+    : { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" };
+
+  return new Intl.DateTimeFormat(formatLocale, formatOptions).format(utcDate);
+}
+
+export function formatPostCount(count: number, locale: BlogLocale) {
+  if (locale === "zh") {
+    return `${count} 篇文章`;
+  }
+
+  return count === 1 ? "1 article" : `${count} articles`;
 }

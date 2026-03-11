@@ -4,6 +4,7 @@ import { VPLink } from "vitepress/theme";
 import { computed, watch } from "vue";
 import { buildBlogSidebarSections } from "./blogData";
 import { detectBlogLocaleFromPath, normalizeBlogPath, useBlogLocale } from "./blogLocale";
+import { data as blogSeries } from "./blogPosts.data";
 
 const route = useRoute();
 const { locale, syncLocale } = useBlogLocale();
@@ -11,7 +12,7 @@ const { locale, syncLocale } = useBlogLocale();
 const currentPath = computed(() => normalizeBlogPath(route.path));
 const isBlogRoute = computed(() => currentPath.value === "/blog" || currentPath.value.startsWith("/blog/"));
 
-const sections = computed(() => buildBlogSidebarSections(locale.value));
+const sections = computed(() => buildBlogSidebarSections(blogSeries, locale.value));
 
 watch(
   () => route.path,
