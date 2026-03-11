@@ -9,6 +9,10 @@ tags: ["AI Agent", "LLM Systems", "Context Engineering", "RAG", "Memory"]
 
 <BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/engineering_system_view/what-are-we-optimizing-in-agent-context" en-path="/blog/engineering_system_view/what-are-we-optimizing-in-agent-context-en" />
 
+最近，像 OpenClaw 这样的开源 AI Agent 框架持续走热。很多人第一次直观地感受到：当一个模型能够调用工具、浏览网页、运行代码，并沿着任务链条逐步完成任务时，系统的复杂度不再只来自模型本身，而来自模型在每一步究竟“看到了什么”。
+
+表面上看，Agent 系统是在增加 tools、skills 和 workflow。但在系统层面，真正困难的部分并不是工具数量，而是上下文如何被构造、筛选和呈现给模型。工具越多、状态越多、执行链越长，这个问题就越尖锐。
+
 当大模型只做单轮问答时，prompt 看起来像一段输入文本；到了 AI Agent 系统里，它更接近模型在当前 step 上可见的**运行时工作集**。用户目标、历史对话、检索文档、工具返回、执行轨迹、反思记录以及任务状态，都要在一次调用前被组织成一个可供模型消费的上下文。
 
 问题也因此变了。Agent 的上限不再只由模型参数、推理技巧或工具数量决定，同样取决于系统在这一刻究竟让模型看见什么、不让它看见什么，以及用什么形式让它看见。一旦这层构造失控，即使 context window 更大，系统也可能在无关信息里失焦、在关键位置上失真，或者把本该结构化保存的状态重新压回自然语言通道 [1-3]。
