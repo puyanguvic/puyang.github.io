@@ -49,17 +49,32 @@
 }
 
 .home-visit-counter {
-  margin: 0.6rem 0 0;
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 25;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(11, 90, 116, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 30px rgba(19, 34, 48, 0.1);
+  backdrop-filter: blur(10px);
   color: var(--vp-c-text-2);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .home-visit-counter strong {
   color: var(--vp-c-text-1);
 }
 
-.home-visit-counter--muted {
-  font-style: italic;
+.home-visit-counter__label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
 }
 
 @media (max-width: 720px) {
@@ -71,5 +86,12 @@
     order: -1;
     width: 180px;
     height: auto;
+  }
+
+  .home-visit-counter {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.84rem;
   }
 }

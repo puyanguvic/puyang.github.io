@@ -12,6 +12,4 @@ aside: false
 - Dec 5, 2025: [Paper accepted](/news/2025-12-05-paper-accepted)
 - [Browse all news](/news/)
 
-## Visit Counter
-
 <HomeVisitCounter />

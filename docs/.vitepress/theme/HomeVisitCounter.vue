@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 
 const counterUrl = (import.meta.env.VITE_GOATCOUNTER_URL || "").replace(/\/$/, "");
+const formatter = new Intl.NumberFormat("en-US");
 const totalVisits = ref<string | null>(null);
 const isEnabled = computed(() => Boolean(counterUrl));
 
@@ -17,41 +18,26 @@ async function loadTotalVisits() {
     }
 
     const payload = await response.json();
-    totalVisits.value = payload.count ?? null;
+    if (typeof payload.count === "string" && payload.count.trim()) {
+      totalVisits.value = payload.count;
+      return;
+    }
+
+    const count = Number(payload.count);
+    totalVisits.value = Number.isFinite(count) ? formatter.format(count) : null;
   } catch {
     totalVisits.value = null;
   }
 }
 
-function injectTrackingScript() {
-  if (!counterUrl) {
-    return;
-  }
-
-  const existing = document.querySelector<HTMLScriptElement>("script[data-goatcounter]");
-  if (existing) {
-    return;
-  }
-
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = "https://gc.zgo.at/count.js";
-  script.dataset.goatcounter = `${counterUrl}/count`;
-  document.head.appendChild(script);
-}
-
 onMounted(() => {
-  injectTrackingScript();
   void loadTotalVisits();
 });
 </script>
 
 <template>
-  <p v-if="isEnabled" class="home-visit-counter">
-    Site visits:
-    <strong>{{ totalVisits ?? "Loading..." }}</strong>
-  </p>
-  <p v-else class="home-visit-counter home-visit-counter--muted">
-    Visit counter will appear here after GoatCounter is configured.
+  <p v-if="isEnabled" class="home-visit-counter" aria-live="polite">
+    <span class="home-visit-counter__label">Visits</span>
+    <strong>{{ totalVisits ?? "..." }}</strong>
   </p>
 </template>

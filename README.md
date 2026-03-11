@@ -38,6 +38,8 @@ This repo is a personal website built with **VitePress** and deployed to **GitHu
 
 - This site supports an optional GoatCounter counter on the homepage.
 - Set the repo variable `GOATCOUNTER_URL` to your GoatCounter site URL, for example `https://example.goatcounter.com`.
+- In GoatCounter site settings, enable `Allow adding visitor counts on your website`; otherwise the homepage total cannot be fetched.
+- The current setup tracks the whole site and shows the site total in the homepage corner.
 - GoatCounter setup reference: https://www.goatcounter.com/help/start
 
 ## Deploy to GitHub Pages
