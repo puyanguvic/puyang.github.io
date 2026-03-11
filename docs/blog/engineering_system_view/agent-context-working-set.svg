@@ -1,168 +1,178 @@
 <svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Agent context as a runtime working set</title>
-  <desc id="desc">A systems diagram showing how an agent controller constructs the current context window from heterogeneous state sources under token, latency, and cost budgets.</desc>
-
-  <defs>
-    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
-      <path d="M0 0L10 5L0 10Z" fill="#64748b"/>
-    </marker>
-  </defs>
+  <desc id="desc">A systems diagram showing that agent context is a constructed runtime working set rather than the full accumulated system state.</desc>
 
   <style>
-    .bg { fill: #ffffff; }
-    .frame { fill: #ffffff; stroke: #d9e1ec; stroke-width: 1.8; rx: 18; }
-    .rule { stroke: #d9e1ec; stroke-width: 1.4; }
-    .title { fill: #0f172a; font: 700 28px "Inter", "Segoe UI", sans-serif; }
+    .bg { fill: #f8fafc; }
+
+    .title { fill: #0f172a; font: 700 30px "Inter", "Segoe UI", sans-serif; }
     .subtitle { fill: #475569; font: 500 15px "Inter", "Segoe UI", sans-serif; }
-    .panelTitle { fill: #0f172a; font: 700 21px "Inter", "Segoe UI", sans-serif; }
-    .num { fill: #ffffff; font: 700 13px "Inter", "Segoe UI", sans-serif; }
-    .label { fill: #334155; font: 600 15px "Inter", "Segoe UI", sans-serif; }
-    .body { fill: #475569; font: 500 13px "Inter", "Segoe UI", sans-serif; }
-    .mono { fill: #0f172a; font: 700 16px "JetBrains Mono", "SFMono-Regular", monospace; }
-    .chipA { fill: #f5f9ff; stroke: #bfd8ff; stroke-width: 1.3; rx: 12; }
-    .chipB { fill: #f4fcf7; stroke: #bde8cb; stroke-width: 1.3; rx: 12; }
-    .chipC { fill: #fffaf0; stroke: #f0d58a; stroke-width: 1.3; rx: 12; }
-    .chipD { fill: #faf5ff; stroke: #dac3f5; stroke-width: 1.3; rx: 12; }
-    .chipE { fill: #fff6f7; stroke: #f1c0ca; stroke-width: 1.3; rx: 12; }
-    .chipF { fill: #f6fbfb; stroke: #b9e0dd; stroke-width: 1.3; rx: 12; }
-    .barA { fill: #60a5fa; }
-    .barB { fill: #34d399; }
-    .barC { fill: #fbbf24; }
-    .barD { fill: #a78bfa; }
-    .barE { fill: #fb7185; }
-    .barF { fill: #14b8a6; }
-    .summary { fill: #fbfcfe; stroke: #dbe3ee; stroke-width: 1.2; rx: 12; }
-    .badge { fill: #f5f7fb; stroke: #dbe3ee; stroke-width: 1.2; rx: 10; }
+    .rule { stroke: #dbe4ee; stroke-width: 1.4; }
+
+    .panel {
+      fill: #ffffff;
+      stroke: #dbe4ee;
+      stroke-width: 1.3;
+      rx: 20;
+    }
+
+    .panelTitle { fill: #0f172a; font: 700 20px "Inter", "Segoe UI", sans-serif; }
+    .panelHint { fill: #64748b; font: 500 12px "Inter", "Segoe UI", sans-serif; }
+
+    .stepNum { fill: #ffffff; font: 700 13px "Inter", "Segoe UI", sans-serif; }
+
     .n1 { fill: #3b82f6; }
     .n2 { fill: #10b981; }
     .n3 { fill: #8b5cf6; }
-    .arrow { stroke: #64748b; stroke-width: 2.5; stroke-linecap: round; marker-end: url(#arrowhead); }
-    .dashed { stroke: #94a3b8; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 7 7; marker-end: url(#arrowhead); }
-    .window { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.5; rx: 16; }
+
+    .label { fill: #334155; font: 650 15px "Inter", "Segoe UI", sans-serif; }
+    .body { fill: #64748b; font: 500 13px "Inter", "Segoe UI", sans-serif; }
+    .mono { fill: #0f172a; font: 700 15px "JetBrains Mono", "SFMono-Regular", monospace; }
+
+    .chipA { fill: #f5f9ff; stroke: #c8dcff; stroke-width: 1.2; rx: 14; }
+    .chipB { fill: #f4fcf7; stroke: #c5ead1; stroke-width: 1.2; rx: 14; }
+    .chipC { fill: #fffaf0; stroke: #efd79a; stroke-width: 1.2; rx: 14; }
+    .chipD { fill: #faf5ff; stroke: #decdf4; stroke-width: 1.2; rx: 14; }
+    .chipE { fill: #fff6f7; stroke: #f2ccd4; stroke-width: 1.2; rx: 14; }
+    .chipF { fill: #f4fbfb; stroke: #c1e4e0; stroke-width: 1.2; rx: 14; }
+
+    .summary {
+      fill: #fbfcfe;
+      stroke: #dde6f0;
+      stroke-width: 1.2;
+      rx: 14;
+    }
+
+    .badge {
+      fill: #f8fafc;
+      stroke: #dbe4ee;
+      stroke-width: 1.2;
+      rx: 12;
+    }
+
+    .window {
+      fill: #f8fafc;
+      stroke: #cfd8e3;
+      stroke-width: 1.2;
+      rx: 16;
+    }
+
     .slotA { fill: #dbeafe; }
     .slotB { fill: #dcfce7; }
     .slotC { fill: #fef3c7; }
     .slotD { fill: #ede9fe; }
     .slotE { fill: #ffe4e6; }
-    .slotF { fill: #ccfbf1; }
-    .footer { fill: #f8fafc; stroke: #d9e1ec; stroke-width: 1.2; rx: 14; }
+
+    .footer {
+      fill: #ffffff;
+      stroke: #dbe4ee;
+      stroke-width: 1.2;
+      rx: 14;
+    }
+
     .footerText { fill: #334155; font: 600 13px "Inter", "Segoe UI", sans-serif; }
+    .smallCaps { fill: #64748b; font: 700 11px "Inter", "Segoe UI", sans-serif; letter-spacing: 0.12em; }
   </style>
 
   <rect class="bg" width="1200" height="760" rx="24"/>
 
-  <text class="title" x="56" y="62">Agent context is a runtime working set, not a raw prompt</text>
-  <text class="subtitle" x="56" y="89">The controller selects, compresses, and renders only a subset of available state for the current step.</text>
-  <line class="rule" x1="56" y1="108" x2="1144" y2="108"/>
+  <text class="title" x="56" y="60">Agent context is a runtime working set, not a raw prompt</text>
+  <text class="subtitle" x="56" y="88">The controller exposes only a selected and rendered subset of system state at each step.</text>
+  <line class="rule" x1="56" y1="110" x2="1144" y2="110"/>
 
-  <rect class="frame" x="48" y="130" width="344" height="568" rx="18"/>
-  <rect class="frame" x="428" y="130" width="312" height="568" rx="18"/>
-  <rect class="frame" x="776" y="130" width="376" height="568" rx="18"/>
+  <!-- panels -->
+  <rect class="panel" x="48" y="136" width="344" height="560" rx="20"/>
+  <rect class="panel" x="428" y="136" width="312" height="560" rx="20"/>
+  <rect class="panel" x="776" y="136" width="376" height="560" rx="20"/>
 
-  <circle class="n1" cx="74" cy="162" r="13"/>
-  <text class="num" x="70.1" y="166.7">1</text>
-  <text class="panelTitle" x="96" y="169">Available state</text>
+  <!-- headers -->
+  <circle class="n1" cx="74" cy="170" r="13"/>
+  <text class="stepNum" x="70" y="175">1</text>
+  <text class="panelTitle" x="96" y="177">State sources</text>
+  <text class="panelHint" x="96" y="196">All state the system could expose</text>
 
-  <circle class="n2" cx="454" cy="162" r="13"/>
-  <text class="num" x="450.2" y="166.7">2</text>
-  <text class="panelTitle" x="476" y="169">Context construction</text>
+  <circle class="n2" cx="454" cy="170" r="13"/>
+  <text class="stepNum" x="450" y="175">2</text>
+  <text class="panelTitle" x="476" y="177">Context manager</text>
+  <text class="panelHint" x="476" y="196">How the live working set is built</text>
 
-  <circle class="n3" cx="802" cy="162" r="13"/>
-  <text class="num" x="798.2" y="166.7">3</text>
-  <text class="panelTitle" x="824" y="169">Current context window</text>
+  <circle class="n3" cx="802" cy="170" r="13"/>
+  <text class="stepNum" x="798" y="175">3</text>
+  <text class="panelTitle" x="824" y="177">Model-visible context</text>
+  <text class="panelHint" x="824" y="196">What the model sees in this call</text>
 
-  <rect class="chipA" x="72" y="190" width="296" height="68" rx="12"/>
-  <rect class="barA" x="72" y="190" width="8" height="68" rx="8"/>
-  <text class="label" x="92" y="214">User goal and current input</text>
-  <text class="body" x="92" y="236">what the agent must answer or do now</text>
+  <!-- left column -->
+  <rect class="chipA" x="72" y="220" width="296" height="58" rx="14"/>
+  <text class="label" x="92" y="244">User goal and current input</text>
+  <text class="body" x="92" y="264">what the agent must solve now</text>
 
-  <rect class="chipB" x="72" y="272" width="296" height="68" rx="12"/>
-  <rect class="barB" x="72" y="272" width="8" height="68" rx="8"/>
-  <text class="label" x="92" y="296">Conversation history</text>
-  <text class="body" x="92" y="318">recent turns plus older summarized state</text>
+  <rect class="chipB" x="72" y="290" width="296" height="58" rx="14"/>
+  <text class="label" x="92" y="314">Conversation history</text>
+  <text class="body" x="92" y="334">recent turns and summarized past</text>
 
-  <rect class="chipC" x="72" y="354" width="296" height="68" rx="12"/>
-  <rect class="barC" x="72" y="354" width="8" height="68" rx="8"/>
-  <text class="label" x="92" y="378">Retrieved documents</text>
-  <text class="body" x="92" y="400">external knowledge fetched for this step</text>
+  <rect class="chipC" x="72" y="360" width="296" height="58" rx="14"/>
+  <text class="label" x="92" y="384">Retrieved documents</text>
+  <text class="body" x="92" y="404">external knowledge for this step</text>
 
-  <rect class="chipD" x="72" y="436" width="296" height="68" rx="12"/>
-  <rect class="barD" x="72" y="436" width="8" height="68" rx="8"/>
-  <text class="label" x="92" y="460">Tool observations</text>
-  <text class="body" x="92" y="482">search results, API payloads, code output</text>
+  <rect class="chipD" x="72" y="430" width="296" height="58" rx="14"/>
+  <text class="label" x="92" y="454">Tool observations</text>
+  <text class="body" x="92" y="474">API data, search output, code results</text>
 
-  <rect class="chipE" x="72" y="518" width="296" height="68" rx="12"/>
-  <rect class="barE" x="72" y="518" width="8" height="68" rx="8"/>
-  <text class="label" x="92" y="542">Long-term memory</text>
-  <text class="body" x="92" y="564">episodic traces, reflections, reusable facts</text>
+  <rect class="chipE" x="72" y="500" width="296" height="58" rx="14"/>
+  <text class="label" x="92" y="524">Long-term memory</text>
+  <text class="body" x="92" y="544">episodic traces and reusable facts</text>
 
-  <rect class="chipF" x="72" y="600" width="296" height="68" rx="12"/>
-  <rect class="barF" x="72" y="600" width="8" height="68" rx="8"/>
-  <text class="label" x="92" y="624">Structured task state</text>
-  <text class="body" x="92" y="646">plan status, cursor, ids, control variables</text>
+  <rect class="chipF" x="72" y="570" width="296" height="58" rx="14"/>
+  <text class="label" x="92" y="594">Structured task state</text>
+  <text class="body" x="92" y="614">plan progress, ids, control variables</text>
 
-  <rect class="summary" x="452" y="194" width="264" height="80" rx="12"/>
-  <text class="label" x="472" y="218">Selection</text>
-  <text class="body" x="472" y="240">which items matter for the current step?</text>
-  <text class="body" x="472" y="257">drop irrelevant or stale state early</text>
+  <!-- middle column -->
+  <text class="smallCaps" x="452" y="228">Controller pipeline</text>
 
-  <rect class="summary" x="452" y="292" width="264" height="80" rx="12"/>
-  <text class="label" x="472" y="316">Compression</text>
-  <text class="body" x="472" y="338">summarize, trim, or keep raw text</text>
-  <text class="body" x="472" y="355">depending on fidelity requirements</text>
+  <rect class="summary" x="452" y="242" width="264" height="74" rx="14"/>
+  <text class="label" x="472" y="268">Selection</text>
+  <text class="body" x="472" y="290">Choose what matters now.</text>
 
-  <rect class="summary" x="452" y="390" width="264" height="80" rx="12"/>
-  <text class="label" x="472" y="414">Rendering</text>
-  <text class="body" x="472" y="436">turn mixed state into a coherent prompt</text>
-  <text class="body" x="472" y="453">with explicit ordering and structure</text>
+  <rect class="summary" x="452" y="332" width="264" height="74" rx="14"/>
+  <text class="label" x="472" y="358">Compression</text>
+  <text class="body" x="472" y="380">Trim or summarize as needed.</text>
 
-  <rect class="summary" x="452" y="488" width="264" height="80" rx="12"/>
-  <text class="label" x="472" y="512">Eviction and externalization</text>
-  <text class="body" x="472" y="534">keep only the live working set here</text>
-  <text class="body" x="472" y="551">leave the rest in external stores</text>
+  <rect class="summary" x="452" y="422" width="264" height="74" rx="14"/>
+  <text class="label" x="472" y="448">Rendering</text>
+  <text class="body" x="472" y="470">Assemble a structured prompt.</text>
 
-  <rect class="badge" x="478" y="598" width="214" height="50" rx="10"/>
-  <text class="mono" x="505" y="629">C_t = render(... ; B_t)</text>
+  <rect class="summary" x="452" y="512" width="264" height="74" rx="14"/>
+  <text class="label" x="472" y="538">Eviction</text>
+  <text class="body" x="472" y="560">Keep only the live set.</text>
 
-  <rect class="badge" x="812" y="190" width="300" height="54" rx="10"/>
-  <text class="label" x="832" y="214">Budget constraints</text>
-  <text class="body" x="832" y="236">token budget, latency budget, and service cost</text>
+  <rect class="badge" x="470" y="612" width="228" height="44" rx="12"/>
+  <text class="mono" x="510" y="639">C_t = Render(W_t)</text>
 
-  <rect class="window" x="832" y="264" width="264" height="356" rx="16"/>
-  <rect class="slotA" x="848" y="280" width="232" height="54" rx="10"/>
-  <text class="label" x="866" y="312">goal + current task</text>
+  <!-- right column -->
+  <rect class="badge" x="832" y="220" width="264" height="50" rx="12"/>
+  <text class="label" x="852" y="244">Budget constraints</text>
+  <text class="body" x="852" y="264">token, latency, and service cost</text>
 
-  <rect class="slotB" x="848" y="342" width="232" height="58" rx="10"/>
-  <text class="label" x="866" y="375">recent history</text>
+  <rect class="window" x="832" y="286" width="264" height="320" rx="16"/>
 
-  <rect class="slotC" x="848" y="408" width="232" height="82" rx="10"/>
-  <text class="label" x="866" y="441">retrieved evidence</text>
-  <text class="body" x="866" y="460">only top pieces survive</text>
+  <rect class="slotA" x="848" y="302" width="232" height="48" rx="10"/>
+  <text class="label" x="866" y="332">goal + task</text>
 
-  <rect class="slotD" x="848" y="498" width="232" height="54" rx="10"/>
-  <text class="label" x="866" y="530">tool results</text>
+  <rect class="slotB" x="848" y="362" width="232" height="48" rx="10"/>
+  <text class="label" x="866" y="392">recent history</text>
 
-  <rect class="slotE" x="848" y="560" width="232" height="44" rx="10"/>
-  <text class="label" x="866" y="589">memory summary</text>
+  <rect class="slotC" x="848" y="422" width="232" height="62" rx="10"/>
+  <text class="label" x="866" y="450">retrieved evidence</text>
+  <text class="body" x="866" y="470">top-ranked pieces only</text>
 
-  <text class="body" x="847" y="646">not every source item is present in every call</text>
+  <rect class="slotD" x="848" y="496" width="232" height="48" rx="10"/>
+  <text class="label" x="866" y="526">tool results</text>
 
-  <rect class="summary" x="836" y="642" width="272" height="34" rx="10"/>
-  <text class="footerText" x="857" y="664">The prompt is only the rendered live working set.</text>
+  <rect class="slotE" x="848" y="556" width="232" height="34" rx="10"/>
+  <text class="label" x="866" y="578">memory summary</text>
 
-  <path class="arrow" d="M368 224H452"/>
-  <path class="arrow" d="M368 306H452"/>
-  <path class="arrow" d="M368 388H452"/>
-  <path class="arrow" d="M368 470H452"/>
-  <path class="arrow" d="M368 552H452"/>
-  <path class="arrow" d="M368 634H452"/>
+  <text class="body" x="832" y="636">Not every source appears in every call.</text>
 
-  <path class="arrow" d="M716 234H832"/>
-  <path class="arrow" d="M716 332H832"/>
-  <path class="arrow" d="M716 430H832"/>
-  <path class="arrow" d="M716 528H832"/>
-  <path class="dashed" d="M716 623H812"/>
-
-  <rect class="footer" x="56" y="718" width="1088" height="24" rx="12"/>
-  <text class="footerText" x="80" y="735">Context engineering is the management of a live working set under budget, not the blind accumulation of everything the agent has ever seen.</text>
+  <rect class="footer" x="56" y="716" width="1088" height="28" rx="14"/>
+  <text class="footerText" x="80" y="735">Context engineering manages a live working set under budget rather than pushing all available state into the prompt.</text>
 </svg>
