@@ -1,0 +1,135 @@
+<svg width="1200" height="780" viewBox="0 0 1200 780" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Naive context accumulation versus engineered context construction</title>
+  <desc id="desc">A comparison between appending everything into a growing prompt and managing context through external stores, retrieval, compression, and structured rendering.</desc>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 5L0 10Z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <style>
+    .bg { fill: #ffffff; }
+    .frame { fill: #ffffff; stroke: #d9e1ec; stroke-width: 1.8; rx: 18; }
+    .rule { stroke: #d9e1ec; stroke-width: 1.4; }
+    .title { fill: #0f172a; font: 700 28px "Inter", "Segoe UI", sans-serif; }
+    .subtitle { fill: #475569; font: 500 15px "Inter", "Segoe UI", sans-serif; }
+    .panelTitle { fill: #0f172a; font: 700 22px "Inter", "Segoe UI", sans-serif; }
+    .label { fill: #334155; font: 600 15px "Inter", "Segoe UI", sans-serif; }
+    .body { fill: #475569; font: 500 13px "Inter", "Segoe UI", sans-serif; }
+    .chipGray { fill: #f8fafc; stroke: #d7dee9; stroke-width: 1.3; rx: 12; }
+    .chipRed { fill: #fff6f7; stroke: #f1c0ca; stroke-width: 1.3; rx: 12; }
+    .chipGreen { fill: #f4fcf7; stroke: #bde8cb; stroke-width: 1.3; rx: 12; }
+    .chipBlue { fill: #f5f9ff; stroke: #bfd8ff; stroke-width: 1.3; rx: 12; }
+    .chipGold { fill: #fffaf0; stroke: #f0d58a; stroke-width: 1.3; rx: 12; }
+    .chipPurple { fill: #faf5ff; stroke: #dac3f5; stroke-width: 1.3; rx: 12; }
+    .mono { fill: #0f172a; font: 700 16px "JetBrains Mono", "SFMono-Regular", monospace; }
+    .arrow { stroke: #64748b; stroke-width: 2.5; stroke-linecap: round; marker-end: url(#arrowhead); }
+    .bad { fill: #b91c1c; }
+    .good { fill: #047857; }
+    .sideBad { fill: #fee2e2; stroke: #fecaca; stroke-width: 1.2; rx: 12; }
+    .sideGood { fill: #dcfce7; stroke: #bbf7d0; stroke-width: 1.2; rx: 12; }
+    .window { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4; rx: 14; }
+    .footer { fill: #f8fafc; stroke: #d9e1ec; stroke-width: 1.2; rx: 14; }
+    .footerText { fill: #334155; font: 600 13px "Inter", "Segoe UI", sans-serif; }
+  </style>
+
+  <rect class="bg" width="1200" height="780" rx="24"/>
+
+  <text class="title" x="56" y="62">A larger window delays the bottleneck; engineered context changes the system</text>
+  <text class="subtitle" x="56" y="89">The real gain comes from externalization, selection, compression, and structured state management.</text>
+  <line class="rule" x1="56" y1="108" x2="1144" y2="108"/>
+
+  <rect class="frame" x="48" y="132" width="508" height="590" rx="18"/>
+  <rect class="frame" x="644" y="132" width="508" height="590" rx="18"/>
+
+  <text class="panelTitle bad" x="76" y="170">Naive accumulation</text>
+  <text class="panelTitle good" x="672" y="170">Engineered context</text>
+
+  <rect class="chipGray" x="76" y="194" width="220" height="54" rx="12"/>
+  <text class="label" x="96" y="226">step 1 prompt</text>
+  <rect class="chipGray" x="76" y="262" width="256" height="54" rx="12"/>
+  <text class="label" x="96" y="294">step 2 = old prompt + more text</text>
+  <rect class="chipGray" x="76" y="330" width="292" height="54" rx="12"/>
+  <text class="label" x="96" y="362">step 3 = history + docs + tool logs</text>
+  <rect class="chipGray" x="76" y="398" width="328" height="54" rx="12"/>
+  <text class="label" x="96" y="430">step 4 = append everything again</text>
+
+  <path class="arrow" d="M296 221H360"/>
+  <path class="arrow" d="M332 289H396"/>
+  <path class="arrow" d="M368 357H432"/>
+
+  <rect class="window" x="76" y="486" width="364" height="178" rx="14"/>
+  <text class="label" x="96" y="514">Giant prompt</text>
+  <rect class="chipBlue" x="96" y="528" width="324" height="22" rx="8"/>
+  <rect class="chipGreen" x="96" y="556" width="324" height="22" rx="8"/>
+  <rect class="chipGold" x="96" y="584" width="324" height="22" rx="8"/>
+  <rect class="chipPurple" x="96" y="612" width="324" height="22" rx="8"/>
+  <text class="body" x="100" y="544">goals, history, stale summaries, raw tool payloads</text>
+  <text class="body" x="100" y="572">retrieved chunks, repeated instructions, old traces</text>
+  <text class="body" x="100" y="600">everything shares the same budget and attention</text>
+
+  <rect class="sideBad" x="458" y="214" width="74" height="110" rx="12"/>
+  <text class="label bad" x="477" y="240">cost</text>
+  <text class="body" x="472" y="264">up</text>
+  <text class="label bad" x="473" y="295">noise</text>
+  <text class="body" x="472" y="319">up</text>
+
+  <rect class="sideBad" x="458" y="348" width="74" height="110" rx="12"/>
+  <text class="label bad" x="467" y="374">stale</text>
+  <text class="body" x="470" y="398">state</text>
+  <text class="label bad" x="470" y="429">loss</text>
+  <text class="body" x="474" y="453">focus</text>
+
+  <rect class="chipBlue" x="672" y="194" width="204" height="58" rx="12"/>
+  <text class="label" x="692" y="219">History store</text>
+  <text class="body" x="692" y="241">recent turns plus summaries</text>
+
+  <rect class="chipGold" x="892" y="194" width="204" height="58" rx="12"/>
+  <text class="label" x="912" y="219">Retrieval index</text>
+  <text class="body" x="912" y="241">external documents and chunks</text>
+
+  <rect class="chipPurple" x="672" y="270" width="204" height="58" rx="12"/>
+  <text class="label" x="692" y="295">Artifact store</text>
+  <text class="body" x="692" y="317">full tool outputs and raw files</text>
+
+  <rect class="chipRed" x="892" y="270" width="204" height="58" rx="12"/>
+  <text class="label" x="912" y="295">Memory store</text>
+  <text class="body" x="912" y="317">reflections and episodic traces</text>
+
+  <rect class="chipGreen" x="746" y="368" width="276" height="116" rx="12"/>
+  <text class="label" x="766" y="394">Context controller</text>
+  <text class="body" x="766" y="418">select relevant pieces</text>
+  <text class="body" x="766" y="440">compress where fidelity permits</text>
+  <text class="body" x="766" y="462">render structured state explicitly</text>
+
+  <path class="arrow" d="M774 252V360"/>
+  <path class="arrow" d="M994 252V360"/>
+  <path class="arrow" d="M774 328V360"/>
+  <path class="arrow" d="M994 328V360"/>
+
+  <rect class="window" x="726" y="540" width="316" height="124" rx="14"/>
+  <text class="label" x="746" y="567">Lean working set for the current step</text>
+  <rect class="chipBlue" x="746" y="582" width="276" height="22" rx="8"/>
+  <rect class="chipGold" x="746" y="610" width="220" height="22" rx="8"/>
+  <rect class="chipPurple" x="746" y="638" width="188" height="22" rx="8"/>
+  <text class="body" x="750" y="598">goal, recent turns, selected evidence</text>
+  <text class="body" x="750" y="626">only the tool fields needed right now</text>
+
+  <path class="arrow" d="M884 484V532"/>
+
+  <rect class="sideGood" x="1062" y="214" width="70" height="110" rx="12"/>
+  <text class="label good" x="1076" y="240">more</text>
+  <text class="body" x="1070" y="264">relevant</text>
+  <text class="label good" x="1076" y="295">more</text>
+  <text class="body" x="1070" y="319">fresh</text>
+
+  <rect class="sideGood" x="1062" y="348" width="70" height="110" rx="12"/>
+  <text class="label good" x="1074" y="374">lower</text>
+  <text class="body" x="1071" y="398">cost</text>
+  <text class="label good" x="1074" y="429">higher</text>
+  <text class="body" x="1069" y="453">control</text>
+
+  <rect class="footer" x="56" y="736" width="1088" height="28" rx="14"/>
+  <text class="footerText" x="80" y="755">The key shift is not from small window to big window, but from append-everything to manage-a-live-working-set.</text>
+</svg>
