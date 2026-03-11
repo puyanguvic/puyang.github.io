@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 
 const counterUrl = (import.meta.env.VITE_GOATCOUNTER_URL || "").replace(/\/$/, "");
 const formatter = new Intl.NumberFormat("en-US");
 const totalVisits = ref<string | null>(null);
 const isEnabled = computed(() => Boolean(counterUrl));
+let refreshTimer: number | undefined;
 
 async function loadTotalVisits() {
   if (!counterUrl) {
@@ -12,7 +13,9 @@ async function loadTotalVisits() {
   }
 
   try {
-    const response = await fetch(`${counterUrl}/counter/TOTAL.json`);
+    const response = await fetch(`${counterUrl}/counter/TOTAL.json?ts=${Date.now()}`, {
+      cache: "no-store"
+    });
     if (!response.ok) {
       return;
     }
@@ -32,6 +35,15 @@ async function loadTotalVisits() {
 
 onMounted(() => {
   void loadTotalVisits();
+  refreshTimer = window.setTimeout(() => {
+    void loadTotalVisits();
+  }, 2500);
+});
+
+onUnmounted(() => {
+  if (refreshTimer) {
+    window.clearTimeout(refreshTimer);
+  }
 });
 </script>
 
