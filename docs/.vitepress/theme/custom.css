@@ -96,15 +96,15 @@
   }
 }
 
-.publications-page {
+.publications-single {
   margin-top: 0.25rem;
 }
 
-.publications-page__header h1 {
+.publications-single h1 {
   margin: 0 0 0.6rem;
 }
 
-.publications-page__intro {
+.publications-single__intro {
   max-width: 46rem;
   margin: 0 0 1.7rem;
   color: var(--vp-c-text-2);
@@ -183,7 +183,7 @@
 }
 
 @media (max-width: 720px) {
-  .publications-page__intro {
+  .publications-single__intro {
     margin-bottom: 1.35rem;
   }
 
