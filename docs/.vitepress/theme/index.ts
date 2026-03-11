@@ -6,6 +6,7 @@ import BlogSidebar from "./BlogSidebar.vue";
 import GoatCounterTracker from "./GoatCounterTracker.vue";
 import HomeIntro from "./HomeIntro.vue";
 import HomeVisitCounter from "./HomeVisitCounter.vue";
+import PublicationsOverview from "./PublicationsOverview.vue";
 import "./custom.css";
 
 export default {
@@ -21,5 +22,6 @@ export default {
     app.component("BlogPostLocaleSwitch", BlogPostLocaleSwitch);
     app.component("HomeIntro", HomeIntro);
     app.component("HomeVisitCounter", HomeVisitCounter);
+    app.component("PublicationsOverview", PublicationsOverview);
   }
 };

@@ -1,5 +1,5 @@
 ---
-title: "ROMAM : An Intelligent Distributed Routing Protocol Architecture"
+title: "ROMAM: An Intelligent Distributed Routing Protocol Architecture"
 authors:
 - Pu Yang
 - Lin Cai
@@ -7,7 +7,7 @@ authors:
 - Jianping Pan
 date: "2024-05-07"
 
-publication: "NSDI 2025 (submitted)"
+publication: "NSDI 2025 submission"
 summary: "NSDI (submitted, 2025). Pu Yang; Lin Cai; Zhiming Huang; Jianping Pan."
 ---
 

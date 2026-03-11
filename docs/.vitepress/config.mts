@@ -59,10 +59,10 @@ export default defineConfig({
           text: "Publications",
           items: [
             { text: "Overview", link: "/publications/" },
-            { text: "Congestion-aware delay-guaranteed scheduling and routing", link: "/publications/pub1" },
-            { text: "DGR: Delay-Guaranteed Routing Protocol", link: "/publications/pub2" },
-            { text: "DDR: A Deadline-Driven Routing Protocol", link: "/publications/pub3" },
             { text: "ROMAM: An Intelligent Distributed Routing Protocol Architecture", link: "/publications/pub4" },
+            { text: "DDR: A Deadline-Driven Routing Protocol", link: "/publications/pub3" },
+            { text: "DGR: Delay-Guaranteed Routing Protocol", link: "/publications/pub2" },
+            { text: "Congestion-aware delay-guaranteed scheduling and routing", link: "/publications/pub1" },
             { text: "Mixed-Numerology Channel Division for Wireless Avionics Intracommunications", link: "/publications/pub5" }
           ]
         }
