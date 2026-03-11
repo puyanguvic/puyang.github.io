@@ -13,7 +13,7 @@ Semantic linearity has fascinated researchers for a long time not just because e
 
 A safer formulation is that linearity in embeddings does not mean natural language obeys some global Euclidean axiom. It means training objectives often discover a low-complexity geometric encoding for recurring co-occurrence structure. The effect is clearest in static word vectors, input embeddings, and output embeddings, and it becomes much weaker in strongly contextual hidden states.
 
-> Core claim: semantic linearity in embeddings should usually be understood as a locally stable relation offset rather than a globally perfect semantic axis. It appears because co-occurrence statistics, low-rank factorization, and parameter sharing jointly encourage repeated relations to be encoded as directions, and that directional structure weakens substantially in contextualized representations [1-9].
+> Core view: semantic linearity in embeddings should usually be understood as a locally stable relation offset rather than a globally perfect semantic axis. It appears because co-occurrence statistics, low-rank factorization, and parameter sharing jointly encourage repeated relations to be encoded as directions, and that directional structure weakens substantially in contextualized representations [1-9].
 
 
 ## 1. What exactly does the linear phenomenon claim?

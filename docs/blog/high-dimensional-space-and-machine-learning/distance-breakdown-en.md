@@ -13,7 +13,7 @@ The first geometric shock that high dimensions bring to machine learning is not 
 
 More precisely, the issue is not whether a particular pairwise distance can be computed. The issue is whether the whole collection of distances still spans a meaningful hierarchy. Once the relative gap between the nearest and farthest neighbors keeps shrinking, any algorithm that relies on "who is closer" becomes fragile. This is the core meaning of distance concentration or relative-contrast collapse in the high-dimensional literature [1][2].
 
-> Core claim: under isotropic high-dimensional models, samples first concentrate on a thin shell of radius about $\sqrt{d}$; pairwise distances then concentrate near $\sqrt{2d}$; unless the sample size grows exponentially with dimension, the relative gap between nearest and farthest neighbors shrinks with $d$, so Euclidean distance gradually loses discriminative power [1-5].
+> Core view: under isotropic high-dimensional models, samples first concentrate on a thin shell of radius about $\sqrt{d}$; pairwise distances then concentrate near $\sqrt{2d}$; unless the sample size grows exponentially with dimension, the relative gap between nearest and farthest neighbors shrinks with $d$, so Euclidean distance gradually loses discriminative power [1-5].
 
 
 ## 1. What exactly does it mean for distance to "break"?

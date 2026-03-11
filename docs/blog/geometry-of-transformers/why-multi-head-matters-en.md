@@ -13,7 +13,7 @@ If a single attention head can already generate soft coordinates through query-k
 
 The true limitation of a single head is not merely that it has too few parameters. It is that it can offer only one matching geometry, one set of soft coordinates, and one content channel for each position. Natural language dependencies are obviously not single-type objects: positional offsets, syntax, coreference, discourse, and task-specific cues often require different reading rules. Multi-head attention matters because it provides several context coordinate systems in parallel inside the same layer.
 
-> Core claim: each attention head defines its own query-key metric, softmax coordinate system, and value mapping. So the essence of multi-head attention is not repeating the same operation, but constructing several distinct context-geometry maps in parallel. What it improves is not just parameter count, but relation disentangling, content disentangling, and parallel computation [1-6].
+> Core view: each attention head defines its own query-key metric, softmax coordinate system, and value mapping. So the essence of multi-head attention is not repeating the same operation, but constructing several distinct context-geometry maps in parallel. What it improves is not just parameter count, but relation disentangling, content disentangling, and parallel computation [1-6].
 
 
 ## 1. What does multi-head add, exactly?

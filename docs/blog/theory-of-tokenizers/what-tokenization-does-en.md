@@ -13,7 +13,7 @@ If a tokenizer is understood only as a preprocessing tool that splits text into 
 
 A more accurate view is that tokenization is first a problem of designing a finite reversible codebook. Its aim is not to find the most linguistically natural segmentation, but to re-encode raw strings into a shorter, more stable, and more neural-network-friendly discrete sequence while preserving recoverable text information.
 
-> Core claim: the first job of a tokenizer is not to "recognize words," but to outsource high-frequency local structure in language to an explicit codebook. This shortens sequences, reduces statistical redundancy, and leaves more model capacity for genuine contextual modeling. Subword methods have dominated modern LLMs because they provide the most effective trade-off among compression efficiency, open vocabulary, and optimization stability [1-5].
+> Core view: the first job of a tokenizer is not to "recognize words," but to outsource high-frequency local structure in language to an explicit codebook. This shortens sequences, reduces statistical redundancy, and leaves more model capacity for genuine contextual modeling. Subword methods have dominated modern LLMs because they provide the most effective trade-off among compression efficiency, open vocabulary, and optimization stability [1-5].
 
 
 ## 1. What kind of object should a tokenizer be?

@@ -17,7 +17,7 @@ When a large model is used only for single-turn question answering, the prompt l
 
 That changes the nature of the problem. An agent's ceiling is determined not only by model parameters, reasoning style, or tool availability, but also by what the system chooses to show the model, what it withholds, and in what form it presents it. Once that construction layer loses discipline, a larger context window does not rescue the system: it can still lose focus in irrelevant material, distort critical details, or push state that should have remained structured back into the natural-language channel [1-3].
 
-> Core claim: in an agent, context engineering is not a technique for making prompts longer. It is runtime information management. The real question is not how many tokens can be packed into the prompt, but which information should enter the live working set, which should be compressed, and which should remain outside the system until it is needed.
+> Core view: in an agent, context engineering is not a technique for making prompts longer. It is runtime information management. The real question is not how many tokens can be packed into the prompt, but which information should enter the live working set, which should be compressed, and which should remain outside the system until it is needed.
 
 ![Agent context as a runtime working set](./agent-context-working-set.svg)
 

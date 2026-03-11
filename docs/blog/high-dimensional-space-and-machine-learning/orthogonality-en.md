@@ -13,7 +13,7 @@ A natural question in high-dimensional Euclidean space is: if radial differences
 
 This does not mean high-dimensional space has "no structure." It means that once norms have concentrated, direction becomes the most stable remaining degree of freedom and the most suitable carrier of representation structure. Many properties of modern embedding spaces are built on this fact.
 
-> Core claim: for random directions on a high-dimensional sphere, normalized inner products have mean zero and variance that decays like $1/d$, so angles concentrate near right angles. High-dimensional spaces can therefore hold many weakly correlated directions at once, which provides the geometric basis for embedding separability, spherical-code capacity, and global spreading in contrastive learning [1-4].
+> Core view: for random directions on a high-dimensional sphere, normalized inner products have mean zero and variance that decays like $1/d$, so angles concentrate near right angles. High-dimensional spaces can therefore hold many weakly correlated directions at once, which provides the geometric basis for embedding separability, spherical-code capacity, and global spreading in contrastive learning [1-4].
 
 
 ## 1. Starting from inner products: why does normalization drive orthogonality?

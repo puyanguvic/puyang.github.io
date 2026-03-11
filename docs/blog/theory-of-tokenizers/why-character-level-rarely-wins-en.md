@@ -13,7 +13,7 @@ If we look only at representational uniformity, character-level or byte-level mo
 
 A stricter statement is that character-level modeling does not eliminate the need for compression. It simply refuses to do the compression explicitly outside the model, so the network must reconstruct it internally on a longer sequence.
 
-> Core claim: character-level or token-free methods do offer open vocabulary, noise robustness, and cross-lingual uniformity, but they usually require longer sequences, longer paths to semantic formation, and extra architectural compensation. The most successful token-free models almost always reintroduce downsampling, local chunking, or latent subword bias explicitly or implicitly. Compression has not disappeared; it has moved from the external tokenizer into the model itself [1-5].
+> Core view: character-level or token-free methods do offer open vocabulary, noise robustness, and cross-lingual uniformity, but they usually require longer sequences, longer paths to semantic formation, and extra architectural compensation. The most successful token-free models almost always reintroduce downsampling, local chunking, or latent subword bias explicitly or implicitly. Compression has not disappeared; it has moved from the external tokenizer into the model itself [1-5].
 
 
 ## 1. Why does the character-level route look so attractive?

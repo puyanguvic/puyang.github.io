@@ -13,7 +13,7 @@ When a model still fits cleanly on one GPU, training is primarily an optimizatio
 
 That is why the most accurate answer to "how are large models trained?" should not begin with a framework name. It should begin with the migration path of bottlenecks. In real systems, the bottleneck moves from single-device memory to model-state placement, then to operator decomposition, pipeline scheduling, and finally exposed communication. ZeRO/FSDP, tensor parallelism, pipeline parallelism, mixed precision, checkpointing, and FlashAttention are not interchangeable items on a technique list. They are successive mechanisms that take over different layers of the system under different constraints [1-6].
 
-> Core claim: once a model grows beyond a single GPU, the problem is not "how many GPUs can we add?" but "how do we rewrite the single-device assumption?" Engineering-wise, large-model training must answer three separate questions: how model state is distributed, how individual computations are decomposed, and how communication is reduced, overlapped, or otherwise made tolerable. Scale-up is the process of pushing the bottleneck from the model layer into the system layer.
+> Core view: once a model grows beyond a single GPU, the problem is not "how many GPUs can we add?" but "how do we rewrite the single-device assumption?" Engineering-wise, large-model training must answer three separate questions: how model state is distributed, how individual computations are decomposed, and how communication is reduced, overlapped, or otherwise made tolerable. Scale-up is the process of pushing the bottleneck from the model layer into the system layer.
 
 ![A systems map of bottleneck migration and parallel axes in large-model training](./training-system-parallelism-map.svg)
 

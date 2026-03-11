@@ -13,7 +13,7 @@ If we treat modern embeddings as ordinary Euclidean vectors, it is hard to expla
 
 These two phenomena are not independent. The previous articles already showed that high-dimensional probability compresses norm fluctuations and transfers useful freedom toward directional structure. Training then further weakens radial noise and encourages semantically relevant differences to be encoded in angles. In practice, embedding spaces therefore often look closer to a hyperspherical manifold than to the full ambient $\mathbb{R}^d$.
 
-> Core claim: the approximate hyperspherical distribution of embeddings is usually produced by three forces acting together: high-dimensional statistics already concentrate norms, normalization and contrastive-style objectives further suppress radial freedom, and inner-product readout keeps rewarding directionally readable organization. In many tasks, angle is therefore more stable than length and closer to the semantic structure the representation actually carries [1-5].
+> Core view: the approximate hyperspherical distribution of embeddings is usually produced by three forces acting together: high-dimensional statistics already concentrate norms, normalization and contrastive-style objectives further suppress radial freedom, and inner-product readout keeps rewarding directionally readable organization. In many tasks, angle is therefore more stable than length and closer to the semantic structure the representation actually carries [1-5].
 
 
 ## 1. The first source of shell structure: norm concentration in high dimensions

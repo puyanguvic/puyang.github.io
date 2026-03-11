@@ -13,7 +13,7 @@ If a tokenizer can promote high-frequency local structure into its codebook, an 
 
 This is not an empirical coincidence. It is an interior optimum at the system level. Enlarging the vocabulary does shorten sequences, but the gain is controlled by a Zipfian long tail and quickly shows diminishing returns. Meanwhile vocabulary parameters, output-head cost, and long-tail sparsity keep increasing. Vocabulary size should therefore not be thought of as a knob where "bigger is more complete." It is a balance point between compression benefit and modeling cost.
 
-> Core claim: as vocabulary size $V$ grows, average sequence length $T(V)$ does decrease, but the decrease quickly slows because of the long-tail distribution. By contrast, embedding parameters, output-layer classification cost, and the learning sparsity of long-tail tokens keep worsening roughly with $V$. Modern LLMs therefore tend to reach a better system trade-off around a medium-sized subword vocabulary instead of promoting every rare fragment into an independent token [1-6].
+> Core view: as vocabulary size $V$ grows, average sequence length $T(V)$ does decrease, but the decrease quickly slows because of the long-tail distribution. By contrast, embedding parameters, output-layer classification cost, and the learning sparsity of long-tail tokens keep worsening roughly with $V$. Modern LLMs therefore tend to reach a better system trade-off around a medium-sized subword vocabulary instead of promoting every rare fragment into an independent token [1-6].
 
 
 ## 1. First write the problem as a cost balance

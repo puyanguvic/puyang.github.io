@@ -13,7 +13,7 @@ Attention is often described as a familiar engineering pipeline: compute `Q`, `K
 
 A more precise statement is that attention uses query-key matching to define a context-dependent set of soft coordinates, then performs a content-adaptive reconstruction in value space. In that sense, it is closer to dynamic kernel regression, barycentric reconstruction, or content-dependent projection than to simply copying one token's representation.
 
-> Core claim: in standard self-attention, the query decides under which relation the current representation should read its context, the keys decide which positions can be activated under that relation, and softmax maps the scores into soft coordinates on a probability simplex. The final output is a barycentric reconstruction in value space, not a direct copy of any single position [1-7].
+> Core view: in standard self-attention, the query decides under which relation the current representation should read its context, the keys decide which positions can be activated under that relation, and softmax maps the scores into soft coordinates on a probability simplex. The final output is a barycentric reconstruction in value space, not a direct copy of any single position [1-7].
 
 
 ## 1. Reading the structure directly from the matrix formula

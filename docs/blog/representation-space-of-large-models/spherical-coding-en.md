@@ -13,7 +13,7 @@ An LLM vocabulary embedding matrix often contains tens of thousands or even hund
 
 That is where the spherical-coding viewpoint begins. Once each token embedding is normalized, the whole vocabulary becomes a point set on the unit sphere: a high-dimensional codebook constrained by semantics, frequency, and the prediction objective. The problem then changes from "can each token get its own dimension?" to "how many directions remain reliably distinguishable at this dimension?"
 
-> Core claim: treating normalized token embeddings as a spherical code is not mere rhetoric. It is a strong first-order model that explains three key facts: representations are mostly read through directional relations, vocabulary capacity is controlled mainly by angular separation and coherence, and training then writes semantic, frequency, and predictive structure into that high-dimensional codebook [1-9].
+> Core view: treating normalized token embeddings as a spherical code is not mere rhetoric. It is a strong first-order model that explains three key facts: representations are mostly read through directional relations, vocabulary capacity is controlled mainly by angular separation and coherence, and training then writes semantic, frequency, and predictive structure into that high-dimensional codebook [1-9].
 
 
 ## 1. From the vocabulary matrix to a spherical codebook

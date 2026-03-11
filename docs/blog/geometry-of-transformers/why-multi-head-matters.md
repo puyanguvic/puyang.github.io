@@ -13,7 +13,7 @@ tags: ["Transformer", "multi-head attention", "representation geometry"]
 
 单头 attention 的真正限制，不是参数太少，而是它只能为每个位置提供一套匹配几何、一组软坐标和一条内容通道。自然语言中的依赖关系显然并不单一：位置偏移、句法依赖、共指链、篇章回溯以及任务相关提示往往需要不同的读取规则。multi-head 的作用，正是在同一层内并行提供多套不同的上下文坐标系统。
 
-> 核心结论：每个 attention head 都定义了一套独立的 query-key 度量、softmax 坐标与 value 映射，因此 multi-head attention 的本质不是重复同一运算，而是并行构造多张不同的上下文几何图；它提升的不是单纯参数量，而是关系解耦、内容解耦与并行计算能力 [1-6]。
+> 核心观点：每个 attention head 都定义了一套独立的 query-key 度量、softmax 坐标与 value 映射，因此 multi-head attention 的本质不是重复同一运算，而是并行构造多张不同的上下文几何图；它提升的不是单纯参数量，而是关系解耦、内容解耦与并行计算能力 [1-6]。
 
 
 ## 1. 从公式看，多头究竟多了什么？

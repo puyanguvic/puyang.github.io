@@ -17,7 +17,7 @@ tags: ["AI Agent", "LLM Systems", "Context Engineering", "RAG", "Memory"]
 
 问题也因此变了。Agent 的上限不再只由模型参数、推理技巧或工具数量决定，同样取决于系统在这一刻究竟让模型看见什么、不让它看见什么，以及用什么形式让它看见。一旦这层构造失控，即使 context window 更大，系统也可能在无关信息里失焦、在关键位置上失真，或者把本该结构化保存的状态重新压回自然语言通道 [1-3]。
 
-> 核心结论：在 Agent 里，context engineering 不是扩充 prompt 的技巧，而是运行时信息管理。真正要优化的不是“能塞多少 token”，而是“在给定预算内，什么信息应该进入当前工作集，什么应该被压缩，什么应该留在外部系统按需取回”。
+> 核心观点：在 Agent 里，context engineering 不是扩充 prompt 的技巧，而是运行时信息管理。真正要优化的不是“能塞多少 token”，而是“在给定预算内，什么信息应该进入当前工作集，什么应该被压缩，什么应该留在外部系统按需取回”。
 
 ![Agent context as a runtime working set](./agent-context-working-set.svg)
 
