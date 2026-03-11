@@ -295,10 +295,10 @@ export function buildBlogSeries(pages: BlogPageData[]): BlogSeries[] {
 }
 
 export function buildBlogSidebarSections(seriesList: BlogSeries[], locale: BlogLocale): BlogSidebarSection[] {
-  const overviewText = locale === "zh" ? "总览" : "Overview";
+  const homeText = "Home";
 
   return [
-    { text: overviewText, link: "/blog/" },
+    { text: homeText, link: "/blog/" },
     ...seriesList.map((series) => ({
       text: series.title[locale],
       items: series.posts.map((post) => ({

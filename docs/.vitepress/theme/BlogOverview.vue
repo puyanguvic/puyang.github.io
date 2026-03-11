@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { VPLink } from "vitepress/theme";
-import { type BlogLocale as Locale, formatBlogDate, formatPostCount } from "./blogData";
+import { type BlogLocale as Locale } from "./blogData";
 import { useBlogLocale } from "./blogLocale";
-import { data as blogSeries } from "./blogPosts.data";
 
 const localeOptions: Locale[] = ["zh", "en"];
 const { locale, setLocale, syncLocale } = useBlogLocale();
@@ -79,22 +77,6 @@ const pageText = {
       "Social impact and governance"
     ]
   },
-  catalogEyebrow: {
-    zh: "自动归档",
-    en: "Auto Index"
-  },
-  catalogTitle: {
-    zh: "文章目录",
-    en: "Article Catalog"
-  },
-  catalogLead: {
-    zh: "这里的系列和文章会直接从 `docs/blog` 目录与 markdown frontmatter 自动生成。以后新增文章，不需要再手工改博客界面代码。",
-    en: "The series and posts below are generated directly from the `docs/blog` directory and markdown frontmatter. New posts no longer require manual updates to the blog UI code."
-  },
-  empty: {
-    zh: "还没有检测到可展示的文章。",
-    en: "No posts were detected yet."
-  },
   closing: {
     zh: "理解它，使用它，也警惕它带来的代价。这大概就是我写这个博客的全部动机。",
     en: "Understand it. Use it. Stay alert to the costs it brings. That is the whole reason this blog exists."
@@ -164,47 +146,6 @@ onMounted(() => {
         </li>
       </ul>
     </div>
-
-    <section class="blog-overview__catalog">
-      <div class="blog-overview__catalog-header">
-        <p class="blog-overview__eyebrow">{{ pageText.catalogEyebrow[locale] }}</p>
-        <h2>{{ pageText.catalogTitle[locale] }}</h2>
-        <p>{{ pageText.catalogLead[locale] }}</p>
-      </div>
-
-      <div v-if="blogSeries.length" class="blog-overview__series-list">
-        <article v-for="series in blogSeries" :key="series.key" class="blog-overview__series">
-          <div class="blog-overview__series-head">
-            <div>
-              <p class="blog-overview__series-date">{{ formatBlogDate(series.date, locale) }}</p>
-              <h3>{{ series.title[locale] }}</h3>
-            </div>
-            <p class="blog-overview__series-count">{{ formatPostCount(series.posts.length, locale) }}</p>
-          </div>
-
-          <p v-if="series.description[locale]" class="blog-overview__series-description">
-            {{ series.description[locale] }}
-          </p>
-
-          <div class="blog-overview__posts">
-            <VPLink
-              v-for="post in series.posts"
-              :key="post.key"
-              class="blog-overview__post"
-              :href="post.href[locale]"
-            >
-              <p class="blog-overview__post-date">{{ formatBlogDate(post.date, locale) }}</p>
-              <h4>{{ post.title[locale] }}</h4>
-              <p>{{ post.summary[locale] }}</p>
-            </VPLink>
-          </div>
-        </article>
-      </div>
-
-      <p v-else class="blog-overview__empty">
-        {{ pageText.empty[locale] }}
-      </p>
-    </section>
 
     <p class="blog-overview__closing">{{ pageText.closing[locale] }}</p>
   </section>
@@ -288,7 +229,6 @@ onMounted(() => {
 }
 
 .blog-overview__card,
-.blog-overview__series,
 .blog-overview__interests {
   border: 1px solid var(--vp-c-divider);
   border-radius: 20px;
@@ -339,117 +279,6 @@ onMounted(() => {
   font-size: 0.92rem;
 }
 
-.blog-overview__catalog {
-  margin-bottom: 1rem;
-}
-
-.blog-overview__catalog-header {
-  margin-bottom: 0.9rem;
-}
-
-.blog-overview__catalog-header h2 {
-  margin: 0 0 0.45rem;
-  font-size: 1.25rem;
-}
-
-.blog-overview__catalog-header p:last-child {
-  margin: 0;
-  color: var(--vp-c-text-2);
-}
-
-.blog-overview__series-list {
-  display: grid;
-  gap: 1rem;
-}
-
-.blog-overview__series {
-  padding: 1.2rem;
-  background:
-    radial-gradient(circle at top right, rgb(250 204 21 / 0.15), transparent 28%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.98), rgb(248 250 252 / 0.95));
-}
-
-.blog-overview__series-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.blog-overview__series-head h3 {
-  margin: 0;
-  font-size: 1.18rem;
-}
-
-.blog-overview__series-date,
-.blog-overview__post-date {
-  margin: 0 0 0.35rem;
-  color: #8a5b28;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.blog-overview__series-count {
-  margin: 0;
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  background: rgb(15 23 42 / 0.06);
-  color: var(--vp-c-text-2);
-  font-size: 0.86rem;
-  white-space: nowrap;
-}
-
-.blog-overview__series-description {
-  margin: 0.85rem 0 1rem;
-  color: var(--vp-c-text-2);
-}
-
-.blog-overview__posts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
-}
-
-.blog-overview__post {
-  display: block;
-  padding: 1rem;
-  border: 1px solid rgb(15 23 42 / 0.08);
-  border-radius: 18px;
-  background: rgb(255 255 255 / 0.86);
-  text-decoration: none;
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.blog-overview__post:hover {
-  transform: translateY(-2px);
-  border-color: rgb(234 179 8 / 0.35);
-  box-shadow: 0 12px 28px rgb(15 23 42 / 0.08);
-}
-
-.blog-overview__post h4 {
-  margin: 0 0 0.45rem;
-  color: var(--vp-c-text-1);
-  font-size: 1rem;
-}
-
-.blog-overview__post p:last-child {
-  margin: 0;
-  color: var(--vp-c-text-2);
-}
-
-.blog-overview__empty {
-  margin: 0;
-  padding: 1rem 1.1rem;
-  border: 1px dashed var(--vp-c-divider);
-  border-radius: 18px;
-  color: var(--vp-c-text-2);
-}
-
 .blog-overview__closing {
   margin: 1rem 0 0;
   color: var(--vp-c-text-1);
@@ -457,8 +286,7 @@ onMounted(() => {
 }
 
 @media (max-width: 960px) {
-  .blog-overview__grid,
-  .blog-overview__posts {
+  .blog-overview__grid {
     grid-template-columns: 1fr;
   }
 }
@@ -476,18 +304,9 @@ onMounted(() => {
 
   .blog-overview__hero,
   .blog-overview__card,
-  .blog-overview__interests,
-  .blog-overview__series {
+  .blog-overview__interests {
     padding-left: 1rem;
     padding-right: 1rem;
-  }
-
-  .blog-overview__series-head {
-    flex-direction: column;
-  }
-
-  .blog-overview__series-count {
-    white-space: normal;
   }
 }
 </style>

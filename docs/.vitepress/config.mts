@@ -40,7 +40,7 @@ export default defineConfig({
     sidebar: {
       "/blog/": [
         {
-          text: "Overview",
+          text: "Home",
           link: "/blog/"
         }
       ],
