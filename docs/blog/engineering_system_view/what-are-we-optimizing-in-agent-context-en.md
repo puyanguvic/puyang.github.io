@@ -1,31 +1,29 @@
 ---
-title: "Context Engineering for AI Agents: What Are We Actually Optimizing as Context Keeps Expanding?"
+title: "What Are We Optimizing as Context Keeps Expanding?"
 date: 2026-03-11T10:00:00-08:00
-summary: "By viewing agent context as a runtime working set, this article explains why context optimization is not merely about enlarging the window, but is instead a multi-objective systems problem that balances task quality, cost, latency, fidelity, freshness, and controllability through retrieval, compression, memory architecture, and structured state management."
-tags: ["AI agent", "LLM systems", "context engineering", "RAG", "memory"]
+summary: "This article reframes agent context as a runtime working set and argues that context engineering is not about enlarging the window, but about building an information-selection and state-management mechanism that can balance quality, cost, latency, fidelity, freshness, and controllability in deployment."
+tags: ["AI Agent", "LLM Systems", "Context Engineering", "RAG", "Memory"]
 ---
 
-# Context Engineering for AI Agents: What Are We Actually Optimizing as Context Keeps Expanding?
+# What Are We Optimizing as Context Keeps Expanding?
 
 <BlogPostLocaleSwitch current-locale="en" zh-path="/blog/engineering_system_view/what-are-we-optimizing-in-agent-context" en-path="/blog/engineering_system_view/what-are-we-optimizing-in-agent-context-en" />
 
-When a large model is used only for single-turn question answering, the prompt looks like a piece of input text. In an AI agent system, however, it is closer to the **runtime working set** visible to the model at the current step. User goals, conversation history, retrieved documents, tool outputs, execution traces, reflections, and task state all have to be organized into one context before a single model call is made.
+When a large model is used only for single-turn question answering, the prompt looks like a piece of input text. In an AI agent system, however, it is closer to the **runtime working set** visible to the model at the current step. User goals, conversation history, retrieved documents, tool outputs, execution traces, reflections, and task state all have to be organized into a context that the model can consume for a single call.
 
-That changes the nature of the problem. An agent's capability is determined not only by model parameters, reasoning style, or tool availability, but also by what the system chooses to place in front of the model at each step. Once this construction layer is weak, a larger context window does not save the system: the agent can still get lost in irrelevant material, miss the critical position of useful evidence, or lose necessary detail through over-compression [1-3]. In practice, systems are often not short of information; they are short of a mechanism that can reliably select the right information under a fixed budget and present it in the right form.
+That changes the nature of the problem. An agent's ceiling is determined not only by model parameters, reasoning style, or tool availability, but also by what the system chooses to show the model, what it withholds, and in what form it presents it. Once that construction layer loses discipline, a larger context window does not rescue the system: it can still lose focus in irrelevant material, distort critical details, or push state that should have remained structured back into the natural-language channel [1-3].
 
-> Core claim: a larger context window only expands the agent's working-memory capacity. It does not automatically solve information management. Context engineering is not simply about scaling capacity up; it is about deciding, under constraints such as task quality, token cost, retrieval and inference latency, fidelity, freshness, and controllability, which information enters the live working set, which is compressed, which remains in external memory for later retrieval, and which must be discarded.
+> Core claim: in an agent, context engineering is not a technique for making prompts longer. It is runtime information management. The real question is not how many tokens can be packed into the prompt, but which information should enter the live working set, which should be compressed, and which should remain outside the system until it is needed.
 
-In the "Engineering and Systems Perspectives" series, this article reframes the problem as a systems question. Context engineering is not merely about wording prompts well; it is about managing a runtime working set, designing memory hierarchies, choosing state representations, and defining context policies. Put differently, the prompt is often just the final rendering of a `context policy`, not the problem itself. To return to the topic overview, use [Blog](/blog/).
-
-Unless noted otherwise, this article uses three related but distinct terms: `context engineering` for the overall systems-design problem, `context optimization` for the constrained optimization problem within it, and `context policy` for the concrete rule set that constructs context for a call or a task class.
+In the "Engineering and Systems Perspectives" series, this article places the problem back in its proper systems setting. The prompt is only the final rendering of a `context policy`, not the problem itself. To return to the topic overview, use [Blog](/blog/).
 
 ![Agent context as a runtime working set](./agent-context-working-set.svg)
 
 *Figure 1. In an agent system, the prompt is not a simple accumulation of input text. It is the working set selected, compressed, and rendered by a controller for the current step.*
 
-## 1. Viewing Context as the Agent's Runtime Working Set
+## 1. Agent Context Is Fundamentally a Runtime Working Set
 
-If we write a single model call at time $t$ in a more systems-oriented form, it can be approximated as
+If we write a single model call at time $t$ in a form that is closer to system reality, it can be approximated as
 
 $$
 C_t
@@ -33,21 +31,13 @@ C_t
 \mathrm{render}(u_t, H_t, R_t, O_t, M_t, s_t; B_t),
 $$
 
-where:
+where $u_t$ is the current user request or subtask goal, $H_t$ is dialogue history, $R_t$ is externally retrieved evidence, $O_t$ is the observation produced by tools or environment interaction, $M_t$ is experience or summary retrieved from long-term memory, $s_t$ is structured task state, and $B_t$ is the available token, latency, and cost budget for the current step.
 
-- $u_t$ is the current user input or subtask goal;
-- $H_t$ is the dialogue history;
-- $R_t$ is externally retrieved documentation or evidence;
-- $O_t$ is the observation generated by tools or environment interaction;
-- $M_t$ is experience or summary retrieved from long-term memory;
-- $s_t$ is structured task state;
-- $B_t$ is the available budget in tokens, latency, and cost for the current step.
+The importance of this notation is not the equation itself. It is that it forces us to acknowledge a basic fact: the model never receives "the state itself." It only receives a view of state for the current call. Put differently, the prompt is not the information the system has. It is a rendered result produced by a controller that filters, ranks, compresses, and templates heterogeneous state under a budget. Conventional software distributes state across memory, caches, logs, and databases. LLM agents often serialize those heterogeneous states into tokens and feed them through one common input channel.
 
-The key point is not that "the model receives a piece of text," but that **the system first renders heterogeneous state into text**. More precisely, the prompt is not the state itself. It is only a view over state for a particular call. In conventional software, runtime state may be distributed across heap memory, caches, logs, database sessions, and task objects. In LLM agents, those heterogeneous states are often serialized into tokens and passed through one common input channel.
+From that perspective, the role of the context window becomes much clearer. It behaves like an expensive and limited working memory, not a container that should simply be filled up. The difficult stage is not `LLM inference` alone, but `context construction` before inference: which history should remain visible, which external information must be retrieved, which tool outputs should be preserved verbatim, and which state should stay outside the prompt and only be rendered into it when the current task view requires it [4-8]. What matters in practice is therefore not the wording of the prompt, but the policy that constructs it.
 
-That is why the context window behaves much like an expensive and limited working memory. The difficult stage is not `LLM inference` alone, but `context construction` before inference: the system must decide which history to keep, which external knowledge to retrieve, which tool results to include, and which state should stay outside the prompt rather than being copied into it verbatim [4-8]. The verb `render` is therefore far more than string concatenation. It typically includes ranking, truncation, summarization, template filling, structured-field expansion, and source ordering.
-
-If we write the objective of a single agent step as a constrained optimization problem, it is closer to
+If we state that more strictly, the agent is not trying to maximize the amount of information at each step. It is trying to maximize the value of information for the next decision. What the system really wants to solve is closer to
 
 $$
 \max_{C_t} \Pr(a_t^\star \mid C_t)
@@ -56,30 +46,18 @@ $$
 \quad
 |C_t| \le B_t,
 \quad
-\mathrm{latency}(C_t) \le \tau_t,
+\mathrm{latency}(C_t) \le \tau_t
 $$
 
-where $a_t^\star$ may be understood as the correct answer, action, or tool call for the current step. This makes the true objective clearer: context engineering is not about stuffing in as much information as possible, but about constructing the working set that is **most useful for the next decision** under a fixed budget. What is being optimized is not context length itself, but the marginal contribution of the working set to next-step decision quality.
+where $a_t^\star$ can be read as the correct answer, action, or tool call for the current step. That makes the central objective explicit: context engineering does not optimize length itself. It optimizes the marginal contribution of the working set to next-step decision quality.
 
-## 2. Why a Larger Context Window Is Not the Fundamental Solution
+## 2. The Real Optimization Target Is Not Window Size, but Working-Set Quality
 
-At first glance, if the problem comes from insufficient context, then expanding the window appears to be the natural answer. From a systems viewpoint, however, that answer is incomplete.
+Once context is treated as a working set, it becomes easy to see why long context is not the fundamental solution. A larger window is valuable because it delays the capacity bottleneck and gives the system room to see longer history, larger documents, and more intermediate results in a single call. But it does not perform information management on its own. In the standard Transformer, compute and memory cost rise quickly with sequence length [1], and "being able to fit more tokens" has never meant "being able to use more tokens reliably." `Lost in the Middle` makes this point clearly: even models that nominally support long context can degrade sharply when the critical evidence sits in the middle of the prompt [2].
 
-First, long context is never free. In the standard Transformer, self-attention incurs rapidly growing computation and memory costs as sequence length increases [1]. Even though later models and kernels have pushed long-context capability forward substantially, longer input still means higher inference cost, longer wall-clock latency, and greater service-budget pressure.
+So the problem is not merely insufficient capacity. It is also a problem of effective information density, position bias, and attention allocation. In many cases, blindly enlarging the window only gives the system more room to insert noise. Results from LongLLMLingua, LLMLingua, and Selective Context show exactly this: for many long-context tasks, targeted compression or pruning can reduce cost and improve performance at the same time [3][9][10]. That is not a paradox. It is a normal consequence of working-set management: more information does not automatically become more useful information.
 
-Second, **being able to fit more tokens** is not the same as **being able to use more tokens robustly**. Liu et al. show in `Lost in the Middle` that even models explicitly designed for long context may degrade significantly when the critical information sits in the middle of the prompt, while information near the beginning or the end is often easier for the model to exploit [2]. That means context engineering faces not only a capacity problem, but also position bias, attention allocation, and information-density problems.
-
-Third, a longer window may not even be the best representation for the current step. LongLLMLingua, LLMLingua, and Selective Context all show that on many long-context tasks, targeted compression or pruning can reduce token cost and improve performance at the same time [3][9][10]. In other words, **more information does not automatically become more useful information**. Once irrelevant material and redundant wording accumulate, a larger window merely creates room for more noise.
-
-So the role of window expansion is more accurately stated as follows: it delays the capacity bottleneck, but it does not replace information management. The agent still faces a working-set design problem, not a pure capacity-scaling problem. Window size is a `capacity parameter`, not a `policy parameter` that automatically yields a good context strategy.
-
-![Naive accumulation versus engineered context construction](./naive-vs-engineered-context.svg)
-
-*Figure 2. Enlarging the window only delays prompt bloat. The more systematic alternative is to leave most information in external stores and construct the minimum effective working set for the current step through retrieval, compression, and structured rendering.*
-
-## 3. Context Optimization as a Multi-Objective Constrained Problem
-
-If we state the problem more precisely, context optimization is not the search for one single "best prompt." It is the search for an acceptable balance across multiple conflicting objectives. A more realistic systems abstraction is
+Context optimization is therefore multi-objective from the outset. A more realistic systems-level abstraction is
 
 $$
 \max_{C_t \in \mathcal{F}_t}
@@ -93,166 +71,41 @@ S_t(C_t),
 \Big),
 $$
 
-where $Q_t$ denotes task quality at the current step, $F_t$ freshness, $R_t$ fidelity, $S_t$ stability and controllability, $L_t$ latency, and $K_t$ total cost. Real systems are therefore not usually chasing a single scalar optimum. They are looking for context strategies that sit closer to a Pareto-efficient region under a concrete workload and service budget.
+where $Q_t$ denotes step-level task quality, $F_t$ freshness, $R_t$ fidelity, $S_t$ stability and controllability, and $L_t$ and $K_t$ latency and cost. None of these dimensions can be ignored. A strategy that improves quality but explodes cost will not deploy. A strategy that aggressively compresses but damages fidelity will fail on critical details. A strategy that tries to "remember more" without control will feed stale state back into current decisions.
 
-![Context policy trade-off map](./context-policy-tradeoff-map.svg)
+That is why the question "what does the current step actually need?" must always come before "what does the system know in total?" Knowledge-intensive QA systems care more about freshness, evidence relevance, and provenance. Code agents and data-analysis agents care more about the fidelity of tool output, consistency of execution state, and verbatim preservation of error messages. Long-horizon companion agents care more about memory policy, expiration, and cross-step stability. Different workloads assign different weights to these objectives, so there is no globally optimal context independent of task distribution and service budget. There are only context policies that are better for a specific workload, budget, and service objective.
 
-*Figure 3. Different context policies improve and damage different objectives at the same time. Context optimization is therefore not a single-metric race, but a workload-dependent multi-objective trade-off.*
+This is also where the professional quality of context engineering shows up: it refuses to translate all state into natural language. Many systems still let the prompt carry prose instructions, knowledge text, execution logs, and control state at the same time. The advantage is interface uniformity. The cost is that semantic content and system state are forced through the same expensive channel. Whenever state could have remained structured but is instead rewritten into verbose text, the system is paying the highest price for the lowest controllability.
 
-### 3.1 Relevance: What does the current step actually need?
+## 3. Retrieval, Compression, Memory, and Structured State Solve Different Problems
 
-The agent does not need "as much of the past as possible." It needs the part of the past that is most useful for the current decision boundary. Dialogue history, retrieved evidence, tool results, and memory records all need to be re-ranked around the present step. Once irrelevant material is placed into the prompt, the model must spend limited attention on both signal and noise.
+The most common mistake in discussing current methods is to treat them as interchangeable prompt tricks. They are not. They address different layers of the systems problem, so the right way to read them is as a division of labor rather than a checklist.
 
-### 3.2 Freshness: Is the information still current?
+Retrieval addresses the mismatch between knowledge scale and window length. The value of RAG is not just that it "adds knowledge," but that it leaves most knowledge in external non-parametric storage and brings it back only when the current question needs it [4]. What it really achieves is decoupling: the knowledge base can keep growing without forcing the prompt to grow with it. But RAG does not eliminate selection. It only moves selection earlier, into retrieval itself. Query formulation, chunking, top-k, and multi-source fusion still determine what actually enters the working set.
 
-For agents, knowledge does not come only from static corpora. Many tasks depend on search results, database state, webpages, API responses, and new observations gathered during multi-step execution. The value of RAG is not merely that it "adds knowledge," but that it externalizes knowledge from parameters and thereby improves updateability and provenance [4]. Yet as soon as the system keeps stale summaries, stale retrieval results, or stale task state, the prompt acquires a subtler source of error: **information that looks relevant but is no longer valid**.
+Compression addresses the mismatch between information density and budget. LLMLingua, Selective Context, and LongLLMLingua are useful precisely because they acknowledge a basic fact: in many long prompts, what is expensive is not necessary information but redundant expression [3][9][10]. But compression is not a harmless cleanup step. It is an explicitly lossy encoding. Background explanation, casual dialogue history, and low-risk context are often good candidates for compression; code, contract clauses, stack traces, critical configuration, and exact fields in tool output often are not. Once the system replaces original text with a summary, it also accepts the risk of irreversible detail loss [11].
 
-### 3.3 Fidelity: How much recoverable information remains after compression?
+Memory architecture addresses the tension between cross-step persistence and immediate visibility. From Transformer-XL to Memorizing Transformers and then to episodic memory and reflexion at the agent layer, the recurring design idea is simple: not all history should remain resident in the prompt [5][6][12][13]. It should be layered and retrieved when needed. The hard part is not whether a memory store exists, but what the memory policy is: what deserves to be written, what should remain only as an index, what should expire, and what the system should trust when multiple memories conflict.
 
-Summarization and compression reduce token cost, but they are fundamentally lossy. Background knowledge, casual dialogue history, and low-risk context are often appropriate targets for compression. Code, contract clauses, stack traces, critical configuration, and exact fields in tool output often are not. Once the system replaces original text with a summary, it usually gives up the ability to recover the original detail [3][9-11].
+Structured state and tool-trace management address another problem that is still underestimated: not every execution trace should be pasted into the prompt as natural language. ReAct and Toolformer both show that an agent's critical context comes not only from external knowledge, but also from the execution process itself [7][8]. But appending full tool traces, raw outputs, and long logs to the prompt at every step is usually the least scalable choice. Better systems keep the full artifact outside the prompt and expose only the fields needed for the current step, a structured summary sufficient to recover execution state, and references that allow the raw result to be fetched again when needed.
 
-### 3.4 Latency and Cost: Can the system afford this context?
+So a more mature context architecture is not one that "writes prompts better." It is one that splits responsibilities cleanly: external knowledge and execution artifacts stay outside, retrieval handles recall, compression controls density, memory preserves useful cross-step experience, structured state carries control information that should never have been translated into prose, and the prompt is only the rendered result of that whole mechanism at one moment in time.
 
-Context quality is never free. Longer inputs mean more token expenditure, slower inference, higher cache and retrieval cost, and more complicated service resource allocation. For an online agent, even if a strategy is slightly better on an offline benchmark, it may still be a poor deployment choice if it sharply raises tail latency, retrieval-call count, or inference spend. A deployable context policy must therefore place quality gains and systems cost inside the same optimization problem.
+## 4. The Difficulty of Context Policy Is That It Is a Systems Problem of Persistent Failure and Trade-offs
 
-### 3.5 Structure and Controllability: Which state should not exist as natural language at all?
+The hard part is not whether long windows, retrieval, compression, or memory modules exist in isolation. It is that once they all enter the same system, their failure modes enter with them. In practice, the common failures are not mysterious. They usually fall into four types: the information that should have entered the working set never enters it, which is `omission`; the information in the prompt looks relevant but is already outdated, which is `staleness`; summarization or pruning damages critical detail, which is `distortion`; and relevant information is present but drowned by noise, which is `interference`. These failures transform into one another easily. Adding more context to avoid omission often creates interference. Compressing too aggressively to save cost introduces distortion. Retaining memory more aggressively to improve reuse eventually creates staleness.
 
-In many current agent systems, the prompt simultaneously carries explanatory prose, knowledge text, execution logs, and control state. That is convenient because natural language is a universal interface. It is also inefficient, because the model must parse both semantic content and control state through the same channel. From an engineering perspective, much of that state is better kept in structured storage and rendered into the prompt only through the view required by the task. Work such as ReAct, Toolformer, Generative Agents, and Reflexion shows in different ways that an agent's key context comes not only from external documents, but also from execution traces, reflections, and reusable experience [7][8][12][13].
+That is why context policy is still driven largely by heuristics. Sliding windows, top-k retrieval, similarity thresholds, salience scores, and summary-length budgets all work in practice, but most do not answer the harder question with real precision: what is the marginal value of this specific piece of information for the current step? Most systems only know two things reliably from experience: too little information is bad, and too much information is also bad. The difficult part is the deployable boundary in between.
 
-Structured state has another frequently overlooked benefit: it improves controllability and debuggability. As long as context construction depends primarily on unstructured natural-language concatenation, engineers cannot answer cleanly why a piece of information entered the prompt, why it was placed in that position, or why it was summarized in this call but not the previous one. In that sense, context engineering looks much more like `cache management + query planning + state rendering` than prompt wording.
+This is also why a context policy should never be judged by a single benchmark or a single accuracy number. A defensible evaluation needs at least three layers. First, there is the capability boundary: benchmarks such as LongBench, RULER, and ∞Bench are needed to check whether the model and the baseline policy can actually handle long-range dependencies at all [14-16]. But that only answers whether the model can "see" long context, not whether the system can use it correctly; HELMET shows that many popular synthetic long-context tests do not reliably predict downstream performance [17]. Second, there are systems metrics: task quality must be reported together with `p50/p95 latency`, token cost, retrieval cost, compression ratio, and fidelity loss, because any claim of improvement that ignores cost has no deployment meaning. Third, there is the layer agents actually care about: cross-step behavior, including multi-step task success rate, tool-call correctness, state consistency, and task completion per unit of service budget.
 
-### 3.6 There Is No Globally Optimal Context Independent of Workload
+Only when all three layers improve together is it defensible to say that one context policy is better than another. Otherwise, it is too easy to mistake "a prompt trick that works on one test set" for "a systems improvement that generalizes." That is why context engineering remains stubbornly hard. Not because the field lacks techniques, but because the problem is inherently workload-dependent, budget-dependent, and service-dependent. It has no context-free answer, only engineering choices that move closer to the Pareto frontier for a given setting.
 
-Knowledge-intensive QA systems usually care more about freshness, evidence relevance, and provenance. Code agents and data-analysis agents often depend more on fidelity of tool output, state consistency, and verbatim preservation of error messages. Long-horizon companion agents care more about memory policy, expiration rules, and cross-step stability. In other words, different task distributions assign different weights to the objectives above. There is no globally optimal context independent of workload; there are only context strategies that are better for a particular task mix, budget, and service-level objective.
+## Conclusion
 
-## 4. Existing Methods Actually Address Different Systems Problems
+If the prompt is understood only as "what we say to the model," then context engineering is easy to misread as an extension of prompt craft. Once context is treated as the runtime working set visible to the agent at the current step, the problem collapses back into its real systems shape. A larger context window only relaxes a capacity constraint. It does not replace information management. What actually determines agent quality is how information is selected, compressed, layered, organized, and evicted.
 
-The most useful way to compare current methods is not to treat them as a flat list of interchangeable tricks, but to ask what problem each one is addressing, what assumption it relies on, and how it typically fails. Many of them are not substitutes. They repair different mismatches: mismatch between history length and budget, mismatch between knowledge scale and window size, mismatch between information density and available bandwidth, mismatch between cross-step persistence and immediate visibility, and mismatch between system state and natural-language representation.
-
-| Method | Question it answers | Implicit assumption | Typical gain | Main risk |
-| --- | --- | --- | --- | --- |
-| Recent-window / sliding history | When dialogue keeps growing, what should be kept first? | recent information is probably more important | simple implementation, stable latency | long-range dependencies get truncated |
-| Retrieval / RAG | How should large external knowledge enter the live working set? | retrieval similarity approximates task relevance | scalable, updatable, traceable | false retrievals, missed retrievals, sensitivity to chunking and top-k |
-| Compression / summarization | How do we shorten the working set when tokens are insufficient? | low-value tokens can be removed or rewritten safely | lower cost and latency, denser information | lossy compression, irreversible detail loss |
-| Memory hierarchy | How should experience persist across steps without staying in the prompt? | past experience can be externalized and retrieved later | supports long-horizon tasks and episodic memory | complex write, retrieval, expiration, and consistency policies |
-| Structured state / tool-trace management | How should execution state be represented? | not all state should be encoded as natural language | less redundant text, higher controllability and debuggability | extra schema design, rendering logic, and controller complexity |
-
-### 4.1 Retrieval-Based Context: Keep Knowledge Outside and Fetch It on Demand
-
-The basic idea of RAG is simple: do not place all knowledge into the prompt. Keep most of it in external non-parametric storage and retrieve only the relevant fragments when needed [4]. This is the most mature and easiest-to-deploy family of context-engineering methods because it directly decouples knowledge scale from prompt length.
-
-But from a systems perspective, RAG does not eliminate selection. It merely pushes selection into the retrieval phase. The system must still decide how to formulate the query, how to chunk the source, how much top-k to keep, how to fuse sources, and whether the retriever's notion of similarity actually matches the reader's notion of usefulness. Even when retrieval succeeds, the documents must still share one context budget with dialogue history, tool output, and task state [2][4].
-
-### 4.2 Compression: Make Context Shorter, but Admit That It Is Lossy
-
-Another route is to compress the working set directly. LLMLingua, Selective Context, and LongLLMLingua represent a practical family of methods that trim, reorder, or compress prompts at token or segment level so that a long prompt becomes shorter but denser [3][9][10]. More recent work even combines prompt compressors with embedding-based memory, so that content removed from the live prompt does not simply disappear, but becomes part of an external representation layer that can be revisited [11].
-
-The main misunderstanding here is to treat compression as a neutral cleanup step. It is not. Compression is an explicit distortion operation. Once context is summarized, trimmed, or rewritten, the system is actively accepting the risk of information loss. Compression is therefore well suited to background and statistical context, but poorly suited to information that requires exact recovery.
-
-### 4.3 Memory Architecture: Keep Only the Live Working Set in the Prompt
-
-From the segment recurrence of Transformer-XL, to external memory in Memorizing Transformers, to episodic memory at the agent level, the recurring idea is the same: **not all history should remain resident in the current prompt** [5][6][12][13].
-
-Such architectures typically distinguish among:
-
-- the working set that must be directly visible at the current step;
-- long-term memory that can be re-retrieved through search or scoring;
-- stale or low-value residue that should eventually be evicted.
-
-The true difficulty is not whether a memory store exists, but what the memory policy is: what should be written, what should be reflected before being written, what should be indexed without keeping full text, what should expire, and which memory should be trusted when multiple memories conflict.
-
-### 4.4 Tool Traces and Structured State: Do Not Paste the Entire Execution Trace into the Prompt
-
-ReAct shows that a language model can improve decisions by interleaving reasoning and acting while incorporating feedback from the environment [7]. Toolformer further shows that the model can learn when to call APIs, how to fill arguments, and how to use the returned result in subsequent prediction [8]. That means an agent's critical context is not only knowledge text. It is also the **execution process itself**.
-
-Many systems initially adopt the simplest possible design: append the full tool trace and raw tool output to the prompt after every step. That approach can work, but it usually scales the worst. A better pattern is to keep the full artifact outside the prompt and preserve inside the prompt only:
-
-- the fields needed for the current step;
-- a structured summary sufficient to reconstruct execution state;
-- references or identifiers that let the controller recover the raw result when necessary.
-
-In that sense, one important direction in context engineering is not to place more natural language into the model, but to reduce the amount of state that should never have been carried as natural language in the first place.
-
-## 5. Common Failure Modes and Open Problems
-
-Even with long windows, retrieval, compression, memory hierarchies, and tool augmentation, context engineering is still not a solved problem. The reason is precisely that failures can arise at multiple layers at once, and those failures are rarely exposed fully by a single benchmark.
-
-### 5.1 Four Common Failures: Omission, Staleness, Distortion, and Interference
-
-From an engineering standpoint, at least four failure modes occur repeatedly:
-
-- `omission`: the information truly needed at the current step never enters the working set;
-- `staleness`: the information in the prompt looks relevant, but is already outdated;
-- `distortion`: summarization or compression changes the original meaning or erases critical detail;
-- `interference`: relevant information is present, but buried beneath irrelevant text.
-
-These failures are not independent. A system that avoids omission by blindly adding more context often increases interference. A system that avoids cost by aggressive compression may introduce distortion. A system that improves reuse by writing more memory may later suffer from staleness. That is why context engineering resists simplification into either "add more information" or "delete more tokens."
-
-### 5.2 Information Selection Remains Mostly Heuristic
-
-Recent-window rules, top-k retrieval, similarity thresholds, salience scores, and summary-length budgets are all effective in practice, but most remain heuristics. Systems generally know that too little information is bad and too much information is also bad. What they do not know with precision is the marginal value of a specific piece of information for the current step.
-
-### 5.3 Multi-Objective Constraints Do Not Collapse Cleanly into One Metric
-
-One piece of information can affect accuracy, freshness, provenance, privacy, cost, and latency in different directions at the same time. Keeping the raw source improves fidelity but hurts cost. Summarization improves latency but can damage verifiability. Writing more state into memory helps long-horizon continuity but may introduce stale state and harmful generalization. Context engineering is therefore not single-objective optimization, but a persistent multi-objective balancing problem.
-
-### 5.4 Text Remains an Overly General and Expensive Universal Interface
-
-Many agent systems still compress knowledge representation, task state, control flow, and tool output into the same natural-language interface. That greatly lowers the barrier to building such systems. It also pushes all the complexity of selection, formatting, denoising, compression, and state synchronization onto prompt construction. As long as a stronger structured representation does not partially replace this universal interface, context engineering will remain a central bottleneck in agent design.
-
-## 6. How Should a Context Policy Be Evaluated?
-
-If context optimization is genuinely a multi-objective constrained problem, then its evaluation cannot be reduced to a single accuracy number. A more defensible approach is to split evaluation into three complementary layers.
-
-### 6.1 Capability Evaluation: Can the model actually use long context at all?
-
-The first layer is long-context capability itself. Benchmarks such as LongBench, ∞Bench, and RULER are valuable because they answer a basic question: how does performance evolve as input length, task type, and dependency span increase [14-16]? That matters because if the model cannot handle retrieval, aggregation, or cross-segment dependency at long ranges in the first place, even a carefully engineered context policy can only compensate locally.
-
-But those benchmarks should not be mistaken for the whole of context engineering. Synthetic tasks in the style of RULER are better understood as sanity checks than as final proxies for realistic workloads. One of HELMET's key conclusions is exactly that many popular synthetic long-context tests do not reliably predict downstream behavior, and that different task families are not strongly aligned [17]. Optimizing context policy only for needle-style or synthetic settings can therefore create a system that "finds the needle" in a benchmark yet fails to work in a real agent workflow.
-
-### 6.2 Systems Evaluation: Quality must be reported with latency and cost
-
-The second layer is systems measurement. In a deployed agent, context policy is not a purely cognitive module. It is also a resource allocator on the serving path. Any context strategy that claims to be better should therefore report at least:
-
-- task success rate or step-level quality;
-- average and tail latency, such as `p50 / p95 latency`;
-- per-call token cost and external retrieval cost;
-- compression ratio, fidelity loss, or evidence retention rate;
-- degradation curves across input-length buckets rather than a single average.
-
-Reporting quality without cost makes a system look better than it is. Reporting token savings without quality loss hides the price of compression. A professional comparison is not "whose headline number is larger," but "who achieves higher quality at the same budget, or lower cost at the same quality." More strongly, the best practice is to report budget-controlled trade-off curves rather than isolated numbers that are not directly comparable.
-
-### 6.3 Agent Evaluation: In the end, cross-step behavior is what matters
-
-The third layer is the one that matters most for agents: multi-step task completion. Many context failures do not show up as immediate single-turn answer errors. They show up later as plan drift, incorrect tool use, lost state, stale evidence, and harmful reuse of prior information. For such systems, more important observables often include:
-
-- multi-step task success rate;
-- tool-call correctness and retry rate;
-- state consistency in long-horizon tasks;
-- net downstream benefit of memory writes rather than whether a memory was merely recalled;
-- task completion rate per unit of service budget.
-
-That is why context engineering cannot be fully characterized by static benchmarks alone. It ultimately optimizes a policy unfolding over time, not the static quality of one prompt in isolation.
-
-### 6.4 A More Defensible Evaluation Protocol
-
-The more useful rule of thumb is therefore not "find the most authoritative benchmark," but rather to build a layered evaluation protocol:
-
-1. Use long-context benchmarks to check whether the model and the baseline strategy satisfy a minimum capability boundary [14-17].
-2. Use systems metrics to determine whether the policy is actually deployable rather than only effective offline.
-3. Use real agent workloads or high-fidelity proxy tasks to measure cumulative gains and cumulative failure across steps.
-
-Only when all three levels hold at once should a context policy be considered genuinely better. Otherwise, it is easy to mistake "a prompt trick that works on one test set" for "a systems design improvement that generalizes."
-
-## 7. Conclusion
-
-If the prompt is viewed merely as "what we say to the model," then context engineering is easy to misread as an extension of prompt craft. Once context is viewed instead as the runtime working set visible to the agent at a given step, the real problem becomes much clearer:
-
-- a larger context window only relaxes the capacity constraint;
-- actual system quality is determined by how information is selected, compressed, layered, organized, and evicted;
-- the ceiling of the agent is set not only by the model, but also by context construction.
-
-The stronger agents of the future may therefore be defined less by larger windows than by better working-set management systems. The central capability will not simply be putting more tokens in front of the model, but sustaining a better balance among quality, cost, latency, fidelity, and freshness while keeping **the most valuable information** reliably in view. There is no globally optimal context independent of task and budget. What is worth pursuing is a context policy that is workload-specific, interpretable, evaluable, and deployable.
+The stronger agents of the future may therefore be defined less by larger windows than by better working-set management systems. The key capability will not simply be putting more tokens in front of the model, but sustaining a better balance among quality, cost, latency, fidelity, freshness, and controllability while keeping the information that matters most to the current decision reliably in view.
 
 ## References
 
