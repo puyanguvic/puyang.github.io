@@ -10,10 +10,6 @@ lastUpdated: false
 
 <div class="publications-single">
 <h1>Publications</h1>
-<p class="publications-single__intro">
-See my <a href="/cv/puyang-resume.pdf">CV</a> for a more complete list. This page is maintained as a single file, so new publications can be appended directly at the end of the list below.
-</p>
-
 <!-- Append new publication blocks at the end of this file. -->
 
 <div class="publications-list">
