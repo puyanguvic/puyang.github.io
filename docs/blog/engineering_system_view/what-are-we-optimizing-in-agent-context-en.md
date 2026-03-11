@@ -15,8 +15,6 @@ That changes the nature of the problem. An agent's ceiling is determined not onl
 
 > Core claim: in an agent, context engineering is not a technique for making prompts longer. It is runtime information management. The real question is not how many tokens can be packed into the prompt, but which information should enter the live working set, which should be compressed, and which should remain outside the system until it is needed.
 
-In the "Engineering and Systems Perspectives" series, this article places the problem back in its proper systems setting. The prompt is only the final rendering of a `context policy`, not the problem itself. To return to the topic overview, use [Blog](/blog/).
-
 ![Agent context as a runtime working set](./agent-context-working-set.svg)
 
 *Figure 1. In an agent system, the prompt is not a simple accumulation of input text. It is the working set selected, compressed, and rendered by a controller for the current step.*

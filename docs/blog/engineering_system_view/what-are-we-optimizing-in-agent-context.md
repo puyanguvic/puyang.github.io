@@ -15,8 +15,6 @@ tags: ["AI Agent", "LLM Systems", "Context Engineering", "RAG", "Memory"]
 
 > 核心结论：在 Agent 里，context engineering 不是扩充 prompt 的技巧，而是运行时信息管理。真正要优化的不是“能塞多少 token”，而是“在给定预算内，什么信息应该进入当前工作集，什么应该被压缩，什么应该留在外部系统按需取回”。
 
-在“工程和系统视角”系列中，本文尝试把这个问题重新写回系统语境：prompt 只是 `context policy` 的最终渲染结果，而不是问题本身。若想回到专题入口，可从 [Blog](/blog/) 继续按系列浏览。
-
 ![Agent context as a runtime working set](./agent-context-working-set.svg)
 
 *图 1. 在 Agent 系统中，prompt 不是输入文本的简单累加，而是控制器从多路状态中选择、压缩并渲染出的当前工作集。*
