@@ -15,7 +15,6 @@ tags: ["LLM", "embeddings", "representation learning"]
 
 > 核心结论：embedding 中的语义线性通常应理解为局部稳定的关系偏移，而不是全局完美的语义轴；它之所以出现，是因为共现统计、低秩因子分解与参数共享共同鼓励模型把重复关系编码为方向结构，而这种结构在上下文化表示中会因语境依赖而显著弱化 [1-9]。
 
-在“大模型的表示空间”系列中，本文先回答重复语义关系为什么会被写成局部稳定的方向偏移；下一篇 [LLM Embedding 的球面编码视角](/blog/representation-space-of-large-models/spherical-coding) 会把这种方向结构从局部关系推广到整个词表的高维码本。
 
 ## 1. 线性现象真正声称了什么？
 

@@ -15,7 +15,6 @@ tags: ["tokenizer", "character-level", "optimization"]
 
 > 核心结论：character-level 或 token-free 方法确实带来开放词表、噪声鲁棒性与跨语言统一性，但它们通常需要更长序列、更长的语义形成路径以及额外的结构补偿；现代最成功的 token-free 模型几乎都会显式或隐式地重新引入下采样、局部块化或潜在 subword 偏置，这恰恰说明压缩并未消失，而是从显式 tokenizer 转移到了模型内部 [1-5]。
 
-在“Tokenizer 的理论”系列中，本文承接上一篇 [LLM 词表规模的自然平衡点](/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k)，把词表继续缩小到字符级，检验显式码本退出后系统要补回哪些代价；若要回看这一组讨论的起点，可先读 [Tokenization 的压缩本质](/blog/theory-of-tokenizers/what-tokenization-does)。
 
 ## 1. 为什么字符级方案看起来如此有吸引力？
 
@@ -119,7 +118,6 @@ character-level 路线最容易被高估的地方，是它看起来取消了 tok
 
 归结起来，**字符级方法通常输的不是表示能力，而是系统分工。** 当显式 subword tokenizer 已经能够以更低代价提供稳定压缩时，完全字符级路线就很难在整体效率上胜出；也正因如此，最成功的 token-free 模型往往最终都会重新引入某种“隐式 tokenizer”。
 
-上一篇：[LLM 词表规模的自然平衡点](/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k)。回到起点：[Tokenization 的压缩本质](/blog/theory-of-tokenizers/what-tokenization-does)。
 
 ## 参考文献
 

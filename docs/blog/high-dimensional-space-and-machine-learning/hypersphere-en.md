@@ -15,7 +15,6 @@ These two phenomena are not independent. The previous articles already showed th
 
 > Core claim: the approximate hyperspherical distribution of embeddings is usually produced by three forces acting together: high-dimensional statistics already concentrate norms, normalization and contrastive-style objectives further suppress radial freedom, and inner-product readout keeps rewarding directionally readable organization. In many tasks, angle is therefore more stable than length and closer to the semantic structure the representation actually carries [1-5].
 
-In the "High-Dimensional Space and Machine Learning" series, this article closes the first arc: the previous two explained why distance degrades and direction stabilizes; this one explains why learned embeddings are pushed even further toward a shell. To continue toward LLM vocabularies, the next relevant article is [Semantic Linearity in Embedding Space](/blog/representation-space-of-large-models/semantic-linearity-en).
 
 ## 1. The first source of shell structure: norm concentration in high dimensions
 
@@ -119,8 +118,6 @@ That is why understanding embeddings cannot stop at inspecting individual coordi
 The fact that embeddings gather near a hypersphere is not an accidental engineering artifact. It is a stable outcome of high-dimensional probability together with modern training objectives. Norm concentration sets the stage, near-orthogonality provides directional capacity, and training writes semantics into those directional relations.
 
 More sharply: **cosine similarity works so often in embedding systems not just because it is convenient, but because trained representations increasingly behave like spherical geometry.** That is also the direct setup for later discussions of spherical codes, vocabulary capacity, and how LLM embeddings are organized.
-
-Previous article: [Why High-Dimensional Vectors Become Nearly Orthogonal](/blog/high-dimensional-space-and-machine-learning/orthogonality-en). Further reading: [Semantic Linearity in Embedding Space](/blog/representation-space-of-large-models/semantic-linearity-en).
 
 ## References
 

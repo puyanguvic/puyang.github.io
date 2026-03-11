@@ -15,7 +15,6 @@ tags: ["tokenizer", "vocabulary", "LLM"]
 
 > 核心结论：随着词表规模 $V$ 增长，平均序列长度 $T(V)$ 的确下降，但下降速度会因长尾分布而迅速减缓；相反，embedding 参数、输出层分类成本以及长尾 token 的学习稀疏性会近似随 $V$ 持续恶化。因此，现代 LLM 常在一个中等规模的 subword 词表附近达到更优的系统折中，而不会把所有低频片段都提升为独立 token [1-6]。
 
-在“Tokenizer 的理论”系列中，本文承接上一篇 [Tokenization 的压缩本质](/blog/theory-of-tokenizers/what-tokenization-does)，把“码本为什么有用”推进到“码本该做到多大”；下一篇 [Character-Level Tokenizer 的理论优势与工程局限](/blog/theory-of-tokenizers/why-character-level-rarely-wins) 则检验把显式码本继续缩小到极限后会发生什么。
 
 ## 1. 先把问题写成一个成本平衡
 
@@ -125,7 +124,6 @@ SentencePiece 把“在给定词表容量下学习最优分段”当成设计中
 
 更紧凑地说，**词表大小不是局部超参数，而是整个语言模型系统如何分配压缩、参数与组合泛化负担的核心决策。** 把这条逻辑推进到极端，字符级路线就是最直接的检验场：如果继续缩小显式码本，系统到底会失去什么？
 
-上一篇：[Tokenization 的压缩本质](/blog/theory-of-tokenizers/what-tokenization-does)。下一篇：[Character-Level Tokenizer 的理论优势与工程局限](/blog/theory-of-tokenizers/why-character-level-rarely-wins)。
 
 ## 参考文献
 

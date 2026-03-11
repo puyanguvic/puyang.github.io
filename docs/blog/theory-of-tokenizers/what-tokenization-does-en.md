@@ -15,7 +15,6 @@ A more accurate view is that tokenization is first a problem of designing a fini
 
 > Core claim: the first job of a tokenizer is not to "recognize words," but to outsource high-frequency local structure in language to an explicit codebook. This shortens sequences, reduces statistical redundancy, and leaves more model capacity for genuine contextual modeling. Subword methods have dominated modern LLMs because they provide the most effective trade-off among compression efficiency, open vocabulary, and optimization stability [1-5].
 
-In the "Theory of Tokenizers" series, this article first defines tokenization as a codebook-compression problem. The next article, [Why Vocabulary Size Stays Near 50k](/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k-en), asks why the codebook does not keep expanding forever.
 
 ## 1. What kind of object should a tokenizer be?
 
@@ -146,7 +145,6 @@ The core of tokenization is not merely cutting text into pieces. It is deciding 
 
 Put compactly, **a tokenizer is first a neural-network-friendly compression system.** Once we adopt the codebook view, the next unavoidable question is why vocabulary size does not keep growing forever, but settles near a moderate operating point.
 
-Continue reading: [Why Vocabulary Size Stays Near 50k](/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k-en).
 
 ## References
 

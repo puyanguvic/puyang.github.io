@@ -15,7 +15,6 @@ This is not an empirical coincidence. It is an interior optimum at the system le
 
 > Core claim: as vocabulary size $V$ grows, average sequence length $T(V)$ does decrease, but the decrease quickly slows because of the long-tail distribution. By contrast, embedding parameters, output-layer classification cost, and the learning sparsity of long-tail tokens keep worsening roughly with $V$. Modern LLMs therefore tend to reach a better system trade-off around a medium-sized subword vocabulary instead of promoting every rare fragment into an independent token [1-6].
 
-In the "Theory of Tokenizers" series, this article continues from [What Tokenization Really Does](/blog/theory-of-tokenizers/what-tokenization-does-en) and pushes the question from "why is a codebook useful?" to "how large should it be?" The next article, [Why Character-Level Tokenizers Rarely Win](/blog/theory-of-tokenizers/why-character-level-rarely-wins-en), then tests what happens if the explicit codebook is pushed toward the character limit.
 
 ## 1. First write the problem as a cost balance
 
@@ -121,9 +120,8 @@ But none of this changes the shape of the trade-off. As vocabulary keeps growing
 
 Vocabulary size often settles in a moderate range not because engineers guessed a convenient default, but because the costs on the two sides follow very different growth laws: sequence-shortening gains diminish quickly, while vocabulary-side costs rise much more steadily. Once tokenization is understood as codebook design, that conclusion is almost unavoidable.
 
-More compactly, **vocabulary size is not a local hyperparameter. It is a central decision about how a language-model system allocates compression, parameters, and compositional generalization.** Pushed to the extreme, the character-level route becomes the clearest test case: if we keep shrinking the explicit codebook, what exactly does the system lose?
+More compactly, **vocabulary size is not a local hyperparameter. It is a central decision about how a language-model system allocates compression, parameters, and compositional generalization.** Pushed to the extreme, the character-level route becomes the clearest stress test for this trade-off: if we keep shrinking the explicit codebook, what exactly does the system lose?
 
-Previous article: [What Tokenization Really Does](/blog/theory-of-tokenizers/what-tokenization-does-en). Next article: [Why Character-Level Tokenizers Rarely Win](/blog/theory-of-tokenizers/why-character-level-rarely-wins-en).
 
 ## References
 

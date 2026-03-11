@@ -15,7 +15,6 @@ tags: ["tokenizer", "compression", "LLM"]
 
 > 核心结论：tokenizer 的首要作用不是“识别词”，而是把语言中的高频局部结构外包给一个显式码本，从而缩短序列、减少统计冗余，并把更多模型容量留给真正的上下文建模；subword 方法之所以长期主导现代 LLM，正是因为它在压缩效率、开放词表与优化稳定性之间实现了最有效的折中 [1-5]。
 
-在“Tokenizer 的理论”系列中，本文先把 tokenization 定义为码本压缩问题；下一篇 [LLM 词表规模的自然平衡点](/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k) 再讨论这套码本为什么不会无限扩张。
 
 ## 1. tokenizer 应被定义为怎样的对象？
 

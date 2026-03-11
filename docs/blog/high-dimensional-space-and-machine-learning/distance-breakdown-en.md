@@ -15,7 +15,6 @@ More precisely, the issue is not whether a particular pairwise distance can be c
 
 > Core claim: under isotropic high-dimensional models, samples first concentrate on a thin shell of radius about $\sqrt{d}$; pairwise distances then concentrate near $\sqrt{2d}$; unless the sample size grows exponentially with dimension, the relative gap between nearest and farthest neighbors shrinks with $d$, so Euclidean distance gradually loses discriminative power [1-5].
 
-In the "High-Dimensional Space and Machine Learning" series, this article explains why raw Euclidean distance loses resolution in the first place. The next piece, [Why High-Dimensional Vectors Become Nearly Orthogonal](/blog/high-dimensional-space-and-machine-learning/orthogonality-en), shifts the focus from length to direction.
 
 ## 1. What exactly does it mean for distance to "break"?
 
@@ -178,7 +177,6 @@ The most counterintuitive fact about high-dimensional spaces is not that points 
 
 The right conclusion is not that Euclidean distance can never be used again. It is that **an unlearned high-dimensional Euclidean space is usually not enough to carry semantic similarity directly.** Once radius and distance both start to degenerate, the problem naturally shifts toward directional structure.
 
-Continue reading: [Why High-Dimensional Vectors Become Nearly Orthogonal](/blog/high-dimensional-space-and-machine-learning/orthogonality-en).
 
 ## References
 

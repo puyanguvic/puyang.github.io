@@ -15,7 +15,6 @@ A more precise statement is that attention uses query-key matching to define a c
 
 > Core claim: in standard self-attention, the query decides under which relation the current representation should read its context, the keys decide which positions can be activated under that relation, and softmax maps the scores into soft coordinates on a probability simplex. The final output is a barycentric reconstruction in value space, not a direct copy of any single position [1-7].
 
-In the "Geometry of Transformers" series, this article first defines the soft-coordinate geometry of single-head attention. The next piece, [Why Multi-Head Attention Matters](/blog/geometry-of-transformers/why-multi-head-matters-en), explains why one coordinate system is not enough for the heterogeneous relations that language requires.
 
 ## 1. Reading the structure directly from the matrix formula
 
@@ -155,9 +154,8 @@ So the most accurate statement is not "attention alone performs understanding," 
 
 The essence of attention should not be compressed to "a weighted average over values." A better description is that it first uses query-key geometry to generate input-dependent soft coordinates, then uses those coordinates to perform barycentric reconstruction in value space. The crucial question in a Transformer is therefore not only which tokens were seen, but what local coordinate system for reading context was built for the current token.
 
-In short, **attention is a content-dependent geometric read operator.** It chooses coordinates first and reconstructs second. The question of multi-head attention is then how many such coordinate systems a layer can provide in parallel. The next article addresses exactly that.
+In short, **attention is a content-dependent geometric read operator.** It chooses coordinates first and reconstructs second. The remaining design question is how many such coordinate systems a layer can provide in parallel.
 
-Continue reading: [Why Multi-Head Attention Matters](/blog/geometry-of-transformers/why-multi-head-matters-en).
 
 ## References
 

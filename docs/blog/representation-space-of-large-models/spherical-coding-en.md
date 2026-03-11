@@ -15,7 +15,6 @@ That is where the spherical-coding viewpoint begins. Once each token embedding i
 
 > Core claim: treating normalized token embeddings as a spherical code is not mere rhetoric. It is a strong first-order model that explains three key facts: representations are mostly read through directional relations, vocabulary capacity is controlled mainly by angular separation and coherence, and training then writes semantic, frequency, and predictive structure into that high-dimensional codebook [1-9].
 
-In the "Representation Space of Large Models" series, this article extends the previous discussion of local semantic directions into a global view of the vocabulary. To see how this static geometry enters contextual computation, continue with [The Geometric Core of Transformer Attention](/blog/geometry-of-transformers/what-attention-does-en).
 
 ## 1. From the vocabulary matrix to a spherical codebook
 
@@ -146,8 +145,6 @@ So the best use of the spherical-coding lens is as a dominant model of vocabular
 Once the embedding table is seen as a high-dimensional codebook, many scattered observations fall into place: near-orthogonality explains capacity, shell geometry explains why direction matters more than length, the Welch bound explains why a few thousand dimensions are enough for a huge vocabulary, and the training objective explains why the real codebook must carry frequency and semantic structure.
 
 Put differently, **an embedding table is not just a loose parameter matrix. It is a trained high-dimensional semantic codebook.** The spherical-coding view does not exhaust all the complexity of LLM representations, but it captures the hardest geometric constraint governing vocabulary organization.
-
-Previous article: [Semantic Linearity in Embedding Space](/blog/representation-space-of-large-models/semantic-linearity-en). Further reading: [The Geometric Core of Transformer Attention](/blog/geometry-of-transformers/what-attention-does-en).
 
 ## References
 

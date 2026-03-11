@@ -15,7 +15,6 @@ tags: ["machine learning", "high-dimensional geometry", "representation learning
 
 > 核心结论：在各向同性高维模型下，样本先集中到半径约为 $\sqrt{d}$ 的薄壳上，随后样本对距离再集中到 $\sqrt{2d}$ 附近；在样本数没有指数级增长的情况下，最近邻与最远邻的相对差距会随维度上升而收缩，欧氏距离因而逐步失去判别力 [1-5]。
 
-在“高维空间与机器学习”系列中，本文先回答原始欧氏距离为什么会失去分辨率；下一篇 [高维向量近似正交的几何机制](/blog/high-dimensional-space-and-machine-learning/orthogonality) 会把焦点从长度转向方向。
 
 ## 1. 距离“失效”到底指什么？
 

@@ -9,13 +9,12 @@ tags: ["machine learning", "embeddings", "high-dimensional geometry"]
 
 <BlogPostLocaleSwitch current-locale="en" zh-path="/blog/high-dimensional-space-and-machine-learning/orthogonality" en-path="/blog/high-dimensional-space-and-machine-learning/orthogonality-en" />
 
-The previous article explained why Euclidean distance gradually loses resolution in high dimensions. A natural follow-up is: if radial differences are no longer reliable, what geometric quantity is still worth keeping? The usual answer is angle. For normalized high-dimensional vectors, inner products contract toward zero and pairwise angles concentrate near $90^\circ$ [1][2].
+A natural question in high-dimensional Euclidean space is: if radial differences are no longer reliable, what geometric quantity is still worth keeping? The usual answer is angle. For normalized high-dimensional vectors, inner products contract toward zero and pairwise angles concentrate near $90^\circ$ [1][2].
 
 This does not mean high-dimensional space has "no structure." It means that once norms have concentrated, direction becomes the most stable remaining degree of freedom and the most suitable carrier of representation structure. Many properties of modern embedding spaces are built on this fact.
 
 > Core claim: for random directions on a high-dimensional sphere, normalized inner products have mean zero and variance that decays like $1/d$, so angles concentrate near right angles. High-dimensional spaces can therefore hold many weakly correlated directions at once, which provides the geometric basis for embedding separability, spherical-code capacity, and global spreading in contrastive learning [1-4].
 
-In the "High-Dimensional Space and Machine Learning" series, this article continues from [Distance Concentration and Metric Breakdown in High Dimensions](/blog/high-dimensional-space-and-machine-learning/distance-breakdown-en). The next piece, [Why Embeddings Gather on an Approximate Hypersphere](/blog/high-dimensional-space-and-machine-learning/hypersphere-en), connects this to learned representation geometry.
 
 ## 1. Starting from inner products: why does normalization drive orthogonality?
 
@@ -128,17 +127,15 @@ Near-orthogonality is therefore better viewed as the geometric substrate of repr
 
 ## 7. From near-orthogonality to hyperspherical representations
 
-Putting the last two articles together gives a clear chain of logic. The previous article showed that radial differences are compressed. This one shows that, after normalization, angles concentrate near right angles. So in a high-dimensional representation space, length is often not the main discriminative variable; direction is. Modern embedding systems then further suppress radial freedom through normalization layers, contrastive learning, and angular-margin losses, eventually pushing representations toward an approximately spherical organization.
+Putting these two steps together gives a clear chain of logic. Radial differences are compressed, and after normalization angles concentrate near right angles. So in a high-dimensional representation space, length is often not the main discriminative variable; direction is. Modern embedding systems then further suppress radial freedom through normalization layers, contrastive learning, and angular-margin losses, eventually pushing representations toward an approximately spherical organization.
 
-That is why the next step is the hypersphere viewpoint: in many trained representation systems, the sphere is not just a metaphor. It is a better first-order model than raw Euclidean space.
+That is why the hypersphere viewpoint is natural: in many trained representation systems, the sphere is not just a metaphor. It is a better first-order model than raw Euclidean space.
 
 ## 8. Closing
 
 What becomes scarce in high-dimensional space is not distance, but interpretable geometry. Once norm concentration weakens radial information, direction naturally becomes the main variable. Inner products contracting toward zero and angles concentrating near right angles do not mean geometry disappears. They mean geometry becomes more regular.
 
-More compactly: **high-dimensional space offers enormous directional capacity through near-orthogonality, and modern representation learning writes semantics into that capacity.** When training further suppresses radial freedom, representation spaces naturally move toward a hypersphere. The next article examines exactly that step.
-
-Previous article: [Distance Concentration and Metric Breakdown in High Dimensions](/blog/high-dimensional-space-and-machine-learning/distance-breakdown-en). Next article: [Why Embeddings Gather on an Approximate Hypersphere](/blog/high-dimensional-space-and-machine-learning/hypersphere-en).
+More compactly: **high-dimensional space offers enormous directional capacity through near-orthogonality, and modern representation learning writes semantics into that capacity.** When training further suppresses radial freedom, representation spaces naturally move toward a hypersphere.
 
 ## References
 

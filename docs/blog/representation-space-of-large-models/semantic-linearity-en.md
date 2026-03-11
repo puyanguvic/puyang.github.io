@@ -15,7 +15,6 @@ A safer formulation is that linearity in embeddings does not mean natural langua
 
 > Core claim: semantic linearity in embeddings should usually be understood as a locally stable relation offset rather than a globally perfect semantic axis. It appears because co-occurrence statistics, low-rank factorization, and parameter sharing jointly encourage repeated relations to be encoded as directions, and that directional structure weakens substantially in contextualized representations [1-9].
 
-In the "Representation Space of Large Models" series, this article first explains why recurring semantic relations are written as locally stable vector offsets. The next one, [A Spherical-Coding View of LLM Embeddings](/blog/representation-space-of-large-models/spherical-coding-en), extends that directional view from local relations to the vocabulary as a whole.
 
 ## 1. What exactly does the linear phenomenon claim?
 
@@ -144,7 +143,6 @@ Semantic linearity in embeddings does not mean language has been fully Euclidean
 
 Compressed into one sentence: **semantic directions are not a prior law of language; they are a geometric consequence of low-dimensional compression of recurring relations in distributed representations.** Push that logic outward, and the whole vocabulary begins to look like a semantically constrained high-dimensional codebook.
 
-Continue reading: [A Spherical-Coding View of LLM Embeddings](/blog/representation-space-of-large-models/spherical-coding-en).
 
 ## References
 

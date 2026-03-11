@@ -15,7 +15,6 @@ A stricter statement is that character-level modeling does not eliminate the nee
 
 > Core claim: character-level or token-free methods do offer open vocabulary, noise robustness, and cross-lingual uniformity, but they usually require longer sequences, longer paths to semantic formation, and extra architectural compensation. The most successful token-free models almost always reintroduce downsampling, local chunking, or latent subword bias explicitly or implicitly. Compression has not disappeared; it has moved from the external tokenizer into the model itself [1-5].
 
-In the "Theory of Tokenizers" series, this article continues from [Why Vocabulary Size Stays Near 50k](/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k-en) and pushes the explicit codebook all the way down toward characters. To return to the beginning of the discussion, see [What Tokenization Really Does](/blog/theory-of-tokenizers/what-tokenization-does-en).
 
 ## 1. Why does the character-level route look so attractive?
 
@@ -118,8 +117,6 @@ So the real question is not "is character-level modeling correct?" It is "in thi
 What is most often overestimated about the character-level route is the feeling that removing the tokenizer removes the engineering compromise around lexical structure. In reality, compression and middle-structure discovery must happen somewhere no matter what. The only difference is whether they are done by an explicit codebook outside the model or rediscovered by a deeper and more expensive network inside the model.
 
 Compressed into one sentence: **character-level methods usually lose not on representation, but on division of labor.** When an explicit subword tokenizer can provide stable compression more cheaply, a fully character-level route struggles to win on total efficiency. That is precisely why the most successful token-free models usually end up reinventing some form of implicit tokenizer.
-
-Previous article: [Why Vocabulary Size Stays Near 50k](/blog/theory-of-tokenizers/why-vocab-size-stays-near-50k-en). Back to the start: [What Tokenization Really Does](/blog/theory-of-tokenizers/what-tokenization-does-en).
 
 ## References
 

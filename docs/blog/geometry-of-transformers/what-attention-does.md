@@ -15,7 +15,6 @@ attention 常被描述成一串熟悉的工程步骤：计算 `Q`、`K`、`V`，
 
 > 核心结论：在标准 self-attention 中，query 决定当前表示应按何种关系读取上下文，key 决定哪些位置在这种关系下可被激活，softmax 则把匹配分数映射为概率单纯形上的软坐标；最终输出是这些坐标在 value 空间中的重心重建，而不是某个位置内容的直接拷贝 [1-7]。
 
-在“Transformer 的几何结构”系列中，本文先定义单头 attention 的软坐标几何；下一篇 [Multi-Head Attention 的必要性与表达优势](/blog/geometry-of-transformers/why-multi-head-matters) 再说明为什么一套坐标系不足以覆盖语言里的异质关系。
 
 ## 1. 从矩阵公式看 attention 的结构
 
@@ -155,9 +154,8 @@ $$
 
 attention 的本质，不应被压缩成“对 value 做加权平均”。更准确的表述是：它先通过 query-key 几何生成一组输入相关的软坐标，再用这些坐标在 value 空间中完成重心重建。这样一来，Transformer 的关键就不只是“看到了哪些 token”，而是“为当前 token 建立了怎样一套读取上下文的局部坐标系”。
 
-归结起来，**attention 是一种内容相关的几何读取算子。** 它先生成坐标，再完成重建；而 multi-head 的问题，则是在同一层里并行提供多少套彼此不同的坐标系统。下一篇文章就讨论这一步。
+归结起来，**attention 是一种内容相关的几何读取算子。** 它先生成坐标，再完成重建；而 multi-head 的问题，则是在同一层里并行提供多少套彼此不同的坐标系统。
 
-继续阅读：[Multi-Head Attention 的必要性与表达优势](/blog/geometry-of-transformers/why-multi-head-matters)。
 
 ## 参考文献
 

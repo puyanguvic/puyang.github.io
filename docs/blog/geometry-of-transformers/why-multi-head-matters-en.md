@@ -15,7 +15,6 @@ The true limitation of a single head is not merely that it has too few parameter
 
 > Core claim: each attention head defines its own query-key metric, softmax coordinate system, and value mapping. So the essence of multi-head attention is not repeating the same operation, but constructing several distinct context-geometry maps in parallel. What it improves is not just parameter count, but relation disentangling, content disentangling, and parallel computation [1-6].
 
-In the "Geometry of Transformers" series, this article extends the previous analysis of single-head soft coordinates into a picture of parallel coordinate systems. To jump back to the topic entry, use [Blog](/blog/).
 
 ## 1. What does multi-head add, exactly?
 
@@ -165,7 +164,6 @@ The main value of multi-head attention is not repeating one attention operation 
 
 At bottom, **multi-head attention is parallel coordinateization.** The Transformer can process position patterns, syntactic dependencies, coreference, and task cues in the same layer not because one giant attention matrix is all-powerful, but because several coordinate systems can cooperate and specialize at the same time.
 
-Previous article: [The Geometric Core of Transformer Attention](/blog/geometry-of-transformers/what-attention-does-en). Return to the topic overview: [Blog](/blog/).
 
 ## References
 
