@@ -9,6 +9,10 @@ tags: ["AI Agent", "LLM Systems", "Context Engineering", "RAG", "Memory"]
 
 <BlogPostLocaleSwitch current-locale="en" zh-path="/blog/engineering_system_view/what-are-we-optimizing-in-agent-context" en-path="/blog/engineering_system_view/what-are-we-optimizing-in-agent-context-en" />
 
+Recently, open-source AI agent frameworks such as OpenClaw have drawn a great deal of attention. For many people, they make one thing newly concrete: once a model can call tools, browse the web, run code, and complete a task step by step, system complexity no longer comes only from the model itself. It comes from what the model is allowed to see at each step.
+
+On the surface, an agent system looks like an accumulation of tools, skills, and workflows. At the systems level, however, the real difficulty is not the number of tools. It is how context is constructed, filtered, and presented to the model. The more tools, state, and execution history a system has, the sharper that problem becomes.
+
 When a large model is used only for single-turn question answering, the prompt looks like a piece of input text. In an AI agent system, however, it is closer to the **runtime working set** visible to the model at the current step. User goals, conversation history, retrieved documents, tool outputs, execution traces, reflections, and task state all have to be organized into a context that the model can consume for a single call.
 
 That changes the nature of the problem. An agent's ceiling is determined not only by model parameters, reasoning style, or tool availability, but also by what the system chooses to show the model, what it withholds, and in what form it presents it. Once that construction layer loses discipline, a larger context window does not rescue the system: it can still lose focus in irrelevant material, distort critical details, or push state that should have remained structured back into the natural-language channel [1-3].
