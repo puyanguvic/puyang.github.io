@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" role="img" aria-labelledby="title desc">
+  <title id="title">Thin-shell phenomenon in high dimensions</title>
+  <desc id="desc">Comparison of broad radial spread in low dimensions and concentration near a thin shell in high dimensions.</desc>
+
+  <defs>
+    <marker id="arrowGray" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 z" fill="#64748b"/>
+    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+
+      .title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .panel {
+        fill: #fcfdff;
+        stroke: #d6dee8;
+        stroke-width: 1.2;
+        rx: 10;
+      }
+
+      .panel-title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .text {
+        fill: #475569;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 11.6px;
+        font-weight: 400;
+      }
+
+      .small {
+        fill: #64748b;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 10.8px;
+        font-weight: 400;
+      }
+
+      .label {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12.3px;
+        font-weight: 600;
+      }
+
+      .dash {
+        fill: none;
+        stroke: #cbd5e1;
+        stroke-width: 1.2;
+        stroke-dasharray: 4 4;
+      }
+
+      .guide {
+        fill: none;
+        stroke: #94a3b8;
+        stroke-width: 1.5;
+      }
+
+      .shell-low {
+        fill: rgba(37, 99, 235, 0.08);
+        stroke: #93c5fd;
+        stroke-width: 1.4;
+      }
+
+      .core-high {
+        fill: rgba(217, 119, 6, 0.08);
+        stroke: #fed7aa;
+        stroke-width: 1.2;
+      }
+
+      .shell-high {
+        fill: none;
+        stroke: #d97706;
+        stroke-width: 18;
+        stroke-linecap: round;
+        opacity: 0.9;
+      }
+
+      .low-point { fill: #2563eb; }
+      .high-point { fill: #9a3412; }
+
+      .note-box {
+        fill: #f8fafc;
+        stroke: #d9e2ec;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .note-box-warm {
+        fill: #fffaf0;
+        stroke: #ead9b8;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .arrow {
+        fill: none;
+        stroke: #64748b;
+        stroke-width: 1.5;
+        marker-end: url(#arrowGray);
+      }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="980" height="520"/>
+
+  <!-- Global title -->
+  <text class="title" x="48" y="38">Thin-shell phenomenon: mass concentrates near a common radius</text>
+
+  <!-- Panels -->
+  <rect class="panel" x="40" y="84" width="430" height="380" rx="10"/>
+  <rect class="panel" x="510" y="84" width="430" height="380" rx="10"/>
+
+  <!-- LEFT PANEL -->
+  <text class="panel-title" x="58" y="112">Lower dimension</text>
+  <text class="text" x="58" y="134">
+    <tspan x="58" dy="0">Samples occupy many radii,</tspan>
+    <tspan x="58" dy="15">so interior mass remains visible.</tspan>
+  </text>
+
+  <!-- left geometry -->
+  <circle class="dash" cx="255" cy="286" r="42"/>
+  <circle class="dash" cx="255" cy="286" r="82"/>
+  <circle class="shell-low" cx="255" cy="286" r="124"/>
+
+  <line class="guide" x1="255" y1="286" x2="323" y2="218"/>
+  <line class="guide" x1="255" y1="286" x2="202" y2="365"/>
+
+  <circle class="low-point" cx="255" cy="286" r="6.5"/>
+  <circle class="low-point" cx="231" cy="246" r="6"/>
+  <circle class="low-point" cx="299" cy="283" r="6"/>
+  <circle class="low-point" cx="306" cy="228" r="6"/>
+  <circle class="low-point" cx="201" cy="231" r="6"/>
+  <circle class="low-point" cx="190" cy="301" r="6"/>
+  <circle class="low-point" cx="220" cy="351" r="6"/>
+  <circle class="low-point" cx="286" cy="356" r="6"/>
+  <circle class="low-point" cx="348" cy="299" r="6"/>
+  <circle class="low-point" cx="329" cy="206" r="6"/>
+
+  <!-- left compact label -->
+  <text class="small" x="255" y="392" text-anchor="middle">radial spread: broad</text>
+
+  <rect class="note-box" x="104" y="418" width="302" height="28" rx="7"/>
+  <text class="small" x="255" y="436" text-anchor="middle">the interior remains visibly populated</text>
+
+  <!-- RIGHT PANEL -->
+  <text class="panel-title" x="528" y="112">Higher dimension</text>
+  <text class="text" x="528" y="134">
+    <tspan x="528" dy="0">Most samples lie near one radius,</tspan>
+    <tspan x="528" dy="15">while thickness stays only O(1).</tspan>
+  </text>
+
+  <!-- right geometry -->
+  <circle class="core-high" cx="725" cy="286" r="124"/>
+  <circle class="dash" cx="725" cy="286" r="58"/>
+  <circle class="shell-high" cx="725" cy="286" r="108"/>
+
+  <circle class="high-point" cx="725" cy="180" r="6"/>
+  <circle class="high-point" cx="784" cy="198" r="6"/>
+  <circle class="high-point" cx="825" cy="251" r="6"/>
+  <circle class="high-point" cx="822" cy="317" r="6"/>
+  <circle class="high-point" cx="780" cy="372" r="6"/>
+  <circle class="high-point" cx="723" cy="392" r="6"/>
+  <circle class="high-point" cx="664" cy="374" r="6"/>
+  <circle class="high-point" cx="623" cy="321" r="6"/>
+  <circle class="high-point" cx="626" cy="254" r="6"/>
+  <circle class="high-point" cx="667" cy="199" r="6"/>
+
+  <circle class="high-point" cx="760" cy="188" r="5"/>
+  <circle class="high-point" cx="806" cy="222" r="5"/>
+  <circle class="high-point" cx="830" cy="283" r="5"/>
+  <circle class="high-point" cx="807" cy="349" r="5"/>
+  <circle class="high-point" cx="749" cy="388" r="5"/>
+  <circle class="high-point" cx="690" cy="387" r="5"/>
+  <circle class="high-point" cx="642" cy="350" r="5"/>
+  <circle class="high-point" cx="618" cy="286" r="5"/>
+  <circle class="high-point" cx="640" cy="224" r="5"/>
+
+  <!-- right annotations -->
+  <line class="guide" x1="725" y1="286" x2="725" y2="178"/>
+  <text class="label" x="725" y="164" text-anchor="middle">radius ≍ √d</text>
+
+  <path class="arrow" d="M852 198 C832 205, 812 218, 795 233"/>
+  <text class="small" x="870" y="188">mass shifts outward</text>
+
+  <!-- moved shell-thickness label outside -->
+  <line class="guide" x1="833" y1="286" x2="868" y2="286"/>
+  <text class="small" x="872" y="290">shell thickness: O(1)</text>
+
+  <rect class="note-box-warm" x="586" y="418" width="298" height="28" rx="7"/>
+  <text class="small" x="735" y="436" text-anchor="middle">most samples lie on a thin shell near the boundary</text>
+
+  <!-- Bottom note -->
+  <text class="small" x="490" y="492" text-anchor="middle">
+    In high dimension, the radius grows like √d, while fluctuations around that radius remain much smaller.
+  </text>
+</svg>
+
+
+
