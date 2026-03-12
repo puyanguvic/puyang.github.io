@@ -1,11 +1,11 @@
 ---
-title: "What Tokenization Really Does"
+title: "Tokenization as Reversible Coarse-Graining"
 date: 2026-03-09T12:00:00-08:00
 summary: "From reversible recoding, coarse-graining of local mutual information, and neural compute budgets to a view of tokenization as source reparameterization for sequence models."
 tags: ["tokenizer", "compression", "LLM"]
 ---
 
-# What Tokenization Really Does
+# Tokenization as Reversible Coarse-Graining
 
 <BlogPostLocaleSwitch current-locale="en" zh-path="/blog/theory-of-tokenizers/what-tokenization-does" en-path="/blog/theory-of-tokenizers/what-tokenization-does-en" />
 

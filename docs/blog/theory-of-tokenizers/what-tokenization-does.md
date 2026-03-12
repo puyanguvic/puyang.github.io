@@ -1,11 +1,11 @@
 ---
-title: "Tokenization 的压缩本质"
+title: "Tokenization：对字符串源的可逆粗粒化"
 date: 2026-03-09T12:00:00-08:00
 summary: "从可逆重编码、局部互信息粗粒化与神经计算预算出发，解释为什么 tokenization 本质上是面向序列模型的源重参数化。"
 tags: ["tokenizer", "compression", "LLM"]
 ---
 
-# Tokenization 的压缩本质
+# Tokenization：对字符串源的可逆粗粒化
 
 <BlogPostLocaleSwitch current-locale="zh" zh-path="/blog/theory-of-tokenizers/what-tokenization-does" en-path="/blog/theory-of-tokenizers/what-tokenization-does-en" />
 
