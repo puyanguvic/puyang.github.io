@@ -1,8 +1,56 @@
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitepress";
 
 const siteUrl = process.env.CUSTOM_DOMAIN
   ? `https://${process.env.CUSTOM_DOMAIN}`
   : "https://puyang.me";
+
+const docsDir = fileURLToPath(new URL("..", import.meta.url));
+const projectsDir = path.join(docsDir, "projects");
+
+type ProjectEntry = {
+  text: string;
+  link: string;
+  date: number;
+};
+
+function getProjectSidebarItems(): ProjectEntry[] {
+  return readdirSync(projectsDir)
+    .map((name) => {
+      const projectDir = path.join(projectsDir, name);
+
+      if (!statSync(projectDir).isDirectory()) {
+        return null;
+      }
+
+      const indexPath = path.join(projectDir, "index.md");
+
+      try {
+        const source = readFileSync(indexPath, "utf8");
+        const title = source.match(/^title:\s*["']?(.*?)["']?\s*$/m)?.[1];
+        const draft = /^draft:\s*true\s*$/m.test(source);
+        const dateValue = source.match(/^date:\s*(.*?)\s*$/m)?.[1];
+
+        if (!title || draft) {
+          return null;
+        }
+
+        return {
+          text: title,
+          link: `/projects/${name}/`,
+          date: dateValue ? Date.parse(dateValue) : 0
+        };
+      } catch {
+        return null;
+      }
+    })
+    .filter((entry): entry is ProjectEntry => entry !== null)
+    .sort((a, b) => b.date - a.date || a.text.localeCompare(b.text));
+}
+
+const projectSidebarItems = getProjectSidebarItems();
 
 export default defineConfig({
   title: "Pu Yang",
@@ -49,8 +97,7 @@ export default defineConfig({
           text: "Projects",
           items: [
             { text: "Overview", link: "/projects/" },
-            { text: "Network Architecture for 6G Network", link: "/projects/proj1" },
-            { text: "Wireless Avionics Intra-Communications System", link: "/projects/proj2" }
+            ...projectSidebarItems.map(({ text, link }) => ({ text, link }))
           ]
         }
       ],
