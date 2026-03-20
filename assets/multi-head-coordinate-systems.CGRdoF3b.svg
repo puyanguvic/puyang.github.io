@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="500" viewBox="0 0 980 500" role="img" aria-labelledby="title desc">
+  <title id="title">Multi-head attention as parallel coordinate systems</title>
+  <desc id="desc">Comparison between single-head attention and multi-head attention using a cleaner conference-style schematic.</desc>
+
+  <defs>
+    <marker id="arrowGray" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+
+      .title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .panel {
+        fill: #fcfdff;
+        stroke: #d6dee8;
+        stroke-width: 1.2;
+        rx: 10;
+      }
+
+      .panel-title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .text {
+        fill: #475569;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 11.8px;
+        font-weight: 400;
+      }
+
+      .small {
+        fill: #64748b;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 10.8px;
+        font-weight: 400;
+      }
+
+      .math {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12.8px;
+        font-weight: 500;
+      }
+
+      .box {
+        fill: #f8fafc;
+        stroke: #d9e2ec;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .box-warm {
+        fill: #fffaf0;
+        stroke: #ead9b8;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .flow {
+        stroke: #64748b;
+        stroke-width: 1.7;
+        fill: none;
+        marker-end: url(#arrowGray);
+      }
+
+      .orange { fill: #d97706; }
+      .blue { fill: #2563eb; }
+      .green { fill: #059669; }
+
+      .simplex-warm {
+        fill: #fffaf0;
+        stroke: #d6b46b;
+        stroke-width: 1.4;
+      }
+
+      .simplex-cool {
+        fill: #f3f7fd;
+        stroke: #9bb7db;
+        stroke-width: 1.4;
+      }
+
+      .simplex-green {
+        fill: #f2faf4;
+        stroke: #a7c7af;
+        stroke-width: 1.4;
+      }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="980" height="500"/>
+
+  <!-- Title -->
+  <text class="title" x="48" y="40">Multi-head attention uses parallel coordinate systems</text>
+
+  <!-- Global equation -->
+  <rect class="box" x="726" y="18" width="196" height="50" rx="7"/>
+  <text class="math" x="824" y="38" text-anchor="middle">MHA(X) = Concat(H_i) W_O</text>
+  <text class="small" x="824" y="56" text-anchor="middle">parallel heads, then mixing</text>
+
+  <!-- Panels -->
+  <rect class="panel" x="40" y="88" width="272" height="356" rx="10"/>
+  <rect class="panel" x="332" y="88" width="608" height="356" rx="10"/>
+
+  <!-- Left panel -->
+  <text class="panel-title" x="58" y="116">Single head</text>
+  <text class="text" x="58" y="138">
+    <tspan x="58" dy="0">One compatibility map must capture</tspan>
+    <tspan x="58" dy="15">different relation types together.</tspan>
+  </text>
+
+  <rect class="box-warm" x="76" y="180" width="200" height="54" rx="7"/>
+  <text class="math" x="176" y="202" text-anchor="middle">one QK metric</text>
+  <text class="small" x="176" y="220" text-anchor="middle">syntax, reference, position mixed</text>
+
+  <line class="flow" x1="176" y1="236" x2="176" y2="260"/>
+
+  <polygon class="simplex-warm" points="176,278 132,350 220,350"/>
+  <circle cx="176" cy="298" r="6" class="orange"/>
+  <circle cx="152" cy="336" r="6" class="orange"/>
+  <circle cx="200" cy="336" r="6" class="orange"/>
+
+  <text class="small" x="176" y="368" text-anchor="middle">one attention simplex α</text>
+
+  <line class="flow" x1="176" y1="378" x2="176" y2="402"/>
+
+  <rect class="box" x="76" y="404" width="200" height="24" rx="7"/>
+  <text class="small" x="176" y="420" text-anchor="middle">all relations compete in one map</text>
+
+  <!-- Right panel -->
+  <text class="panel-title" x="350" y="116">Multi-head</text>
+  <text class="text" x="350" y="138">
+    <tspan x="350" dy="0">Different heads learn different matching</tspan>
+    <tspan x="350" dy="15">geometries and separate coordinates.</tspan>
+  </text>
+
+  <!-- Head 1 -->
+  <rect class="box-warm" x="366" y="186" width="150" height="50" rx="7"/>
+  <text class="math" x="441" y="206" text-anchor="middle">Head 1</text>
+  <text class="small" x="441" y="223" text-anchor="middle">local syntax</text>
+  <line class="flow" x1="441" y1="238" x2="441" y2="258"/>
+  <polygon class="simplex-warm" points="441,274 401,338 481,338"/>
+  <circle cx="441" cy="292" r="5.8" class="orange"/>
+  <circle cx="420" cy="326" r="5.8" class="orange"/>
+  <circle cx="462" cy="326" r="5.8" class="orange"/>
+  <text class="small" x="441" y="356" text-anchor="middle">α^(1)</text>
+
+  <!-- Head 2 -->
+  <rect class="box" x="560" y="186" width="150" height="50" rx="7"/>
+  <text class="math" x="635" y="206" text-anchor="middle">Head 2</text>
+  <text class="small" x="635" y="223" text-anchor="middle">coreference</text>
+  <line class="flow" x1="635" y1="238" x2="635" y2="258"/>
+  <polygon class="simplex-cool" points="635,274 595,338 675,338"/>
+  <circle cx="635" cy="306" r="5.8" class="blue"/>
+  <circle cx="614" cy="326" r="5.8" class="blue"/>
+  <circle cx="654" cy="290" r="5.8" class="blue"/>
+  <text class="small" x="635" y="356" text-anchor="middle">α^(2)</text>
+
+  <!-- Head 3 -->
+  <rect class="box" x="754" y="186" width="150" height="50" rx="7"/>
+  <text class="math" x="829" y="206" text-anchor="middle">Head 3</text>
+  <text class="small" x="829" y="223" text-anchor="middle">position</text>
+  <line class="flow" x1="829" y1="238" x2="829" y2="258"/>
+  <polygon class="simplex-green" points="829,274 789,338 869,338"/>
+  <circle cx="829" cy="314" r="5.8" class="green"/>
+  <circle cx="808" cy="294" r="5.8" class="green"/>
+  <circle cx="850" cy="326" r="5.8" class="green"/>
+  <text class="small" x="829" y="356" text-anchor="middle">α^(3)</text>
+
+  <!-- Merge -->
+  <line class="flow" x1="441" y1="372" x2="441" y2="394"/>
+  <line class="flow" x1="635" y1="372" x2="635" y2="394"/>
+  <line class="flow" x1="829" y1="372" x2="829" y2="394"/>
+
+  <rect class="box" x="550" y="398" width="206" height="30" rx="7"/>
+  <text class="small" x="653" y="417" text-anchor="middle">Concat(H_i), then apply W_O</text>
+
+  <!-- Bottom note -->
+  <text class="small" x="490" y="470" text-anchor="middle">
+    Multi-head attention separates different relation types before recombination.
+  </text>
+</svg>

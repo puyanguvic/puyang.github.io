@@ -1,0 +1,171 @@
+<svg width="1200" height="790" viewBox="0 0 1200 790" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Large-model training bottleneck migration and parallelism map</title>
+  <desc id="desc">A paper-style systems diagram showing how dominant bottlenecks move from model-state memory to operator scale, depth and activation pressure, memory movement, and finally exposed communication, together with the main parallelism techniques used at each stage.</desc>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 5L0 10Z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <style>
+    .bg { fill: #ffffff; }
+    .frame { fill: #ffffff; stroke: #d9e1ec; stroke-width: 1.8; rx: 18; }
+    .rule { stroke: #d9e1ec; stroke-width: 1.4; }
+    .title { fill: #0f172a; font: 700 28px "Inter", "Segoe UI", sans-serif; }
+    .subtitle { fill: #475569; font: 500 15px "Inter", "Segoe UI", sans-serif; }
+    .panelTitle { fill: #0f172a; font: 700 21px "Inter", "Segoe UI", sans-serif; }
+    .num { fill: #ffffff; font: 700 13px "Inter", "Segoe UI", sans-serif; }
+    .label { fill: #334155; font: 600 15px "Inter", "Segoe UI", sans-serif; }
+    .body { fill: #475569; font: 500 13px "Inter", "Segoe UI", sans-serif; }
+    .mono { fill: #0f172a; font: 700 16px "JetBrains Mono", "SFMono-Regular", monospace; }
+    .chipA { fill: #f5f9ff; stroke: #bfd8ff; stroke-width: 1.3; rx: 12; }
+    .chipB { fill: #f4fcf7; stroke: #bde8cb; stroke-width: 1.3; rx: 12; }
+    .chipC { fill: #fffaf0; stroke: #f0d58a; stroke-width: 1.3; rx: 12; }
+    .chipD { fill: #faf5ff; stroke: #dac3f5; stroke-width: 1.3; rx: 12; }
+    .chipE { fill: #fff6f7; stroke: #f1c0ca; stroke-width: 1.3; rx: 12; }
+    .barA { fill: #60a5fa; }
+    .barB { fill: #34d399; }
+    .barC { fill: #fbbf24; }
+    .barD { fill: #a78bfa; }
+    .barE { fill: #fb7185; }
+    .summary { fill: #fbfcfe; stroke: #dbe3ee; stroke-width: 1.2; rx: 12; }
+    .badge { fill: #f5f7fb; stroke: #dbe3ee; stroke-width: 1.2; rx: 10; }
+    .n1 { fill: #3b82f6; }
+    .n2 { fill: #10b981; }
+    .n3 { fill: #8b5cf6; }
+    .arrow { stroke: #64748b; stroke-width: 2.5; stroke-linecap: round; marker-end: url(#arrowhead); }
+    .footer { fill: #f8fafc; stroke: #d9e1ec; stroke-width: 1.2; rx: 14; }
+    .footerText { fill: #334155; font: 600 13px "Inter", "Segoe UI", sans-serif; }
+  </style>
+
+  <rect class="bg" width="1200" height="790" rx="24"/>
+
+  <!-- header -->
+  <text class="title" x="56" y="62">When one GPU stops being enough, the bottleneck migrates across system layers</text>
+  <text class="subtitle" x="56" y="89">Scaling typically moves from memory capacity to operator scale, depth, memory movement, and finally exposed communication.</text>
+  <line class="rule" x1="56" y1="108" x2="1144" y2="108"/>
+
+  <!-- panels -->
+  <rect class="frame" x="48" y="130" width="336" height="584" rx="18"/>
+  <rect class="frame" x="432" y="130" width="368" height="584" rx="18"/>
+  <rect class="frame" x="848" y="130" width="304" height="584" rx="18"/>
+
+  <!-- titles -->
+  <circle class="n1" cx="74" cy="162" r="13"/>
+  <text class="num" x="70.1" y="166.7">1</text>
+  <text class="panelTitle" x="96" y="169">Dominant bottleneck</text>
+
+  <circle class="n2" cx="458" cy="162" r="13"/>
+  <text class="num" x="454.2" y="166.7">2</text>
+  <text class="panelTitle" x="480" y="169">First technique</text>
+
+  <circle class="n3" cx="874" cy="162" r="13"/>
+  <text class="num" x="870.2" y="166.7">3</text>
+  <text class="panelTitle" x="896" y="169">System view</text>
+
+  <!-- left column -->
+  <rect class="chipA" x="72" y="190" width="288" height="74" rx="12"/>
+  <rect class="barA" x="72" y="190" width="8" height="74" rx="8"/>
+  <text class="label" x="92" y="215">Model-state memory</text>
+  <text class="body" x="92" y="237">parameters, gradients, and</text>
+  <text class="body" x="92" y="254">optimizer state dominate</text>
+
+  <rect class="chipB" x="72" y="280" width="288" height="74" rx="12"/>
+  <rect class="barB" x="72" y="280" width="8" height="74" rx="8"/>
+  <text class="label" x="92" y="305">Operator scale</text>
+  <text class="body" x="92" y="327">a single Linear, QKV, or FFN</text>
+  <text class="body" x="92" y="344">block is still too large</text>
+
+  <rect class="chipC" x="72" y="370" width="288" height="74" rx="12"/>
+  <rect class="barC" x="72" y="370" width="8" height="74" rx="8"/>
+  <text class="label" x="92" y="395">Depth and activations</text>
+  <text class="body" x="92" y="417">many layers or long-lived</text>
+  <text class="body" x="92" y="434">saved activations dominate</text>
+
+  <rect class="chipD" x="72" y="460" width="288" height="74" rx="12"/>
+  <rect class="barD" x="72" y="460" width="8" height="74" rx="8"/>
+  <text class="label" x="92" y="485">Memory movement</text>
+  <text class="body" x="92" y="507">HBM traffic and attention</text>
+  <text class="body" x="92" y="524">workspace become limiting</text>
+
+  <rect class="chipE" x="72" y="550" width="288" height="74" rx="12"/>
+  <rect class="barE" x="72" y="550" width="8" height="74" rx="8"/>
+  <text class="label" x="92" y="575">Exposed communication</text>
+  <text class="body" x="92" y="597">collectives and stage transfers</text>
+  <text class="body" x="92" y="614">remain on the critical path</text>
+
+  <!-- middle column -->
+  <rect class="chipA" x="456" y="190" width="320" height="74" rx="12"/>
+  <rect class="barA" x="456" y="190" width="8" height="74" rx="8"/>
+  <text class="label" x="476" y="215">ZeRO / FSDP</text>
+  <text class="body" x="476" y="237">shard model state and remove</text>
+  <text class="body" x="476" y="254">replica redundancy</text>
+
+  <rect class="chipB" x="456" y="280" width="320" height="74" rx="12"/>
+  <rect class="barB" x="456" y="280" width="8" height="74" rx="8"/>
+  <text class="label" x="476" y="305">Tensor parallelism</text>
+  <text class="body" x="476" y="327">split one operator into</text>
+  <text class="body" x="476" y="344">distributed linear algebra</text>
+
+  <rect class="chipC" x="456" y="370" width="320" height="74" rx="12"/>
+  <rect class="barC" x="456" y="370" width="8" height="74" rx="8"/>
+  <text class="label" x="476" y="395">Pipeline parallelism</text>
+  <text class="body" x="476" y="417">partition depth into stages</text>
+  <text class="body" x="476" y="434">and schedule micro-batches</text>
+
+  <rect class="chipD" x="456" y="460" width="320" height="86" rx="12"/>
+  <rect class="barD" x="456" y="460" width="8" height="86" rx="8"/>
+  <text class="label" x="476" y="485">Checkpointing, sequence parallelism,</text>
+  <text class="label" x="476" y="504">and FlashAttention</text>
+  <text class="body" x="476" y="526">reduce activation residency and</text>
+  <text class="body" x="476" y="543">memory movement</text>
+
+  <rect class="chipE" x="456" y="562" width="320" height="74" rx="12"/>
+  <rect class="barE" x="456" y="562" width="8" height="74" rx="8"/>
+  <text class="label" x="476" y="587">Overlap and topology mapping</text>
+  <text class="body" x="476" y="609">hide or reduce communication</text>
+  <text class="body" x="476" y="626">that stays exposed</text>
+
+  <!-- right column -->
+  <rect class="summary" x="872" y="190" width="256" height="90" rx="12"/>
+  <text class="label" x="892" y="215">Capacity first</text>
+  <text class="body" x="892" y="237">The system must fit before it</text>
+  <text class="body" x="892" y="254">can become efficient.</text>
+
+  <rect class="summary" x="872" y="296" width="256" height="108" rx="12"/>
+  <text class="label" x="892" y="321">Topology view</text>
+  <rect class="badge" x="892" y="337" width="196" height="34" rx="10"/>
+  <text class="mono" x="930" y="359">N = DP × TP × PP</text>
+  <text class="body" x="892" y="384">total ranks across data, tensor,</text>
+  <text class="body" x="892" y="401">and pipeline parallel dimensions</text>
+
+  <rect class="summary" x="872" y="420" width="256" height="136" rx="12"/>
+  <text class="label" x="892" y="445">Hardware-aware mapping</text>
+  <text class="body" x="892" y="467">TP stays on the fastest links.</text>
+  <text class="body" x="892" y="487">PP follows stage balance and</text>
+  <text class="body" x="892" y="504">inter-stage bandwidth.</text>
+  <text class="body" x="892" y="524">DP or FSDP often spans weaker</text>
+  <text class="body" x="892" y="541">cross-node links.</text>
+
+  <rect class="summary" x="872" y="572" width="256" height="90" rx="12"/>
+  <text class="label" x="892" y="597">End-state objective</text>
+  <text class="body" x="892" y="619">meet memory limits while</text>
+  <text class="body" x="892" y="636">minimizing exposed communication</text>
+
+  <!-- arrows -->
+  <path class="arrow" d="M360 227H456"/>
+  <path class="arrow" d="M360 317H456"/>
+  <path class="arrow" d="M360 407H456"/>
+  <path class="arrow" d="M360 497H456"/>
+  <path class="arrow" d="M360 587H456"/>
+
+  <path class="arrow" d="M776 227H872"/>
+  <path class="arrow" d="M776 350H872"/>
+  <path class="arrow" d="M776 488H872"/>
+  <path class="arrow" d="M776 617H872"/>
+
+  <!-- footer -->
+  <rect class="footer" x="56" y="736" width="1088" height="34" rx="14"/>
+  <text class="footerText" x="80" y="758">As scale grows, the dominant constraint is progressively pushed from memory capacity toward communication exposed on the critical path.</text>
+</svg>
