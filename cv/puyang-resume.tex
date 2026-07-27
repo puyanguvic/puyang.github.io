@@ -10,23 +10,16 @@
 {\website{https://puyang.me/}}
 {\nationality{Canada}}
 
-\begin{section}{Education}
-    \begin{subsectionnobullet}{University of Victoria}{Ph.D. in Electrical Computer Engineering (GPA:3.9/4.0)}{}{May 2020 -- Present}
-        \italicitem{Advisor: Dr. Lin Cai}
-    \end{subsectionnobullet}
-    
-    \begin{subsectionnobullet}{Northwestern Polytechnical University}{M.Sc. in Computer technology (GPA: 3.82/4.0)}{}{Aug 2017 -- May 2020}
-        \italicitem{Advisor: Dr. Shining Li}
-        \italicitem{B.Eng. in Software Engineering  \hfill Aug 2012 -- May 2016}
-    \end{subsectionnobullet}
+\begin{section}{Summary}
+Senior Machine Learning Researcher focused on trustworthy AI, secure LLM agents, and AI-for-security systems.\\
+Lead a team of four Ph.D. researchers on controllable security data synthesis; also research AI-agent permission management and federated-learning security.\\
+Research spans LLM safety, agent governance, efficient inference, distributed AI systems, and networked security.
 \end{section}
 
-\sectiontable{Research Interests}{
-    \entry{Trustworthy AI \& Security}{AI firewalls, secure LLM agents, content safety, and adversarial robustness, including model poisoning and backdoors}
-    \entry{Agentic LLM Systems}{Safe and reliable tool use, workflow governance, and least-privilege API execution}
-    \entry{Efficient Language Models}{Small language models (SLMs), KV-cache optimization, and system-level efficiency}
-    \entry{Generative Models for Security}{Discrete diffusion models for controllable security data synthesis}
-    \entry{Distributed \& Networked Systems}{Federated learning security, 6G architectures, and delay-constrained communication systems}
+\sectiontable{Technical Skills}{
+    \entry{AI/ML}{Python, PyTorch, Transformers, LLM agents, SLM adaptation, diffusion models, federated learning}
+    \entry{Systems}{KV-cache optimization, model serving, distributed systems, networking, low-latency inference}
+    \entry{Security}{AI firewall, adversarial robustness, model poisoning, backdoors, content safety, policy enforcement}
 }
 
 % \begin{section}{Research Experience}
@@ -37,15 +30,16 @@
 
 \begin{section}{Work Experience}
     \begin{subsection}{Edison Research Center, Huawei Canada}{Senior Machine Learning Researcher}{Jan. 2026 -- Present}{Canada}
-        \item Lead a team of four Ph.D. researchers on AI-for-security projects, including secure agents, AI firewall systems, and security dataset generation
-        \item Develop data synthesis methods using discrete diffusion language models to construct and augment AI security datasets
-        \item Research model poisoning defenses for federated learning to improve robustness against adversarial training and compromised clients
+        \item Lead a team of four Ph.D. researchers developing controllable data synthesis methods for AI security applications
+        \item Design a GAN-inspired framework that pairs a diffusion language model generator with an encoder-only discriminator to steer generated data toward target styles
+        \item Develop permission-management mechanisms for AI agents to govern tool access and resource usage across agentic workflows
+        \item Investigate model-poisoning attacks and defense strategies in federated learning to improve robustness against malicious clients
     \end{subsection}
 
     \begin{subsection}{Edison Research Center, Huawei Canada}{Machine Learning Researcher}{Dec. 2024 -- Dec. 2025}{Canada}
-        \item Researched AI firewall architectures for detecting, filtering, and mitigating unsafe or policy-violating model interactions
-        \item Built and evaluated AI agent safeguards for content governance, secure workflow execution, and trustworthy response generation
-        \item Investigated small language model adaptation and KV cache strategies for efficient security-oriented inference
+        \item Developed an AI web application firewall using compact BERT-family models to detect malicious and policy-violating inputs at the application boundary
+        \item Trained domain-specific tokenizers and small language models for accurate, low-latency security classification
+        \item Designed a multimodal phishing-email detection agent that extracts evidence from message content, attachments, and embedded URLs, then orchestrates LLM calls for efficient threat assessment
     \end{subsection}
 
     \begin{subsection}{6G Network Architecture Design}{Ph.D student}{Dec. 2020 -- Jul. 2023}{Victoria, Canada}
@@ -108,7 +102,6 @@
 
         \item X. Fan , S. Li , W. Cui , \textbf{P. Yang}, G. Huang, "Mixed-Numerology Channel Division for Wireless Avionics Intracommunications", Wireless Communications and Mobile Computing, April. 2022
 
-        \item \textbf{P. Yang}, L. Cai, Z. Huang, J. Pan, "ROMAM : An Intelligent Distributed Routing Protocol Architecture", USENIX Symposium on Networked Systems Design and Implementation (NSDI), 2025 (submitted)
     \end{itemize}
 \end{section}
 \end{document}
