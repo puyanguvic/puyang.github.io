@@ -1,0 +1,216 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="500" viewBox="0 0 980 500" role="img" aria-labelledby="title desc">
+  <title id="title">Attention builds soft coordinates before reconstruction</title>
+  <desc id="desc">Conference-style colored schematic of attention as query-key scoring, simplex normalization, and weighted reconstruction in value space.</desc>
+
+  <defs>
+    <marker id="flowArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+    <marker id="accentArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+
+    <style>
+      .bg { fill: #ffffff; }
+
+      .title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 21px;
+        font-weight: 700;
+      }
+
+      .panel {
+        fill: #fcfdff;
+        stroke: #d6dee8;
+        stroke-width: 1.2;
+        rx: 10;
+      }
+
+      .panel-title {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .text {
+        fill: #475569;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12px;
+        font-weight: 400;
+      }
+
+      .small {
+        fill: #64748b;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 11px;
+        font-weight: 400;
+      }
+
+      .math {
+        fill: #0f172a;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .axis {
+        stroke: #64748b;
+        stroke-width: 1.5;
+      }
+
+      .grid {
+        stroke: #e7edf3;
+        stroke-width: 1;
+      }
+
+      .flow {
+        stroke: #64748b;
+        stroke-width: 1.7;
+        fill: none;
+        marker-end: url(#flowArrow);
+      }
+
+      .accent {
+        stroke: #2563eb;
+        stroke-width: 2;
+        fill: none;
+        marker-end: url(#accentArrow);
+      }
+
+      .guide {
+        stroke: #94a3b8;
+        stroke-width: 1.3;
+        stroke-dasharray: 4 4;
+        fill: none;
+      }
+
+      .formula {
+        fill: #f8fafc;
+        stroke: #d9e2ec;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .formula-warm {
+        fill: #fffaf0;
+        stroke: #ead9b8;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .blue { fill: #2563eb; }
+      .orange { fill: #d97706; }
+      .green { fill: #059669; }
+      .purple { fill: #7c3aed; }
+
+      .simplex {
+        fill: #fffaf0;
+        stroke: #d6b46b;
+        stroke-width: 1.5;
+      }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="980" height="500"/>
+
+  <!-- Main title -->
+  <text class="title" x="48" y="40">Attention builds soft coordinates before reconstruction</text>
+
+  <!-- Global equations -->
+  <rect class="formula" x="690" y="18" width="232" height="52" rx="7"/>
+  <text class="math" x="806" y="39" text-anchor="middle">A = softmax(QKᵀ / √dₖ)</text>
+  <text class="math" x="806" y="58" text-anchor="middle">O = AV</text>
+
+  <!-- Panels -->
+  <rect class="panel" x="40"  y="88" width="276" height="356" rx="10"/>
+  <rect class="panel" x="352" y="88" width="276" height="356" rx="10"/>
+  <rect class="panel" x="664" y="88" width="276" height="356" rx="10"/>
+
+  <!-- Flow arrows -->
+  <line class="flow" x1="316" y1="266" x2="352" y2="266"/>
+  <line class="flow" x1="628" y1="266" x2="664" y2="266"/>
+
+  <!-- Panel 1 -->
+  <text class="panel-title" x="58" y="116">1. Query-key compatibility</text>
+  <text class="text" x="58" y="138">
+    <tspan x="58" dy="0">The query scores how strongly each key</tspan>
+    <tspan x="58" dy="15">matches the learned compatibility structure.</tspan>
+  </text>
+
+  <line class="axis" x1="78" y1="388" x2="272" y2="388"/>
+  <line class="axis" x1="78" y1="388" x2="78" y2="194"/>
+  <line class="grid" x1="78" y1="324" x2="272" y2="324"/>
+  <line class="grid" x1="78" y1="260" x2="272" y2="260"/>
+  <line class="grid" x1="142" y1="388" x2="142" y2="194"/>
+  <line class="grid" x1="206" y1="388" x2="206" y2="194"/>
+
+  <circle cx="132" cy="278" r="6.5" class="blue"/>
+  <circle cx="190" cy="236" r="6.5" class="orange"/>
+  <circle cx="240" cy="332" r="6.5" class="green"/>
+  <circle cx="248" cy="220" r="6.5" class="purple"/>
+
+  <line class="accent" x1="100" y1="356" x2="185" y2="242"/>
+
+  <text class="math" x="89" y="368">q</text>
+  <text class="small" x="118" y="271">k₁</text>
+  <text class="small" x="198" y="230">k₂</text>
+  <text class="small" x="246" y="345">k₃</text>
+  <text class="small" x="256" y="216">k₄</text>
+
+  <rect class="formula" x="66" y="404" width="224" height="24" rx="7"/>
+  <text class="small" x="178" y="420" text-anchor="middle">scores sⱼ encode query-key compatibility</text>
+
+  <!-- Panel 2 -->
+  <text class="panel-title" x="370" y="116">2. Softmax on the simplex</text>
+  <text class="text" x="370" y="138">
+    <tspan x="370" dy="0">The scores become nonnegative weights</tspan>
+    <tspan x="370" dy="15">that sum to one.</tspan>
+  </text>
+
+  <polygon class="simplex" points="490,208 410,348 570,348"/>
+  <circle cx="490" cy="228" r="6.5" class="blue"/>
+  <circle cx="430" cy="328" r="6.5" class="orange"/>
+  <circle cx="550" cy="328" r="6.5" class="green"/>
+  <circle cx="486" cy="294" r="6.5" fill="#0f172a"/>
+
+  <text class="small" x="490" y="215" text-anchor="middle">e₂</text>
+  <text class="small" x="417" y="343">e₁</text>
+  <text class="small" x="557" y="343">e₃</text>
+  <text class="math" x="497" y="288">α</text>
+
+  <rect class="formula-warm" x="390" y="374" width="200" height="40" rx="7"/>
+  <text class="small" x="490" y="390" text-anchor="middle">αⱼ ≥ 0,   Σⱼ αⱼ = 1</text>
+  <text class="small" x="490" y="405" text-anchor="middle">soft coordinates on a simplex</text>
+
+  <!-- Panel 3 -->
+  <text class="panel-title" x="682" y="116">3. Reconstruction in value space</text>
+  <text class="text" x="682" y="138">
+    <tspan x="682" dy="0">The same coordinates weight the values</tspan>
+    <tspan x="682" dy="15">to produce the output representation.</tspan>
+  </text>
+
+  <circle cx="768" cy="236" r="6.5" class="blue"/>
+  <circle cx="714" cy="336" r="6.5" class="orange"/>
+  <circle cx="848" cy="322" r="6.5" class="green"/>
+  <circle cx="786" cy="286" r="6.5" fill="#0f172a"/>
+
+  <line class="guide" x1="786" y1="286" x2="768" y2="236"/>
+  <line class="guide" x1="786" y1="286" x2="714" y2="336"/>
+  <line class="guide" x1="786" y1="286" x2="848" y2="322"/>
+
+  <text class="small" x="753" y="230">v₂</text>
+  <text class="small" x="696" y="351">v₁</text>
+  <text class="small" x="854" y="336">v₃</text>
+  <text class="math" x="797" y="280">o</text>
+
+  <rect class="formula" x="696" y="374" width="212" height="40" rx="7"/>
+  <text class="small" x="802" y="390" text-anchor="middle">o = Σⱼ αⱼ vⱼ</text>
+  <text class="small" x="802" y="405" text-anchor="middle">weighted reconstruction in value space</text>
+
+  <!-- Bottom note -->
+  <text class="small" x="490" y="470" text-anchor="middle">
+    Attention first normalizes query-key scores into coordinates, then uses them to reconstruct the output from values.
+  </text>
+</svg>

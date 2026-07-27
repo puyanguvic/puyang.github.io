@@ -1,0 +1,206 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" role="img" aria-labelledby="title desc">
+  <title id="title">Approximate orthogonality in high dimensions</title>
+  <desc id="desc">Low-dimensional random directions exhibit a broad angle distribution, whereas high-dimensional normalized vectors concentrate near ninety degrees.</desc>
+
+  <defs>
+    <marker id="arrowBlue" markerWidth="6" markerHeight="6" refX="4.8" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#2f6ca3"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="6" markerHeight="6" refX="4.8" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="#cf6d1d"/>
+    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+
+      .title {
+        fill: #111827;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 19px;
+        font-weight: 700;
+      }
+
+      .panel {
+        fill: #ffffff;
+        stroke: #d1d5db;
+        stroke-width: 1.1;
+        rx: 8;
+      }
+
+      .panel-title {
+        fill: #111827;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .text {
+        fill: #4b5563;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 11.2px;
+        font-weight: 400;
+      }
+
+      .small {
+        fill: #6b7280;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 10.4px;
+        font-weight: 400;
+      }
+
+      .label {
+        fill: #111827;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .formula {
+        fill: #111827;
+        font-family: Arial, Helvetica, "Noto Sans", "PingFang SC", sans-serif;
+        font-size: 12.2px;
+        font-weight: 500;
+      }
+
+      .formula-box {
+        fill: #f9fafb;
+        stroke: #d1d5db;
+        stroke-width: 1;
+        rx: 7;
+      }
+
+      .circle {
+        fill: #f8fafc;
+        stroke: #cbd5e1;
+        stroke-width: 1.3;
+      }
+
+      .axis {
+        stroke: #6b7280;
+        stroke-width: 1.4;
+      }
+
+      .tick {
+        stroke: #9ca3af;
+        stroke-width: 1;
+      }
+
+      .curve-low-fill { fill: rgba(47,108,163,0.08); }
+      .curve-low-stroke {
+        fill: none;
+        stroke: #2f6ca3;
+        stroke-width: 2.6;
+      }
+
+      .curve-high-fill { fill: rgba(207,109,29,0.10); }
+      .curve-high-stroke {
+        fill: none;
+        stroke: #cf6d1d;
+        stroke-width: 2.6;
+      }
+
+      .angle-arc {
+        fill: none;
+        stroke: #6b7280;
+        stroke-width: 1.4;
+      }
+
+      .note-box {
+        fill: #fafaf9;
+        stroke: #d6d3d1;
+        stroke-width: 1;
+        rx: 6;
+      }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="980" height="520"/>
+
+  <!-- Title -->
+  <text class="title" x="48" y="34">Approximate orthogonality in high dimensions</text>
+
+  <!-- Compact formula box moved down -->
+  <rect class="formula-box" x="374" y="48" width="232" height="52" rx="7"/>
+  <text class="formula" x="490" y="69" text-anchor="middle">E[cos θ] ≈ 0</text>
+  <text class="small" x="490" y="87" text-anchor="middle">Var(cos θ) ≈ 1 / d</text>
+
+  <!-- Panels moved down -->
+  <rect class="panel" x="40" y="112" width="430" height="340" rx="8"/>
+  <rect class="panel" x="510" y="112" width="430" height="340" rx="8"/>
+
+  <!-- Left panel -->
+  <text class="panel-title" x="58" y="138">Lower dimension</text>
+  <text class="text" x="58" y="157">
+    <tspan x="58" dy="0">Angles span a broad range.</tspan>
+  </text>
+
+  <!-- left schematic -->
+  <circle class="circle" cx="164" cy="260" r="58"/>
+  <line x1="164" y1="260" x2="219" y2="230" stroke="#2f6ca3" stroke-width="2.6" marker-end="url(#arrowBlue)"/>
+  <line x1="164" y1="260" x2="194" y2="314" stroke="#2f6ca3" stroke-width="2.6" marker-end="url(#arrowBlue)"/>
+  <line x1="164" y1="260" x2="118" y2="227" stroke="#2f6ca3" stroke-width="2.6" marker-end="url(#arrowBlue)"/>
+  <path class="angle-arc" d="M196 244 A34 34 0 0 1 189 289"/>
+  <text class="small" x="208" y="275">broad range</text>
+
+  <!-- left distribution -->
+  <line class="axis" x1="92" y1="366" x2="414" y2="366"/>
+  <line class="tick" x1="120" y1="362" x2="120" y2="370"/>
+  <line class="tick" x1="253" y1="362" x2="253" y2="370"/>
+  <line class="tick" x1="386" y1="362" x2="386" y2="370"/>
+
+  <path class="curve-low-fill" d="M108 366
+    C145 342, 181 289, 226 280
+    C267 273, 311 296, 356 337
+    C374 354, 392 362, 404 366 Z"/>
+  <path class="curve-low-stroke" d="M108 366
+    C145 342, 181 289, 226 280
+    C267 273, 311 296, 356 337
+    C374 354, 392 362, 404 366"/>
+
+  <text class="small" x="120" y="387" text-anchor="middle">0°</text>
+  <text class="small" x="253" y="387" text-anchor="middle">90°</text>
+  <text class="small" x="386" y="387" text-anchor="middle">180°</text>
+
+  <rect class="note-box" x="108" y="409" width="296" height="24" rx="6"/>
+  <text class="small" x="256" y="425" text-anchor="middle">broad angular distribution</text>
+
+  <!-- Right panel -->
+  <text class="panel-title" x="528" y="138">Higher dimension</text>
+  <text class="text" x="528" y="157">
+    <tspan x="528" dy="0">Angles concentrate near 90°.</tspan>
+  </text>
+
+  <!-- right schematic -->
+  <circle class="circle" cx="634" cy="260" r="58"/>
+  <line x1="634" y1="260" x2="694" y2="260" stroke="#cf6d1d" stroke-width="2.6" marker-end="url(#arrowOrange)"/>
+  <line x1="634" y1="260" x2="634" y2="200" stroke="#cf6d1d" stroke-width="2.6" marker-end="url(#arrowOrange)"/>
+  <line x1="634" y1="260" x2="608" y2="207" stroke="#cf6d1d" stroke-width="2.6" marker-end="url(#arrowOrange)" opacity="0.35"/>
+  <path class="angle-arc" d="M667 260 A33 33 0 0 0 634 227"/>
+  <text class="small" x="676" y="242">θ ≈ 90°</text>
+
+  <!-- right distribution -->
+  <line class="axis" x1="566" y1="366" x2="888" y2="366"/>
+  <line class="tick" x1="594" y1="362" x2="594" y2="370"/>
+  <line class="tick" x1="727" y1="362" x2="727" y2="370"/>
+  <line class="tick" x1="860" y1="362" x2="860" y2="370"/>
+
+  <path class="curve-high-fill" d="M610 366
+    C678 365, 700 289, 724 257
+    C734 244, 744 244, 754 257
+    C778 289, 800 365, 874 366 Z"/>
+  <path class="curve-high-stroke" d="M610 366
+    C678 365, 700 289, 724 257
+    C734 244, 744 244, 754 257
+    C778 289, 800 365, 874 366"/>
+
+  <text class="small" x="594" y="387" text-anchor="middle">0°</text>
+  <text class="small" x="727" y="387" text-anchor="middle">90°</text>
+  <text class="small" x="860" y="387" text-anchor="middle">180°</text>
+
+  <rect class="note-box" x="590" y="409" width="294" height="24" rx="6"/>
+  <text class="small" x="737" y="425" text-anchor="middle">mass concentrates near orthogonality</text>
+
+  <!-- Bottom note -->
+  <text class="small" x="490" y="478" text-anchor="middle">
+    For normalized random vectors, angular variability shrinks with dimension and approximate orthogonality becomes typical.
+  </text>
+</svg>
